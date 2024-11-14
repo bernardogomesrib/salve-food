@@ -13,7 +13,7 @@ export default function TabOneScreen() {
       <Image source={require('../../assets/images/salve-food.png')} style={styles.image} />
       <Input label="Email" value={email} onChangeText={setEmail} style={{width:"80%"}} keyboardType='email-address'/>
       <Input label="Senha" secureTextEntry style={{width:"80%"}}/>
-      <Link href="/cadastro" asChild><Text style={styles.esqueci}>Esqueci a senha</Text></Link>
+      <Link href="/recuperarSenha" asChild><Text style={styles.esqueci}>Esqueci a senha</Text></Link>
       <Button title="Entrar" style={styles.buttonEntrar}/>
       <Text>Não tem uma conta? <Link href="/cadastro"><Text style={styles.esqueci}>Cadastre-se</Text></Link></Text>
     </View>
