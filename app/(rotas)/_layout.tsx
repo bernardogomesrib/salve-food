@@ -14,7 +14,6 @@ export {
 } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: 'index',
 };
 
@@ -52,7 +51,7 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="two" options={{ title: 'outra aba' }} />
+        <Stack.Screen name="cadastro" options={{ title: 'cadastre-se',headerShown:false }} />
       </Stack>
     </ThemeProvider>
   );

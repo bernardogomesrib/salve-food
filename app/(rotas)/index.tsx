@@ -1,33 +1,23 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-
+import { useState } from 'react';
+import { styles } from './Styles';
 export default function TabOneScreen() {
+  const [email, setEmail] = useState('');
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-      <Link href="/two"><Text>Segunda aba</Text></Link>
+      <Image source={require('../../assets/images/salve-food.png')} style={styles.image} />
+      <Input label="Email" value={email} onChangeText={setEmail} style={{width:"80%"}} keyboardType='email-address'/>
+      <Input label="Senha" secureTextEntry style={{width:"80%"}}/>
+      <Link href="/recuperarSenha" asChild><Text style={styles.esqueci}>Esqueci a senha</Text></Link>
+      <Button title="Entrar" style={styles.buttonEntrar}/>
+      <Text>Não tem uma conta? <Link href="/cadastro"><Text style={styles.esqueci}>Cadastre-se</Text></Link></Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
+
