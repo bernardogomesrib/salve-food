@@ -20,7 +20,7 @@ export default function RecuperarSenha() {
         <Text style={{width:"70%", marginBottom:20}}>Para recuperação de senha, entre com a nova senha e a confirme</Text>
         <Input label={"Senha"} secureTextEntry style={{width:"80%"}}/>
         <Input label={"Confirmação de senha"} secureTextEntry style={{width:"80%"}}/>
-        <Button title="Cadastrar" style={stilus.buttonEntrar}/>
+        <Button title="Redefinir Senha" style={stilus.buttonEntrar}/>
         <Text style={{width:"70%", marginTop:20,textAlign:'center'}}>Já tem uma conta? <Link href="/"><Text style={stilus.esqueci}>Entre</Text></Link></Text>
          
     </View>
