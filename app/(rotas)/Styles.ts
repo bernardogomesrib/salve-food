@@ -1,5 +1,5 @@
 import { StyleSheet, useColorScheme } from "react-native";
-
+const colorScheme = useColorScheme();
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     esqueci: {
-        color: useColorScheme() === 'dark' ? '#0660FC' : 'blue',
+        color: colorScheme === 'dark' ? '#0660FC' : 'blue',
         textDecorationLine: "underline",
         width: "80%",
         textAlign: "left",
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         resizeMode: 'stretch'
     },
     buttonEntrar: {
-        marginTop: 15,
+        marginTop: 20,
         width: "80%"
     }
 });

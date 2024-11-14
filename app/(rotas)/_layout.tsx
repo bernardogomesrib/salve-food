@@ -51,7 +51,7 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="cadastro" options={{ title: 'outra aba' }} />
+        <Stack.Screen name="cadastro" options={{ title: 'cadastre-se',headerShown:false }} />
       </Stack>
     </ThemeProvider>
   );
