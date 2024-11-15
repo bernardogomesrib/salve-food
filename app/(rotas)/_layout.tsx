@@ -53,6 +53,9 @@ function RootLayoutNav() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="cadastro" options={{ title: 'cadastre-se',headerShown:false }} />
         <Stack.Screen name="recuperarSenha" options={{ title: 'Recuperar senha',headerShown:false }} />
+        <Stack.Screen name="home" options={{ title: 'Home', headerShown: false}} />
+        <Stack.Screen name="restaurant" options={{ headerShown: false }}
+      />
       </Stack>
     </ThemeProvider>
   );
