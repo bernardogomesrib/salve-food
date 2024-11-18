@@ -56,6 +56,10 @@ function RootLayoutNav() {
         <Stack.Screen name="home" options={{ title: 'Home', headerShown: false}} />
         <Stack.Screen name="restaurant" options={{ headerShown: false }}
       />
+      <Stack.Screen name="alterarDados" options={{ headerShown: false }}
+      />
+      <Stack.Screen name="enviarEmail" options={{ headerShown: false }}
+      />
       </Stack>
     </ThemeProvider>
   );
