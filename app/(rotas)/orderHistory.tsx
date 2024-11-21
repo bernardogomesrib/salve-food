@@ -1,26 +1,52 @@
-import { StyleSheet } from 'react-native';
-import { Text, View } from '@/components/Themed';
-import { Image } from 'expo-image';
-import { TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-
+import { StyleSheet } from "react-native";
+import { Text, View } from "@/components/Themed";
+import { Image } from "expo-image";
+import { TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { useState } from "react";
 
 export default function OrderHistory() {
+    const [isDropDownOpen, setisDropDownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setisDropDownOpen((prev) => !prev);
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.headerContent}>
-                    <View style={{ width: 40 }} />
+                    <TouchableOpacity>
+                        <FontAwesome name="bars" size={32} color="#fff" />
+                    </TouchableOpacity>
                     <Image
-                        source={require('../../assets/images/salve-food.png')}
+                        source={require("../../assets/images/salve-food.png")}
                         style={styles.logo}
                     />
                     <TouchableOpacity>
-                        <FontAwesome name='user' size={32} color="#fff" />
+                        <FontAwesome name="user" size={32} color="#fff" />
                     </TouchableOpacity>
                 </View>
             </View>
+            <View style={styles.body}>
+                <FontAwesome name="clock-o" size={32} color="#fff" />
 
+                <Text style={styles.text}> Histórico de Pedidos </Text>
+                <TouchableOpacity onPress={toggleDropdown}>
+                    <FontAwesome
+                        name={isDropDownOpen ? "chevron-down" : "chevron-right"}
+                        size={32}
+                        color="#fff"
+                    />
+                </TouchableOpacity>
+            </View>
+            {isDropDownOpen && (
+            <View style={styles.dropdown}>
+                <Text style={styles.dropdownText}>Pedido #1</Text>
+                <Text style={styles.dropdownText}>Pedido #2</Text>
+                <Text style={styles.dropdownText}>Pedido #3</Text>
+            </View>
+            )}
         </View>
     );
 }
@@ -30,91 +56,46 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        backgroundColor: '#fff',
+        backgroundColor: "#fff",
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: "#eee",
+    },
+    body: {
+        marginTop: 30,
+        padding: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
+
+        backgroundColor: "#000",
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    text: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "bold",
     },
     headerContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 16
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: 16,
     },
     logo: {
         width: 120,
         height: 40,
-        resizeMode: 'contain',
+        resizeMode: "contain",
     },
-    content: {
-        flex: 1,
-        padding: 20,
+    dropdown: {
+        padding: 16,
+        backgroundColor: "#222",
+        borderTopWidth: 1,
+        borderTopColor: "#eee",
     },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 15,
-    },
-    categoriesContainer: {
-        marginBottom: 30,
-    },
-    categoryCard: {
-        alignItems: 'center',
-        marginRight: 20,
-        backgroundColor: '#f5f5f5',
-        padding: 15,
-        borderRadius: 12,
-        minWidth: 80,
-    },
-    categoryIcon: {
-        fontSize: 24,
-        marginBottom: 5,
-    },
-    categoryName: {
-        fontSize: 12,
-        fontWeight: '500',
-    },
-    restaurantCard: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    restaurantImage: {
-        width: '100%',
-        height: 150,
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-    },
-    restaurantInfo: {
-        padding: 15,
-    },
-    restaurantName: {
+    dropdownText: {
+        color: "#fff",
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    restaurantDetails: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    rating: {
-        fontSize: 14,
-        color: '#666',
-    },
-    category: {
-        fontSize: 14,
-        color: '#666',
-    },
-    deliveryTime: {
-        fontSize: 14,
-        color: '#666',
+        marginVertical: 4,
     },
 });
