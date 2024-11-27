@@ -1,9 +1,8 @@
-import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
-import { Image } from 'expo-image';
-import { ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 const categories = [
   { id: 1, name: 'Brasileira', icon: '🇧🇷' },
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
   categoryCard: {
     alignItems: 'center',
     marginRight: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#AEADAD',
     padding: 15,
     borderRadius: 12,
     minWidth: 80,
