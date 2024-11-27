@@ -1,7 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -49,17 +49,18 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
   const CustomHeader = () => {
     const color = useColorScheme();
     return (<View style={styles.header}>
-      <TouchableOpacity onPress={() => console.log("Menu")}>
+      <TouchableOpacity onPress={() => {console.log("pagina de Ellen");router.push("/orderHistory")}}>
         <FontAwesome name="bars" size={24} color={color == 'dark' ? 'white' : 'black'} />
       </TouchableOpacity>
       <Image
         source={require("../../assets/images/salve-food.png")}
         style={styles.logo}
       />
-      <TouchableOpacity>
+      <TouchableOpacity onPress={()=>{router.push("/orderHistory")}}>
         <FontAwesome name="user" size={24} color={color == 'dark' ? 'white' : 'black'} />
       </TouchableOpacity>
     </View>)
@@ -87,11 +88,7 @@ function RootLayoutNav() {
         <Stack.Screen name="restaurant" options={{ headerShown: false }} />
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
-        <Stack.Screen name="cadastro" options={{ title: 'cadastre-se',headerShown:false }} />
-        <Stack.Screen name="recuperarSenha" options={{ title: 'Recuperar senha',headerShown:false }} />
-        <Stack.Screen name="home" options={{ title: 'Home', headerShown: false}} />
-        <Stack.Screen name="restaurant" options={{ headerShown: false }}/>
-        <Stack.Screen name="orderHystory" options={{ title: 'Histórico de Pedidos', headerShown: false}} />
+        <Stack.Screen name="orderHistory" options={{ header: CustomHeader}} />
       </Stack>
     </ThemeProvider>
   );

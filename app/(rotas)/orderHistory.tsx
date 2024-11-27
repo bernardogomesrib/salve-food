@@ -1,9 +1,7 @@
-import { StyleSheet } from "react-native";
 import { Text, View } from "@/components/Themed";
-import { Image } from "expo-image";
-import { TouchableOpacity } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 export default function OrderHistory() {
     const [isDropDownOpen, setisDropDownOpen] = useState(false);
@@ -14,20 +12,7 @@ export default function OrderHistory() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.headerContent}>
-                    <TouchableOpacity>
-                        <FontAwesome name="bars" size={32} color="#fff" />
-                    </TouchableOpacity>
-                    <Image
-                        source={require("../../assets/images/salve-food.png")}
-                        style={styles.logo}
-                    />
-                    <TouchableOpacity>
-                        <FontAwesome name="user" size={32} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-            </View>
+
             <View style={styles.body}>
                 <FontAwesome name="clock-o" size={32} color="#fff" />
 
