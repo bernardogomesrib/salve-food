@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "@/components/Themed";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, } from "react-native";
 import { styles as stilus } from "./Styles";
 
-export default function RecuperarSenha() {
+export default function EnviarEmail() {
   const [email, setEmail] = useState("");
 
   const handleSubmit = () => {
@@ -34,10 +35,11 @@ export default function RecuperarSenha() {
         title="Enviar"
         onPress={handleSubmit}
         style={stilus.buttonEntrar}
+        href="/recuperarSenha"
       />
       <Text style={styles.footerText}>
         Já tem uma conta?{" "}
-        <Link href="/login">
+        <Link href="/(rotas)">
           <Text style={stilus.esqueci}>Entre</Text>
         </Link>
       </Text>
@@ -51,14 +53,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    
   },
   instructionText: {
     textAlign: "center",
     fontSize: 16,
     marginBottom: 20,
     width: "80%",
-    color: "#333",
   },
   input: {
     width: "80%",
@@ -68,6 +69,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontSize: 14,
-    color: "#333",
   },
 });
