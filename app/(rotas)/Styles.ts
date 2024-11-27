@@ -30,7 +30,8 @@ const styles = StyleSheet.create({
     },
     buttonEntrar: {
         marginTop: 20,
-        width: "80%"
+        width: "80%",
+        borderRadius: 20
     }
 });
 export { styles };
