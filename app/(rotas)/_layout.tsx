@@ -53,15 +53,15 @@ function RootLayoutNav() {
   const CustomHeader = () => {
     const color = useColorScheme();
     return (<View style={styles.header}>
-      <TouchableOpacity onPress={() => {console.log("pagina de Ellen");router.push("/orderHistory")}}>
-        <FontAwesome name="bars" size={24} color={color == 'dark' ? 'white' : 'black'} />
+      <TouchableOpacity onPress={() => {console.log("pagina de Ellen");router.push("/listaEnderecos")}}>
+        <FontAwesome name="bars" size={32} color={color == 'dark' ? 'white' : 'black'} />
       </TouchableOpacity>
       <Image
         source={require("../../assets/images/salve-food.png")}
         style={styles.logo}
       />
-      <TouchableOpacity onPress={()=>{router.push("/orderHistory")}}>
-        <FontAwesome name="user" size={24} color={color == 'dark' ? 'white' : 'black'} />
+      <TouchableOpacity onPress={()=>{console.log("pagina de thiago");router.push("/orderHistory")}}>
+        <FontAwesome name="user" size={32} color={color == 'dark' ? 'white' : 'black'} />
       </TouchableOpacity>
     </View>)
   }
@@ -71,6 +71,8 @@ function RootLayoutNav() {
       alignItems: "center",
       justifyContent: "space-between",
       padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: '#eee',
     },
     logo: {
       width: 120,
@@ -84,11 +86,12 @@ function RootLayoutNav() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="cadastro" options={{ title: 'cadastre-se', headerShown: false }} />
         <Stack.Screen name="recuperarSenha" options={{ title: 'Recuperar senha', headerShown: false }} />
-        <Stack.Screen name="home" options={{ title: 'Home', headerShown: false }} />
+        <Stack.Screen name="home" options={{ title: 'Home', header: CustomHeader }} />
         <Stack.Screen name="restaurant" options={{ headerShown: false }} />
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
         <Stack.Screen name="orderHistory" options={{ header: CustomHeader}} />
+        <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />
       </Stack>
     </ThemeProvider>
   );

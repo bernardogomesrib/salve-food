@@ -1,8 +1,7 @@
-import React, { useState} from 'react';
-import { TextInput, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { Text, View } from '@/components/Themed';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { View } from '@/components/Themed';
-import { Image } from 'expo-image';
+import React, { useState } from 'react';
+import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 type Address = {
     id: string;
@@ -58,18 +57,7 @@ export default function ListaEnderecos() {
     };
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.headerContent}>
-                    <View style={{ width: 40 }} />
-                    <Image
-                        source={require('../../assets/images/salve-food.png')}
-                        style={styles.logo}
-                    />
-                    <TouchableOpacity>
-                        <FontAwesome name='user' size={32} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-            </View>
+            
             <Text style={styles.title}>Endereços</Text>
 
             <View style={styles.searchBar}>

@@ -1,5 +1,4 @@
 import { Text, View } from '@/components/Themed';
-import { FontAwesome } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
@@ -35,18 +34,6 @@ const restaurants = [
 export default function Home() {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={{ width: 40 }} />
-          <Image 
-            source={require('../../assets/images/salve-food.png')} 
-            style={styles.logo}
-          />
-          <TouchableOpacity>
-            <FontAwesome name='user' size={32} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.sectionTitle}>Categorias</Text>
