@@ -13,11 +13,12 @@ import "react-native-reanimated";
 import { View } from "@/components/Themed";
 import { useColorScheme } from "@/components/useColorScheme";
 import { Image } from "expo-image";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { defColorScheme, styles } from "./Styles";
 
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -52,7 +53,8 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const clrSch= useColorScheme();
+  defColorScheme(clrSch);
   const router = useRouter();
   const CustomHeader = () => {
     const color = useColorScheme();
@@ -95,23 +97,9 @@ function RootLayoutNav() {
       </View>
     );
   };
-  const styles = StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: "#eee",
-    },
-    logo: {
-      width: 120,
-      height: 40,
-      resizeMode: "contain",
-    },
-  });
+  
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={clrSch=== "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
