@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   editButtonText: {
-
     fontSize: 16,
     fontWeight: "bold",
   },

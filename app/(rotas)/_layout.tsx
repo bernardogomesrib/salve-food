@@ -123,6 +123,11 @@ function RootLayoutNav() {
           options={{ header: CustomHeader }}
         />
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
+        <Stack.Screen name="seguranca" options={{ header: CustomHeader }} />
+        <Stack.Screen name="adicionarCartao" options={{ header: CustomHeader }} />
+        <Stack.Screen name="editarCartao" options={{ header: CustomHeader }} />
+        <Stack.Screen name="exibirCartoes" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento" options={{ header: CustomHeader }} />
       </Stack>
     </ThemeProvider>
   );
