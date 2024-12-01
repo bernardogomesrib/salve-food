@@ -15,6 +15,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { Image } from "expo-image";
 import { TouchableOpacity } from "react-native";
 import { defColorScheme, styles } from "./Styles";
+import 'react-native-get-random-values';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -118,16 +119,17 @@ function RootLayoutNav() {
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
         <Stack.Screen name="orderHistory" options={{ header: CustomHeader }} />
-        <Stack.Screen
-          name="listaEnderecos"
-          options={{ header: CustomHeader }}
-        />
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
         <Stack.Screen name="seguranca" options={{ header: CustomHeader }} />
         <Stack.Screen name="adicionarCartao" options={{ header: CustomHeader }} />
         <Stack.Screen name="editarCartao" options={{ header: CustomHeader }} />
         <Stack.Screen name="exibirCartoes" options={{ header: CustomHeader }} />
         <Stack.Screen name="formasDePagamento" options={{ header: CustomHeader }} />
+        <Stack.Screen name="adicionarEnderecos" options={{ header: CustomHeader }} />
+        <Stack.Screen name="editarEnderecos" options={{ header: CustomHeader }} />
+        <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />
+        <Stack.Screen name="mapaEnderecos" options={{ header: CustomHeader }} />
+        
       </Stack>
     </ThemeProvider>
   );

@@ -1,5 +1,6 @@
 import { Text, View } from '@/components/Themed';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
@@ -101,7 +102,8 @@ export default function ListaEnderecos() {
                                 <Text style={styles.modalButtonText}>Excluir</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.modalButtonEdit}>
-                                <Text style={styles.modalButtonText}>Editar</Text>
+                                <Link href={"/editarEnderecos"}>
+                                <Text style={styles.modalButtonText}>Editar</Text></Link>
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity style={styles.modalCloseButton} onPress={closeModal}>
