@@ -66,7 +66,7 @@ export default function MapScreen() {
     const rua = parts[0]?.trim() || "";
     const numeroBairro = parts[1]?.split("-") || [];
     const numero = numeroBairro[0]?.trim() || "";
-    const bairro = numeroBairro[1]?.trim() || ""; 
+    const bairro = numeroBairro[1]?.trim() || "";
 
     const cidadeEstadoCep = parts[2]?.split("-") || [];
     const cidade = cidadeEstadoCep[0]?.trim() || "";
@@ -101,18 +101,16 @@ export default function MapScreen() {
 
       console.log("Callback Data", callbackData);
 
-      router.back();
-      
-  //     router.push({
-  //       pathname: "/adicionarEnderecos",
-  //       query: {
-  //         callbackData: JSON.stringify(callbackData),
-  //       },
-  //     });
-  //   } else {
-  //     Alert.alert("Erro", "Nenhum local selecionado.");
-  //   }
-  // };
+      router.push({
+        pathname: "/adicionarEnderecos",
+        query: {
+          callbackData: JSON.stringify(callbackData),
+        },
+      });
+    } else {
+      Alert.alert("Erro", "Nenhum local selecionado.");
+    }
+  };
 
   if (!region) {
     return (
