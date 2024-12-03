@@ -50,7 +50,7 @@ export default function Profile() {
         <MenuItem
           icon="cog"
           label="Configurações"
-          onPress={() => console.log("Não implementado ainda (Configurações)")}
+          onPress={() => router.push("/configuracoes")}
         />
         <MenuItem
           icon="sign-out"
