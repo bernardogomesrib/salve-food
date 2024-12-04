@@ -1,13 +1,13 @@
 import { Text, View } from "@/components/Themed";
 import { FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, Image } from "react-native";
 
 export default function OrderHistory() {
-    const [isDropDownOpen, setisDropDownOpen] = useState(false);
-
+    const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+    const stars = Array(5).fill("star");
     const toggleDropdown = () => {
-        setisDropDownOpen((prev) => !prev);
+        setIsDropDownOpen((prev) => !prev);
     };
 
     return (
@@ -26,11 +26,72 @@ export default function OrderHistory() {
                 </TouchableOpacity>
             </View>
             {isDropDownOpen && (
-            <View style={styles.dropdown}>
-                <Text style={styles.dropdownText}>Pedido #1</Text>
-                <Text style={styles.dropdownText}>Pedido #2</Text>
-                <Text style={styles.dropdownText}>Pedido #3</Text>
-            </View>
+                <View style={styles.dropdown}>
+                    <View style={styles.dropdownText}>
+                        <View>
+                            <Text>Dom 14 abril 2024</Text>
+                            <View style={styles.container_order}>
+                                <View style={styles.container_retaurant}>
+                                    <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "95%", padding: 12, borderBottomWidth: 1, borderBottomColor: "7a7a7a" }}>
+                                        <View style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", flexDirection: "row", }}>
+                                            <Image style={styles.restaurantImage}
+                                                source={{
+                                                    uri: 'https://www.designi.com.br/images/preview/10802428.jpg',
+                                                }} />
+                                            <Text style={{ marginLeft: 12 }}>Luigi da Massa</Text>
+                                        </View>
+                                        <FontAwesome
+                                            name={"chevron-right"}
+                                            size={32}
+                                            color="#black"
+                                            style={{}} />
+                                    </View>
+                                    <View style={{ padding: 0, width:"95%", borderBottomWidth: 1, borderBottomColor: "7a7a7a", paddingVertical:5 }}>
+                                        <View style={{ alignItems: "center", justifyContent: "flex-start", flexDirection: "row" }}>
+                                            <FontAwesome
+                                                name={"check-circle"}
+                                                size={32}
+                                                color="#42CF1D"
+                                                style={{ marginLeft: 12 }} />
+                                            <Text style={{ marginLeft: 12 }}>Pedido concluído - N° 123456</Text>
+                                        </View>
+                                        <View style={{ display: "flex", alignItems: "center", flexDirection: "row", }}>
+                                            <Text style={{ marginLeft: 12 }}>1</Text>
+                                            <Text style={{ marginLeft: 12 }}>Pizza de calabresa/borda recheada - grande</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        width: "95%", borderBottomWidth: 1,
+                                        borderBottomColor: "7a7a7a",
+                                        paddingVertical:10
+                                    }}>
+                                        <Text style={{ fontWeight: "bold", marginLeft:12 }}>Avaliação</Text>
+                                        <View style={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "row" }}>
+                                            {stars.map((star, index) => (
+                                                <FontAwesome
+                                                    key={index}
+                                                    name={star}
+                                                    size={18}
+                                                    color="#FFEE03"
+                                                    style={styles.star}
+                                                />
+                                            ))}
+                                        </View>
+                                    </View>
+                                    <View style={{ paddingVertical: 8, margin: 5 }}>
+                                        <Text style={{ fontWeight: "bold", color: "red", fontSize: 12 }}>Repetir Pedido</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <Text style={styles.dropdownText}>Pedido #2</Text>
+                    <Text style={styles.dropdownText}>Pedido #3</Text>
+                </View>
             )}
         </View>
     );
@@ -83,4 +144,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginVertical: 4,
     },
+    restaurantImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 100,
+    },
+    container_retaurant: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        width: "100%",
+        boxShadow: "0 0 10 0 ",
+        marginLeft: 18
+    },
+    container_order: {
+        display: "flex",
+        width: "90%",
+        paddingTop: 5,
+        paddingBottom: 32
+    },
+    star: {
+        padding: 0,
+
+    }
 });
