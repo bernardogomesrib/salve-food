@@ -8,9 +8,12 @@ import {
   useColorScheme,
   Alert,
   ScrollView,
+  Modal,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 
 type Address = {
   rua: string;
@@ -27,7 +30,6 @@ export default function AddAddressScreen() {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
-
   const [address, setAddress] = useState<Address>({
     rua: "",
     numero: "",
@@ -38,23 +40,84 @@ export default function AddAddressScreen() {
     complemento: "",
     cep: "",
   });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [region, setRegion] = useState<any>(null);
 
+  // Função para buscar o endereço via ViaCEP
   const handleCepLookup = async () => {
     if (!address.cep) {
       Alert.alert("Erro", "Digite um CEP válido.");
       return;
     }
     try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${address.cep}&key=AIzaSyDohZlFgwg979AR1ndE_7eud9z7duRZ2GI`
-      );
+      const response = await fetch(`https://viacep.com.br/ws/${address.cep}/json/`);
       const data = await response.json();
-      if (!data.results.length) {
+      if (data.erro) {
         Alert.alert("Erro", "CEP não encontrado.");
         return;
       }
 
+      setAddress({
+        ...address,
+        rua: data.logradouro || "",
+        bairro: data.bairro || "",
+        cidade: data.localidade || "",
+        estado: data.uf || "",
+        pais: "Brasil",
+        cep: data.cep || "",
+      });
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível buscar o CEP.");
+    }
+  };
+
+  const handleLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permissão Negada",
+        "É necessário conceder permissão de localização para usar esta funcionalidade."
+      );
+      return;
+    }
+
+    const userLocation = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = userLocation.coords;
+
+    setRegion({
+      latitude,
+      longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+
+    setSelectedLocation({
+      latitude,
+      longitude,
+    });
+
+    setModalVisible(true);
+  };
+
+  const handleSelectLocation = (latitude: number, longitude: number) => {
+    setSelectedLocation({ latitude, longitude });
+  };
+
+  const fetchAddress = async (latitude: number, longitude: number) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDohZlFgwg979AR1ndE_7eud9z7duRZ2GI`
+      );
+      const data = await response.json();
+      if (!data.results.length) {
+        Alert.alert("Erro", "Endereço não encontrado.");
+        return;
+      }
+
       const components = data.results[0].address_components;
+      const addressString = data.results[0].formatted_address;
+
       setAddress({
         ...address,
         rua: components.find((c) => c.types.includes("route"))?.long_name || "",
@@ -73,36 +136,15 @@ export default function AddAddressScreen() {
           components.find((c) => c.types.includes("postal_code"))?.long_name ||
           "",
       });
+
+      setSelectedLocation({
+        ...selectedLocation,
+        address: addressString,
+      });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível buscar o CEP.");
+      Alert.alert("Erro", "Não foi possível buscar o endereço.");
     }
   };
-
-  const handleLocation = () => {
-    router.push({
-      pathname: "/mapaEnderecos",
-      query: { callbackData: JSON.stringify(address) },
-    });
-  };
-
-  useEffect(() => {
-    if (router.query && router.query.callbackData) {
-      const callbackData = JSON.parse(router.query.callbackData as string);
-      const { rua, bairro, cidade, estado, pais, cep, numero } =
-        callbackData || {};
-
-      setAddress((prev) => ({
-        ...prev,
-        rua: rua || prev.rua,
-        bairro: bairro || prev.bairro,
-        cidade: cidade || prev.cidade,
-        estado: estado || prev.estado,
-        pais: pais || prev.pais,
-        cep: cep || prev.cep,
-        numero: numero || prev.numero,
-      }));
-    }
-  }, [router.query]);
 
   return (
     <ScrollView
@@ -110,11 +152,7 @@ export default function AddAddressScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View
-        style={[
-          styles.container,
-          { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" },
-        ]}
-      >
+        style={[styles.container, { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" }]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome5
@@ -142,8 +180,7 @@ export default function AddAddressScreen() {
           ].map((field, index) => (
             <View key={index} style={styles.inputGroup}>
               <Text
-                style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}
-              >
+                style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}>
                 {field.label}
               </Text>
               <TextInput
@@ -188,6 +225,65 @@ export default function AddAddressScreen() {
           </Link>
         </TouchableOpacity>
       </View>
+
+      {/* Modal de Mapa */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Exibindo o mapa com a região do usuário */}
+            <MapView
+              style={styles.map}
+              region={region}
+              onPress={(e) =>
+                handleSelectLocation(
+                  e.nativeEvent.coordinate.latitude,
+                  e.nativeEvent.coordinate.longitude
+                )
+              }
+            >
+              {selectedLocation && (
+                <Marker
+                  coordinate={{
+                    latitude: selectedLocation.latitude,
+                    longitude: selectedLocation.longitude,
+                  }}
+                />
+              )}
+            </MapView>
+
+            {/* Pré-visualização do endereço selecionado */}
+            <View style={styles.preview}>
+              <Text style={styles.previewText}>
+                {selectedLocation && selectedLocation.address
+                  ? `Local Selecionado: ${selectedLocation.address}`
+                  : "Mova o mapa para selecionar um local."}
+              </Text>
+            </View>
+
+            {/* Botões para confirmar ou fechar o modal */}
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => {
+                fetchAddress(selectedLocation.latitude, selectedLocation.longitude);
+                setModalVisible(false);
+              }}
+            >
+              <Text style={styles.confirmButtonText}>Confirmar Localização</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}> [ X ]</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -224,4 +320,59 @@ const styles = StyleSheet.create({
     backgroundColor: "#1f8fdb",
   },
   saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "90%",
+    height: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  map: { flex: 1 },
+  preview: {
+    position: "absolute",
+    bottom: 100,
+    left: 20,
+    right: 20,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 8,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  previewText: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "#333",
+  },
+  confirmButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  confirmButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  closeButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    padding: 10,
+    backgroundColor: "#ff4040",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  closeButtonText: { color: "#fff", fontWeight: "bold" },
 });
