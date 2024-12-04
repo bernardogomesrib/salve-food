@@ -13,9 +13,7 @@ import "react-native-reanimated";
 import { View } from "@/components/Themed";
 import { useColorScheme } from "@/components/useColorScheme";
 import { Image } from "expo-image";
-import { StatusBar } from "expo-status-bar";
 import { TouchableOpacity } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { defColorScheme, styles } from "./Styles";
 
 export {
@@ -55,13 +53,11 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const clrSch = useColorScheme();
-  const insets = useSafeAreaInsets();
-
+  const clrSch= useColorScheme();
   defColorScheme(clrSch);
   const router = useRouter();
   const CustomHeader = () => {
-    const color = clrSch;
+    const color = useColorScheme();
     return (
       <View style={styles.header}>
         <TouchableOpacity
@@ -101,12 +97,9 @@ function RootLayoutNav() {
       </View>
     );
   };
-
+  
   return (
-    <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
-      <View style={{ height: insets.top }}>
-        <StatusBar style={clrSch === 'dark' ? 'light' : 'dark'} />
-      </View>
+    <ThemeProvider value={clrSch=== "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
@@ -130,8 +123,10 @@ function RootLayoutNav() {
           options={{ header: CustomHeader }}
         />
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
+        <Stack.Screen name="entregador" options={{ header: CustomHeader }} />
+        <Stack.Screen name="entregasAtivas" options={{ header: CustomHeader }} />
+        <Stack.Screen name="historico" options={{ header: CustomHeader }} />
       </Stack>
     </ThemeProvider>
-
   );
 }

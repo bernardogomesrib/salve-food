@@ -5,6 +5,8 @@ import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
 import { useRouter } from "expo-router";
 
+
+
 export default function Profile() {
   const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
   const backgroundColor = useThemeColor(
@@ -46,6 +48,11 @@ export default function Profile() {
           icon="map-marker"
           label="Endereços"
           onPress={() => router.push("/listaEnderecos")}
+        />
+        <MenuItem
+          icon="motorcycle"
+          label="Área do Entregador"
+          onPress={() => router.push("/entregador")}
         />
         <MenuItem
           icon="cog"
