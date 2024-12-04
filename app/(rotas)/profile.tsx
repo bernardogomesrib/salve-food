@@ -1,9 +1,9 @@
 import { Text, View } from "@/components/Themed";
-import { FontAwesome } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
+import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { StyleSheet } from "react-native";
 
 
 
@@ -14,7 +14,7 @@ export default function Profile() {
     "background"
   );
   const router = useRouter();
-
+  let jaEntrou = false;
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
@@ -51,8 +51,16 @@ export default function Profile() {
         />
         <MenuItem
           icon="motorcycle"
-          label="Área do Entregador"
-          onPress={() => router.push("/entregador")}
+          label="Área do Entregador" // spell-checker: disable-line
+          onPress={() => {
+          if(jaEntrou){
+            router.replace("/entregador");
+          }else{
+            jaEntrou = true;
+            router.push("/entregador");
+          }
+        
+          }} // spell-checker: disable-line
         />
         <MenuItem
           icon="cog"

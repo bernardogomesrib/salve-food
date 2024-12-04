@@ -1,106 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Image, Button } from 'react-native';
-// import { useRouter } from 'next/router';
-import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker } from 'react-native-maps';''
 import * as Location from 'expo-location';
-import Historico from './historico';
-import EntregasAtivas from './entregasAtivas';
-import Profile from './profile';
 import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Button, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { Marker, Region } from 'react-native-maps';
 
 export default function DeliveryDetails() {
-  const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
-  const navigation = useNavigation();
+  const [region, setRegion] = useState<Region | null>(null);
+  const mapRef = useRef<MapView>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+
+    let currentLocation = await Location.getCurrentPositionAsync({});
+    setLocation(currentLocation);
+//    console.log(currentLocation);
+    if (!userInteracted) {
+      setRegion({
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    }
+    setLoading(false);
+    console.log(location);
+  };
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation.coords);
-    })();
-  }, []);
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation.coords);
-    })();
+    getLocation();
+    const interval = setInterval(getLocation, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   if (errorMsg) {
     Alert.alert('Error', errorMsg);
   }
-
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
   return (
     <ScrollView style={styles.container}>
-      {/* Mapa */}
       <MapView
+        ref={mapRef}
         style={styles.map}
         initialRegion={{
-          latitude: location ? location.latitude : 0,
-          longitude: location ? location.longitude : 0,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
+          latitude: location?.coords.latitude ?? -14.2578293,
+          longitude: location?.coords.longitude ?? -55.3539277,
+          latitudeDelta: 40,
+          longitudeDelta: 40,
         }}
-        region={
-          location
-            ? {
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
-              }
-            : undefined
-        }
+        region={region?region:undefined}
+        onRegionChange={() => setUserInteracted(true)}
       >
         {location && (
           <Marker
             coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
             }}
             title="Sua localização"
           />
         )}
       </MapView>
 
-        {/* Botões de navegação */}
-        <View style={styles.navigationContainer}>
-          <View style={styles.navigationButton}>
-            <Button
-              title="Entregas Ativas"
-              onPress={() => router.push('/entregasAtivas')}
-            />
-          </View>
-          <View style={styles.navigationButton}>
-            <Button
-              title="Histórico"
-              onPress={() => router.push('/historico')}
-            />
-          </View>
-          <View style={styles.navigationButton}>
-            <Button
-              title="Editar Perfil"
-              onPress={() => router.push('/profile')}
-            />
-          </View>
+      <View style={styles.navigationContainer}>
+        <View style={styles.navigationButton}>
+          <Button
+            title="Entregas Ativas"
+            onPress={() => router.push('/entregasAtivas')}
+          />
+        </View>
+        <View style={styles.navigationButton}>
+          <Button
+            title="Histórico"
+            onPress={() => router.push('/historico')}
+          />
+        </View>
+        <View style={styles.navigationButton}>
+          <Button
+            title="Editar Perfil"
+            onPress={() => router.push('/profile')}
+          />
+        </View>
       </View>
-      
 
-      {/* Informações do pedido */}
       <View style={styles.card}>
         <Text style={styles.title}>Rota de Entrega</Text>
         <TouchableOpacity style={styles.liveButton}>
@@ -113,8 +108,7 @@ export default function DeliveryDetails() {
         <Text style={styles.subTitle}>Endereço:</Text>
         <Text style={styles.info}>Rua das Flores, 123</Text>
 
-       {/* Lista de itens - lembrar de por para pescar o titulo do restaurante na entrega */}
-       <View style={styles.itemList}>
+        <View style={styles.itemList}>
           <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.itemImage} />
           <View style={styles.itemInfo}>
             <Text style={styles.itemName}>Comedoria - Gildo Lanches --- Um comido e um bebido!</Text>
@@ -122,9 +116,7 @@ export default function DeliveryDetails() {
           </View>
         </View>
       </View>
-
     </ScrollView>
-    
   );
 }
 
@@ -202,4 +194,3 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
-
