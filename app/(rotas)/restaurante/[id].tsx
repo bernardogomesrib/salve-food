@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Image } from "expo-image";
@@ -71,6 +71,7 @@ const mockRestaurants = {
 };
 
 export default function RestaurantScreen() {
+  const router = useRouter();
   const { id } = useLocalSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
@@ -152,7 +153,23 @@ export default function RestaurantScreen() {
 
           <View style={styles.menuContainer}>
             {filteredItems.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.menuItem}>
+              <TouchableOpacity
+              key={item.id}
+              style={styles.menuItem}
+              onPress={() =>
+                router.push({
+                  pathname: `/menu/${item.id}`,
+                  params: {
+                    name: item.name,
+                    description: item.description,
+                    price: item.price,
+                    image: item.image,
+                    restaurantName: restaurant.name,
+                    restaurantDelivery: restaurant.deliveryTime,
+                    restaurantRating: restaurant.rating,
+                  },
+                })
+              }>
                 <View style={styles.menuItemInfo}>
                   <Text style={styles.menuItemName}>{item.name}</Text>
                   <Text style={styles.menuItemDescription}>
