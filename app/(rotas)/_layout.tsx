@@ -19,7 +19,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { defColorScheme, styles } from "./Styles";
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary
 } from "expo-router";
 

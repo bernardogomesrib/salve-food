@@ -21,8 +21,7 @@ export default function EnviarEmail() {
         style={stilus.image}
       />
       <Text style={styles.instructionText}>
-        Digite o e-mail da sua conta para receber o código de redefinição da
-        senha.
+        Digite o e-mail da sua conta para receber o código de redefinição da senha.
       </Text>
       <Input
         label="E-mail"
