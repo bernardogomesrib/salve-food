@@ -16,7 +16,7 @@ import { Image } from "expo-image";
 import { StatusBar } from "expo-status-bar";
 import { TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { defColorScheme, styles } from "./Styles";
+import { defColorScheme, styles } from "../../assets/styles/Styles";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -64,6 +64,9 @@ function RootLayoutNav() {
     const color = clrSch;
     return (
       <View style={styles.header}>
+        <View style={{ height: insets.top }}>
+          <StatusBar style={clrSch === 'dark' ? 'light' : 'dark'} />
+        </View>
         <TouchableOpacity
           onPress={() => {
             console.log("Vázio por enquanto");
@@ -104,9 +107,6 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
-      <View style={{ height: insets.top }}>
-        <StatusBar style={clrSch === 'dark' ? 'light' : 'dark'} />
-      </View>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen
@@ -121,7 +121,7 @@ function RootLayoutNav() {
           name="home"
           options={{ title: "Home", header: CustomHeader }}
         />
-        <Stack.Screen name="restaurant" options={{ headerShown: false }} />
+        <Stack.Screen name="restaurante/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
         <Stack.Screen name="orderHistory" options={{ header: CustomHeader }} />
@@ -130,6 +130,7 @@ function RootLayoutNav() {
           options={{ header: CustomHeader }}
         />
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
+        <Stack.Screen name="menu/[itemId]" options={{ headerShown: true }} />
       </Stack>
     </ThemeProvider>
 
