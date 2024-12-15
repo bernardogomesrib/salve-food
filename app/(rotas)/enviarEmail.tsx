@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, } from "react-native";
-import { styles as stilus } from "./Styles";
+import { styles as stilus } from "../../assets/styles/Styles";
 
 export default function EnviarEmail() {
   const [email, setEmail] = useState("");
