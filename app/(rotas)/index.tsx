@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { styles } from './Styles';
+import { styles } from '../../assets/styles/Styles';
 export default function TabOneScreen() {
   const [email, setEmail] = useState('');
   
