@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-let colorScheme: 'light' | 'dark'| null|undefined = null;
-const defColorScheme = (scheme:'light'|'dark'|null|undefined) => {
+let colorScheme: 'light' | 'dark' | null | undefined = null;
+const defColorScheme = (scheme: 'light' | 'dark' | null | undefined) => {
     colorScheme = scheme
 };
 const styles = StyleSheet.create({
@@ -11,12 +11,12 @@ const styles = StyleSheet.create({
         padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: "#eee",
-      },
-      logo: {
+    },
+    logo: {
         width: 120,
         height: 40,
         resizeMode: "contain",
-      },
+    },
     container: {
         flex: 1,
         alignItems: 'center',
