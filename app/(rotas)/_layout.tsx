@@ -61,11 +61,12 @@ function RootLayoutNav() {
   const router = useRouter();
   const CustomHeader = () => {
     const color = clrSch;
-    return (
-      <View style={styles.header}>
+    return (<>
+    
         <View style={{ height: insets.top }}>
           <StatusBar style={clrSch === 'dark' ? 'light' : 'dark'} />
         </View>
+      <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
             console.log("Vázio por enquanto");
@@ -101,6 +102,7 @@ function RootLayoutNav() {
           />
         </TouchableOpacity>
       </View>
+      </>
     );
   };
 
