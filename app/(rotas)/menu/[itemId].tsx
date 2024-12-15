@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from "expo-router";
-
 export default function DetalhesPrato() {
     const {
         name,
@@ -13,23 +12,18 @@ export default function DetalhesPrato() {
         restaurantDelivery,
         restaurantRating,
     } = useLocalSearchParams();
-
     const [quantity, setQuantity] = useState(1);
-
     const handleIncrease = () => setQuantity((prev) => prev + 1);
     const handleDecrease = () => {
         if (quantity > 1) setQuantity((prev) => prev - 1);
     };
-
     return (
         <View style={styles.container}>
             <Image source={{ uri: image }} style={styles.image} />
-
             <View style={styles.details}>
                 <Text style={styles.title}>{name}</Text>
                 <Text style={styles.description}>{description}</Text>
                 <Text style={styles.price}>R$ {Number(price).toFixed(2)}</Text>
-
                 <View style={styles.restaurantInfo}>
                     <MaterialIcons name="restaurant" size={24} color="#000" />
                     <View style={styles.restaurantText}>
@@ -41,7 +35,6 @@ export default function DetalhesPrato() {
                         <Text style={styles.ratingText}>{restaurantRating}</Text>
                     </View>
                 </View>
-
                 <Text style={styles.observationLabel}>Observação?</Text>
                 <TextInput
                     style={styles.textInput}
@@ -49,7 +42,6 @@ export default function DetalhesPrato() {
                     placeholderTextColor="#999"
                 />
             </View>
-
             <View style={styles.footer}>
                 <View style={styles.quantitySelector}>
                     <TouchableOpacity onPress={handleDecrease} style={styles.button}>
@@ -68,7 +60,6 @@ export default function DetalhesPrato() {
         </View>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

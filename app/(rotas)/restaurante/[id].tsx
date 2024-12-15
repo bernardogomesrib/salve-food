@@ -153,23 +153,23 @@ export default function RestaurantScreen() {
 
           <View style={styles.menuContainer}>
             {filteredItems.map((item) => (
-              <TouchableOpacity
-              key={item.id}
-              style={styles.menuItem}
-              onPress={() =>
-                router.push({
-                  pathname: `/menu/${item.id}`,
-                  params: {
-                    name: item.name,
-                    description: item.description,
-                    price: item.price,
-                    image: item.image,
-                    restaurantName: restaurant.name,
-                    restaurantDelivery: restaurant.deliveryTime,
-                    restaurantRating: restaurant.rating,
-                  },
-                })
-              }>
+               <TouchableOpacity
+               key={item.id}
+               style={styles.menuItem}
+               onPress={() =>
+                 router.push({
+                   pathname: `/menu/${item.id}`,
+                   params: {
+                     name: item.name,
+                     description: item.description,
+                     price: item.price,
+                     image: item.image,
+                     restaurantName: restaurant.name,
+                     restaurantDelivery: restaurant.deliveryTime,
+                     restaurantRating: restaurant.rating,
+                   },
+                 })
+               }>
                 <View style={styles.menuItemInfo}>
                   <Text style={styles.menuItemName}>{item.name}</Text>
                   <Text style={styles.menuItemDescription}>
