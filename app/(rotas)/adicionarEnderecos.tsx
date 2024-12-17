@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -51,7 +51,9 @@ export default function AddAddressScreen() {
       return;
     }
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${address.cep}/json/`);
+      const response = await fetch(
+        `https://viacep.com.br/ws/${address.cep}/json/`
+      );
       const data = await response.json();
       if (data.erro) {
         Alert.alert("Erro", "CEP não encontrado.");
@@ -152,7 +154,11 @@ export default function AddAddressScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <View
-        style={[styles.container, { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" }]}>
+        style={[
+          styles.container,
+          { backgroundColor: isDarkMode ? "black" : "#f9f9f9" },
+        ]}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
             <FontAwesome5
@@ -180,7 +186,8 @@ export default function AddAddressScreen() {
           ].map((field, index) => (
             <View key={index} style={styles.inputGroup}>
               <Text
-                style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}>
+                style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}
+              >
                 {field.label}
               </Text>
               <TextInput
@@ -269,11 +276,16 @@ export default function AddAddressScreen() {
             <TouchableOpacity
               style={styles.confirmButton}
               onPress={() => {
-                fetchAddress(selectedLocation.latitude, selectedLocation.longitude);
+                fetchAddress(
+                  selectedLocation.latitude,
+                  selectedLocation.longitude
+                );
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.confirmButtonText}>Confirmar Localização</Text>
+              <Text style={styles.confirmButtonText}>
+                Confirmar Localização
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.closeButton}

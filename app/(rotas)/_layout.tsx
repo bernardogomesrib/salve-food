@@ -110,19 +110,9 @@ function RootLayoutNav() {
       </View>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="cadastro"
-          options={{ title: "cadastre-se", headerShown: false }}
-        />
-        <Stack.Screen
-          name="recuperarSenha"
-          options={{ title: "Recuperar senha", headerShown: false }}
-        />
-        <Stack.Screen
-          name="home"
-          options={{ title: "Home", header: CustomHeader }}
-        />
-        <Stack.Screen name="restaurant" options={{ headerShown: false }} />
+        <Stack.Screen name="cadastro" options={{ title: "cadastre-se", headerShown: false }}/>
+        <Stack.Screen name="recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }}/>
+        <Stack.Screen name="home" options={{ title: "Home", header: CustomHeader }}/>
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
         <Stack.Screen name="orderHistory" options={{ header: CustomHeader }} />
@@ -135,8 +125,6 @@ function RootLayoutNav() {
         <Stack.Screen name="adicionarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="editarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />
-        <Stack.Screen name="mapaEnderecos" options={{ header: CustomHeader }} />
-        
       </Stack>
     </ThemeProvider>
 
