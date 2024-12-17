@@ -13,6 +13,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 
 
+import { ColorCompliantHeader } from "@/components/ui/ColorCompliantHeader";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { defColorScheme } from "../../assets/styles/Styles";
 
@@ -58,7 +59,7 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ header: ColorCompliantHeader }} />
         <Stack.Screen
           name="cadastro"
           options={{ title: "cadastre-se", headerShown: false }}
