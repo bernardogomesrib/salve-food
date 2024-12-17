@@ -35,8 +35,7 @@ const Button = (props: ButtonProps) => {
         <TouchableOpacity
             style={[stylesLocal.button, { backgroundColor }, style]}
             onPress={href ? handlePress : onPress}
-            {...otherProps}
-        >
+            {...otherProps}>
             <Text style={[stylesLocal.text, { color: textColor }]}>{title}</Text>
         </TouchableOpacity>
     );

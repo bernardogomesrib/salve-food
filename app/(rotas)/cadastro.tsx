@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { styles as stilus } from './Styles';
+import { styles as stilus } from '../../assets/styles/Styles';
 export default function TabTwoScreen() {
   const [nome,setNome]= useState("");
   const [email,setEmail] =useState("");

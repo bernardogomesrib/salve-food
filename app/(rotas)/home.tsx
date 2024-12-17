@@ -52,8 +52,8 @@ export default function Home() {
 
         <Text style={styles.sectionTitle}>Restaurantes</Text>
         {restaurants.map((restaurante) => (
-          <TouchableOpacity 
-          key={restaurante.id} 
+          <TouchableOpacity
+          key={restaurante.id}
           style={styles.restaurantCard}
           onPress={() => router.push(`/restaurante/${restaurante.id}`)}
         >

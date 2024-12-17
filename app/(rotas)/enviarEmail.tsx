@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, } from "react-native";
-import { styles as stilus } from "./Styles";
+import { styles as stilus } from "../../assets/styles/Styles";
 
 export default function EnviarEmail() {
   const [email, setEmail] = useState("");
@@ -21,8 +21,7 @@ export default function EnviarEmail() {
         style={stilus.image}
       />
       <Text style={styles.instructionText}>
-        Digite o e-mail da sua conta para receber o código de redefinição da
-        senha.
+        Digite o e-mail da sua conta para receber o código de redefinição da senha.
       </Text>
       <Input
         label="E-mail"
