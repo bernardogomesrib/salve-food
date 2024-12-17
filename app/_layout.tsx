@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import MyProvider from '@/components/context/appContext';
 import { useColorScheme } from '@/components/useColorScheme';
 
 export {
@@ -49,10 +50,12 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(rotas)" options={{ headerShown: false }} />
-      </Stack>
-    </ThemeProvider>
+    <MyProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(rotas)" options={{ headerShown: false }} />
+        </Stack>
+      </ThemeProvider>
+    </MyProvider>
   );
 }

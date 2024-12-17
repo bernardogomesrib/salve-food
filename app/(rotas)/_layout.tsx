@@ -71,12 +71,12 @@ function RootLayoutNav() {
           name="home"
           options={{ title: "Home", header: CustomHeader }}
         />
-        <Stack.Screen name="restaurante/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
         <Stack.Screen name="orderHistory" options={{ header: CustomHeader }} />
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
-        <Stack.Screen name="menu/[itemId]" options={{ headerShown: true }} />
+        <Stack.Screen name="menu/index" options={{ headerShown: true }} />
         <Stack.Screen name="seguranca" options={{ header: CustomHeader }} />
         <Stack.Screen name="adicionarCartao" options={{ header: CustomHeader }} />
         <Stack.Screen name="editarCartao" options={{ header: CustomHeader }} />

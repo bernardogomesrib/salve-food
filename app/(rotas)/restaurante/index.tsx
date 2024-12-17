@@ -1,82 +1,18 @@
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useMyContext } from "@/components/context/appContext";
 import { Text, View } from "@/components/Themed";
-import { Image } from "expo-image";
-import { useState } from "react";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import React from "react";
+import { Image } from "expo-image";
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
-const mockMenuItems = {
-  1: [
-    {
-      id: 1,
-      name: "Feijoada Completa",
-      description: "Feijoada tradicional com arroz, couve e farofa",
-      price: 45.9,
-      image: "https://via.placeholder.com/400",
-      category: "Pratos Principais",
-    },
-    {
-      id: 2,
-      name: "Moqueca de Peixe",
-      description: "Peixe fresco com leite de coco e dendê",
-      price: 52.9,
-      image: "https://via.placeholder.com/400",
-      category: "Pratos Principais",
-    },
-  ],
-  2: [
-    {
-      id: 1,
-      name: "Pizza Margherita",
-      description: "Molho de tomate, mussarela, manjericão",
-      price: 39.9,
-      image: "https://via.placeholder.com/400",
-      category: "Pizzas",
-    },
-    {
-      id: 2,
-      name: "Lasanha à Bolonhesa",
-      description: "Massa fresca, molho bolonhesa e bechamel",
-      price: 45.9,
-      image: "https://via.placeholder.com/400",
-      category: "Massas",
-    },
-  ],
-};
-
-const mockRestaurants = {
-  1: {
-    id: 1,
-    name: "Restaurante do Chef",
-    rating: 4.8,
-    category: "Brasileira",
-    deliveryTime: "30-45 min",
-    image: "https://via.placeholder.com/400",
-    description:
-      "O melhor da culinária brasileira com ingredientes frescos e selecionados.",
-    address: "Rua das Flores, 123 - Centro",
-  },
-  2: {
-    id: 2,
-    name: "Pizza Express",
-    rating: 4.5,
-    category: "Italiana",
-    deliveryTime: "40-55 min",
-    image: "https://via.placeholder.com/400",
-    description:
-      "Pizzas artesanais com massa feita na hora e ingredientes importados.",
-    address: "Av. Principal, 456 - Jardim Europa",
-  },
-};
 
 export default function RestaurantScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const { restaurant, products, handleProductSelection } = useMyContext();
 
-  const restaurant = mockRestaurants[id as keyof typeof mockRestaurants];
-  const menuItems = mockMenuItems[id as keyof typeof mockMenuItems];
+  const menuItems = products;
   const categories = ["Todos", ...new Set(menuItems.map((item) => item.category))];
 
   const filteredItems =
@@ -84,45 +20,47 @@ export default function RestaurantScreen() {
       ? menuItems
       : menuItems.filter((item) => item.category === selectedCategory);
 
+
   return (
     <>
+
       <Stack.Screen
         options={{
-          title: restaurant?.name || "Restaurante",
+          title: restaurant?.name || "carregando",
           headerTitleStyle: {
             fontSize: 18,
           },
-          headerShadowVisible: false,
+          headerShadowVisible: true,
         }}
       />
       <View style={styles.container}>
         <Image
-          source={restaurant.image}
+          source={restaurant?.image}
           style={styles.coverImage}
           contentFit="cover"
         />
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.restaurantInfo}>
-            <Text style={styles.restaurantName}>{restaurant.name}</Text>
-            <Text style={styles.description}>{restaurant.description}</Text>
+            <Text style={styles.restaurantName}>{restaurant?.name}</Text>
+            <Text style={styles.description}>{restaurant?.description}</Text>
 
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <AntDesign name="star" size={16} color="#FFD700" />
-                <Text style={styles.infoText}>{restaurant.rating}</Text>
+                <Text style={styles.infoText}>{restaurant?.rating}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Feather name="clock" size={16} color="#666" />
-                <Text style={styles.infoText}>{restaurant.deliveryTime}</Text>
+                <Text style={styles.infoText}>{restaurant?.deliveryTime}</Text>
               </View>
               <View style={styles.infoItem}>
                 <Feather name="map-pin" size={16} color="#666" />
-                <Text style={styles.infoText}>{restaurant.category}</Text>
+                <Text style={styles.infoText}>{restaurant?.category}</Text>
               </View>
             </View>
 
-            <Text style={styles.address}>{restaurant.address}</Text>
+            <Text style={styles.address}>{restaurant?.address}</Text>
           </View>
 
           <ScrollView
@@ -153,23 +91,12 @@ export default function RestaurantScreen() {
 
           <View style={styles.menuContainer}>
             {filteredItems.map((item) => (
-               <TouchableOpacity
-               key={item.id}
-               style={styles.menuItem}
-               onPress={() =>
-                 router.push({
-                   pathname: `/menu/${item.id}`,
-                   params: {
-                     name: item.name,
-                     description: item.description,
-                     price: item.price,
-                     image: item.image,
-                     restaurantName: restaurant.name,
-                     restaurantDelivery: restaurant.deliveryTime,
-                     restaurantRating: restaurant.rating,
-                   },
-                 })
-               }>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.menuItem}
+                onPress={() =>
+                  handleProductSelection(item)
+                }>
                 <View style={styles.menuItemInfo}>
                   <Text style={styles.menuItemName}>{item.name}</Text>
                   <Text style={styles.menuItemDescription}>
@@ -192,6 +119,7 @@ export default function RestaurantScreen() {
     </>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

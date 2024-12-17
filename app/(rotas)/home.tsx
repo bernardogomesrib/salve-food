@@ -1,6 +1,6 @@
+import { useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 const categories = [
@@ -12,26 +12,9 @@ const categories = [
   { id: 6, name: 'Doces', icon: '🍰' },
 ];
 
-const restaurants = [
-  {
-    id: 1,
-    name: 'Restaurante do Chef',
-    rating: 4.8,
-    category: 'Brasileira',
-    deliveryTime: '30-45 min',
-    image: 'https://via.placeholder.com/400'
-  },
-  {
-    id: 2,
-    name: 'Pizza Express',
-    rating: 4.5,
-    category: 'Italiana',
-    deliveryTime: '40-55 min',
-    image: 'https://via.placeholder.com/400'
-  }
-];
 
 export default function Home() {
+  const {restaurants,handleRestaurantSelection} = useMyContext();
   return (
     <View style={styles.container}>
 
@@ -55,7 +38,7 @@ export default function Home() {
           <TouchableOpacity
           key={restaurante.id}
           style={styles.restaurantCard}
-          onPress={() => router.push(`/restaurante/${restaurante.id}`)}
+          onPress={() => handleRestaurantSelection(restaurante)}
         >
             <Image
               source={restaurante.image}
