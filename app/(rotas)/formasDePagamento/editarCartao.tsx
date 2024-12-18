@@ -1,22 +1,24 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Switch,
-  useColorScheme,
-} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View
+} from "react-native";
 
 export default function EditCardScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const [saveCard, setSaveCard] = useState(false);
   const router = useRouter();
-
+  const [numero, setNumero] = useState("");
+  const [nome, setNome] = useState("");
+  const [validade, setValidade] = useState("");
+  const [cvc, setCvc] = useState("");
   return (
     <View
       style={[
@@ -46,12 +48,12 @@ export default function EditCardScreen({ navigation }: any) {
             { backgroundColor: isDarkMode ? "#333" : "#000" },
           ]}
         >
-          <Text style={styles.cardNumber}>**** **** **** 1234</Text>
+          <Text style={styles.cardNumber}>{numero!==""?numero:"**** **** **** 1234"}</Text>
           <View style={styles.cardDetails}>
-            <Text style={styles.cardName}>THYAGO SILVA</Text>
-            <Text style={styles.cardDate}>11/30</Text>
+            <Text style={styles.cardName}>{nome!==""?nome:"THYAGO SILVA"}</Text>
+            <Text style={styles.cardDate}>{validade!==""?validade:"11/30"}</Text>
           </View>
-          <Text style={styles.cardCVC}>CVC: 123</Text>
+          <Text style={styles.cardCVC}>CVC: {cvc!==""?cvc:"123"}</Text>
         </View>
       </View>
 
@@ -70,6 +72,8 @@ export default function EditCardScreen({ navigation }: any) {
           ]}
           placeholder="THYAGO SILVA"
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
+          value={nome}
+          onChangeText={(text) => setNome(text)}
         />
 
         <Text style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}>
@@ -85,6 +89,8 @@ export default function EditCardScreen({ navigation }: any) {
           ]}
           placeholder="1234 5678 1234 5678"
           keyboardType="numeric"
+          value={numero}
+          onChangeText={(text) => setNumero(text)}
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
         />
 
@@ -104,6 +110,8 @@ export default function EditCardScreen({ navigation }: any) {
                 },
               ]}
               placeholder="11/30"
+              value={validade}
+              onChangeText={(text) => setValidade(text)}
               keyboardType="numeric"
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
             />
@@ -124,6 +132,8 @@ export default function EditCardScreen({ navigation }: any) {
               ]}
               placeholder="123"
               keyboardType="numeric"
+              value={cvc}
+              onChangeText={(text) => setCvc(text)}
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
             />
           </View>
@@ -140,7 +150,7 @@ export default function EditCardScreen({ navigation }: any) {
           <TouchableOpacity 
             style={[styles.confirmButton, { backgroundColor: "#4CAF50" }]}
           >
-            <Link href={"/exibirCartoes"}><Text style={styles.buttonText}>Confirmar</Text></Link>
+            <Link href={"/formasDePagamento/exibirCartoes"}><Text style={styles.buttonText}>Confirmar</Text></Link>
           </TouchableOpacity>
         </View>
       </View>

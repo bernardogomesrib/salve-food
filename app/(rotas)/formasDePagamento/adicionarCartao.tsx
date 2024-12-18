@@ -1,21 +1,25 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Switch,
-  useColorScheme,
-} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 
 export default function AddCardScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const [saveCard, setSaveCard] = useState(false);
   const router = useRouter();
+  const [numero, setNumero] = useState("");
+  const [nome, setNome] = useState("");
+  const [validade, setValidade] = useState("");
+  const [cvc, setCvc] = useState("");
 
   return (
     <View
@@ -46,12 +50,12 @@ export default function AddCardScreen({ navigation }: any) {
             { backgroundColor: isDarkMode ? "#333" : "#000" },
           ]}
         >
-          <Text style={styles.cardNumber}>**** **** **** 1234</Text>
+          <Text style={styles.cardNumber}>{numero !== "" ? numero : "**** **** **** 1234"}</Text>
           <View style={styles.cardDetails}>
-            <Text style={styles.cardName}>THYAGO SILVA</Text>
-            <Text style={styles.cardDate}>11/30</Text>
+            <Text style={styles.cardName}>{nome !== "" ? nome : "THYAGO SILVA"}</Text>
+            <Text style={styles.cardDate}>{validade !== "" ? validade : "11/30"}</Text>
           </View>
-          <Text style={styles.cardCVC}>CVC: 123</Text>
+          <Text style={styles.cardCVC}>CVC: {cvc !== "" ? cvc : "123"}</Text>
         </View>
       </View>
 
@@ -68,6 +72,8 @@ export default function AddCardScreen({ navigation }: any) {
               color: isDarkMode ? "#fff" : "#333",
             },
           ]}
+          value={nome}
+          onChangeText={setNome}
           placeholder="Digite o nome do titular"
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
         />
@@ -85,6 +91,8 @@ export default function AddCardScreen({ navigation }: any) {
           ]}
           placeholder="1234 5678 1234 5678"
           keyboardType="numeric"
+          value={numero}
+          onChangeText={setNumero}
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
         />
 
@@ -104,6 +112,8 @@ export default function AddCardScreen({ navigation }: any) {
                 },
               ]}
               placeholder="MM/AA"
+              value={validade}
+              onChangeText={setValidade}
               keyboardType="numeric"
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
             />
@@ -123,6 +133,8 @@ export default function AddCardScreen({ navigation }: any) {
                 },
               ]}
               placeholder="123"
+              value={cvc}
+              onChangeText={setCvc}
               keyboardType="numeric"
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
             />
@@ -149,14 +161,14 @@ export default function AddCardScreen({ navigation }: any) {
 
         {/* Add Card Button */}
         <Link
-          href={"/exibirCartoes"}
+          href={"/formasDePagamento/exibirCartoes"}
           style={[
             styles.addButton,
             { backgroundColor: isDarkMode ? "#222" : "orange" },
           ]}
         >
           <Text style={[styles.addButtonText,
-            {color: isDarkMode ? "white": "white"},]
+          { color: isDarkMode ? "white" : "white" },]
           }>Adicionar Cartão</Text>
         </Link>
       </View>
@@ -248,7 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row", 
+    flexDirection: "row",
   },
   addButtonText: {
     color: "#fff",

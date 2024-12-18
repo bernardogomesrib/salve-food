@@ -1,19 +1,19 @@
+import { FontAwesome5 } from "@expo/vector-icons";
+import * as Location from "expo-location";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
+  Alert,
+  Modal,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   useColorScheme,
-  Alert,
-  ScrollView,
-  Modal,
+  View,
 } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
-import * as Location from "expo-location";
 
 type Address = {
   rua: string;
@@ -122,20 +122,20 @@ export default function AddAddressScreen() {
 
       setAddress({
         ...address,
-        rua: components.find((c) => c.types.includes("route"))?.long_name || "",
+        rua: components.find((c:any) => c.types.includes("route"))?.long_name || "",
         bairro:
-          components.find((c) => c.types.includes("sublocality"))?.long_name ||
+          components.find((c:any) => c.types.includes("sublocality"))?.long_name ||
           "",
         cidade:
-          components.find((c) => c.types.includes("locality"))?.long_name || "",
+          components.find((c:any) => c.types.includes("locality"))?.long_name || "",
         estado:
-          components.find((c) =>
+          components.find((c:any) =>
             c.types.includes("administrative_area_level_1")
           )?.short_name || "",
         pais:
-          components.find((c) => c.types.includes("country"))?.long_name || "",
+          components.find((c:any) => c.types.includes("country"))?.long_name || "",
         cep:
-          components.find((c) => c.types.includes("postal_code"))?.long_name ||
+          components.find((c:any) => c.types.includes("postal_code"))?.long_name ||
           "",
       });
 

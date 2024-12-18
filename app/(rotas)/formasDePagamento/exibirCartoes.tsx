@@ -1,16 +1,15 @@
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   FlatList,
-  useColorScheme,
   Modal,
-  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useColorScheme,
+  View
 } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Link, useRouter} from "expo-router";
 
 export default function CardListScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
@@ -34,10 +33,10 @@ export default function CardListScreen({ navigation }: any) {
     },
   ]);
 
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [selectedCard, setSelectedCard] = useState<string|null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleDeleteCard = (cardId: string) => {
+  const handleDeleteCard = (cardId: string|null) => {
     setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
     setModalVisible(false);
   };
@@ -117,7 +116,7 @@ export default function CardListScreen({ navigation }: any) {
             </View>
             {/* Botões de Ação */}
             <View style={styles.actionButtons}>
-              <Link href={"/editarCartao"} style={styles.editButton}>
+              <Link href={"/formasDePagamento/editarCartao"} style={styles.editButton}>
                 <FontAwesome5 name="edit" size={18} color="#1f8fdb" />
               </Link>
               <TouchableOpacity
@@ -169,7 +168,7 @@ export default function CardListScreen({ navigation }: any) {
       </Modal>
 
       {/* Botão para Adicionar Novo Cartão */}
-      <Link href={"/adicionarCartao"} style={[
+      <Link href={"/formasDePagamento/adicionarCartao"} style={[
           styles.addButton,
           { backgroundColor: isDarkMode ? "#222" : "orange" },
         ]}>

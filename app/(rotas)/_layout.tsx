@@ -79,10 +79,10 @@ function RootLayoutNav() {
         <Stack.Screen name="profile" options={{ header: CustomHeader }} />
         <Stack.Screen name="menu/index" options={{ headerShown: true }} />
         <Stack.Screen name="seguranca" options={{ header: CustomHeader }} />
-        <Stack.Screen name="adicionarCartao" options={{ header: CustomHeader }} />
-        <Stack.Screen name="editarCartao" options={{ header: CustomHeader }} />
-        <Stack.Screen name="exibirCartoes" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento/adicionarCartao" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento/editarCartao" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento/exibirCartoes" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento/formasDePagamento" options={{ header: CustomHeader }} />
         <Stack.Screen name="adicionarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="editarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />

@@ -1,43 +1,51 @@
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Link, RelativePathString, useRouter } from "expo-router";
 import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
   useColorScheme,
+  View,
 } from "react-native";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+
+export type PaymentMethod = {
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"] | React.ComponentProps<typeof FontAwesome5>["name"];
+  title: string;
+  route: RelativePathString;
+  lib?: "MaterialCommunityIcons" | "FontAwesome5";
+}
+
 
 export default function PaymentMethodsScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
 
-  const paymentMethods = [
-    { icon: "credit-card", title: "Cartão de Crédito", route: "/exibirCartoes" },
-    { icon: "credit-card", title: "Cartão de Débito", route: "CartaoDebito" },
-    { icon: "qrcode", title: "Pix", route: "Pix" },
+  const paymentMethods:PaymentMethod[] = [
+    { icon: "credit-card", title: "Cartão de Crédito", route: "./exibirCartoes" },
+    { icon: "credit-card", title: "Cartão de Débito", route: "./CartaoDebito" },
+    { icon: "qrcode", title: "Pix", route: "./Pix" },
     {
       icon: "food-fork-drink",
       title: "Vale-Refeição",
-      route: "ValeRefeicao",
+      route: "./ValeRefeicao",
       lib: "MaterialCommunityIcons",
     },
     {
       icon: "cart",
       title: "Vale-Alimentação",
-      route: "ValeAlimentacao",
+      route: "./ValeAlimentacao",
       lib: "MaterialCommunityIcons",
     },
     {
       icon: "barcode",
       title: "Boleto Bancário",
-      route: "BoletoBancario",
+      route: "./BoletoBancario",
       lib: "MaterialCommunityIcons",
     },
-    { icon: "paypal", title: "PayPal", route: "PayPal", lib: "FontAwesome5" },
+    { icon: "paypal", title: "PayPal", route: "./PayPal", lib: "FontAwesome5" },
   ];
 
   return (

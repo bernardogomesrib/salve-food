@@ -1,9 +1,9 @@
 import { Text, View } from "@/components/Themed";
-import { FontAwesome } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
+import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { StyleSheet } from "react-native";
 
 
 export default function Configuracoes() {
@@ -44,7 +44,7 @@ export default function Configuracoes() {
                 <MenuItem
                     icon="dollar"
                     label="Formas de Pagamento"
-                    onPress={() => console.log("Não implementado ainda ")}
+                    onPress={() => router.push("/formasDePagamento/formasDePagamento")}
                 />
                 <MenuItem
                     icon="bell"
