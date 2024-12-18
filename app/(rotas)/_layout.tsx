@@ -60,18 +60,9 @@ function RootLayoutNav() {
     <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ header: ColorCompliantHeader }} />
-        <Stack.Screen
-          name="cadastro"
-          options={{ title: "cadastre-se", headerShown: false }}
-        />
-        <Stack.Screen
-          name="recuperarSenha"
-          options={{ title: "Recuperar senha", headerShown: false }}
-        />
-        <Stack.Screen
-          name="home"
-          options={{ title: "Home", header: CustomHeader }}
-        />
+        <Stack.Screen name="cadastro" options={{ title: "cadastre-se", headerShown: false }} />
+        <Stack.Screen name="recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }} />
+        <Stack.Screen name="home" options={{ header: CustomHeader }} />
         <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
         <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
         <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
