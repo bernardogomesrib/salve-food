@@ -2,65 +2,90 @@ import { useMyContext } from "@/components/context/appContext";
 import { Text, View } from "@/components/Themed";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-
+import {
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useThemeColor } from "@/components/Themed";
 
 export default function RestaurantScreen() {
-  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const { restaurant, products, handleProductSelection } = useMyContext();
+  const textColor = useThemeColor({ light: "#000", dark: "#fff" }, "text");
+  const backgroundColor = useThemeColor(
+    { light: "#fff", dark: "#000" },
+    "background"
+  );
 
   const menuItems = products;
-  const categories = ["Todos", ...new Set(menuItems.map((item) => item.category))];
+  const categories = [
+    "Todos",
+    ...new Set(menuItems.map((item) => item.category)),
+  ];
 
   const filteredItems =
     selectedCategory === "Todos"
       ? menuItems
       : menuItems.filter((item) => item.category === selectedCategory);
 
-
   return (
     <>
-
       <Stack.Screen
         options={{
           title: restaurant?.name || "carregando",
           headerTitleStyle: {
             fontSize: 18,
+            color: textColor,
           },
           headerShadowVisible: true,
         }}
       />
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor }]}>
         <Image
           source={restaurant?.image}
           style={styles.coverImage}
           contentFit="cover"
         />
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.restaurantInfo}>
-            <Text style={styles.restaurantName}>{restaurant?.name}</Text>
-            <Text style={styles.description}>{restaurant?.description}</Text>
+        <ScrollView
+          style={[styles.content, { backgroundColor }]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={[styles.restaurantInfo, { backgroundColor }]}>
+            <Text style={[styles.restaurantName, { color: textColor }]}>
+              {restaurant?.name}
+            </Text>
+            <Text style={[styles.description, { color: textColor }]}>
+              {restaurant?.description}
+            </Text>
 
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
                 <AntDesign name="star" size={16} color="#FFD700" />
-                <Text style={styles.infoText}>{restaurant?.rating}</Text>
+                <Text style={[styles.infoText, { color: textColor }]}>
+                  {restaurant?.rating}
+                </Text>
               </View>
               <View style={styles.infoItem}>
                 <Feather name="clock" size={16} color="#666" />
-                <Text style={styles.infoText}>{restaurant?.deliveryTime}</Text>
+                <Text style={[styles.infoText, { color: textColor }]}>
+                  {restaurant?.deliveryTime}
+                </Text>
               </View>
               <View style={styles.infoItem}>
                 <Feather name="map-pin" size={16} color="#666" />
-                <Text style={styles.infoText}>{restaurant?.category}</Text>
+                <Text style={[styles.infoText, { color: textColor }]}>
+                  {restaurant?.category}
+                </Text>
               </View>
             </View>
 
-            <Text style={styles.address}>{restaurant?.address}</Text>
+            <Text style={[styles.address, { color: textColor }]}>
+              {restaurant?.address}
+            </Text>
           </View>
 
           <ScrollView
@@ -74,13 +99,16 @@ export default function RestaurantScreen() {
                 style={[
                   styles.categoryButton,
                   selectedCategory === category && styles.categoryButtonActive,
+                  { backgroundColor: selectedCategory === category ? textColor : backgroundColor },
                 ]}
                 onPress={() => setSelectedCategory(category)}
               >
                 <Text
                   style={[
                     styles.categoryButtonText,
-                    selectedCategory === category && styles.categoryButtonTextActive,
+                    selectedCategory === category &&
+                      styles.categoryButtonTextActive,
+                    { color: selectedCategory === category ? backgroundColor : textColor },
                   ]}
                 >
                   {category}
@@ -93,16 +121,19 @@ export default function RestaurantScreen() {
             {filteredItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                style={styles.menuItem}
-                onPress={() =>
-                  handleProductSelection(item)
-                }>
+                style={[styles.menuItem, { backgroundColor }]}
+                onPress={() => handleProductSelection(item)}
+              >
                 <View style={styles.menuItemInfo}>
-                  <Text style={styles.menuItemName}>{item.name}</Text>
-                  <Text style={styles.menuItemDescription}>
+                  <Text style={[styles.menuItemName, { color: textColor }]}>
+                    {item.name}
+                  </Text>
+                  <Text
+                    style={[styles.menuItemDescription, { color: textColor }]}
+                  >
                     {item.description}
                   </Text>
-                  <Text style={styles.menuItemPrice}>
+                  <Text style={[styles.menuItemPrice, { color: textColor }]}>
                     R$ {item.price.toFixed(2)}
                   </Text>
                 </View>
@@ -120,11 +151,9 @@ export default function RestaurantScreen() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   coverImage: {
     width: "100%",
@@ -132,10 +161,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   restaurantInfo: {
-    backgroundColor: "white",
     padding: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -145,32 +172,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
-    color: '#000',
   },
   description: {
     fontSize: 14,
-    color: "#666",
     marginBottom: 16,
   },
   infoRow: {
     flexDirection: "row",
     gap: 20,
     marginBottom: 12,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   infoItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   infoText: {
     fontSize: 14,
-    color: "#666",
   },
   address: {
     fontSize: 14,
-    color: "#666",
   },
   categoriesContainer: {
     padding: 20,
@@ -178,7 +201,6 @@ const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: 20,
     paddingVertical: 8,
-    backgroundColor: "white",
     borderRadius: 20,
     marginRight: 10,
     shadowColor: "#000",
@@ -205,10 +227,11 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     flexDirection: "row",
-    backgroundColor: "white",
     borderRadius: 12,
     marginBottom: 15,
     overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#fff",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -226,20 +249,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 4,
-    color: '#000',
   },
   menuItemDescription: {
     fontSize: 14,
-    color: "#666",
     marginBottom: 8,
   },
   menuItemPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: '#2E7D32',
+    color: "#2E7D32",
   },
   menuItemImage: {
     width: 100,
-    height: 100,
   },
 });
