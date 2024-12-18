@@ -39,7 +39,7 @@ export default function Configuracoes() {
                 <MenuItem
                     icon="shield"
                     label="Segurança"
-                    onPress={() => console.log("Não implementado ainda ")}
+                    onPress={() => router.push("/seguranca")}
                 />
                 <MenuItem
                     icon="dollar"
