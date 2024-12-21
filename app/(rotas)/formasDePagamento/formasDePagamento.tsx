@@ -11,22 +11,27 @@ import {
 } from "react-native";
 
 export type PaymentMethod = {
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"] | React.ComponentProps<typeof FontAwesome5>["name"];
+  icon:
+    | React.ComponentProps<typeof MaterialCommunityIcons>["name"]
+    | React.ComponentProps<typeof FontAwesome5>["name"];
   title: string;
   route: RelativePathString;
   lib?: "MaterialCommunityIcons" | "FontAwesome5";
-}
-
+};
 
 export default function PaymentMethodsScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
 
-  const paymentMethods:PaymentMethod[] = [
-    { icon: "credit-card", title: "Cartão de Crédito", route: "./exibirCartoes" },
+  const paymentMethods: PaymentMethod[] = [
+    {
+      icon: "credit-card",
+      title: "Cartão de Crédito",
+      route: "./exibirCartoes",
+    },
     { icon: "credit-card", title: "Cartão de Débito", route: "./CartaoDebito" },
-    { icon: "qrcode", title: "Pix", route: "./Pix" },
+    { icon: "qrcode", title: "Pix", route: "./pixPaymentScreen" },
     {
       icon: "food-fork-drink",
       title: "Vale-Refeição",
@@ -80,43 +85,42 @@ export default function PaymentMethodsScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.methodsContainer}>
         {paymentMethods.map((method, index) => (
           <Link
-          href={method.route}
-          key={index}
-          style={[
-            styles.methodButton,
-            {
-              backgroundColor: isDarkMode ? "#222" : "#fff",
-              borderColor: isDarkMode ? "#333" : "#ddd",
-            },
-          ]}
-        >
-          <View style={styles.methodContent}>
-            {method.lib === "MaterialCommunityIcons" ? (
-              <MaterialCommunityIcons
-                name={method.icon}
-                size={24}
-                color={isDarkMode ? "#4CAF50" : "#1f8fdb"}
-                style={styles.methodIcon}
-              />
-            ) : (
-              <FontAwesome5
-                name={method.icon}
-                size={24}
-                color={isDarkMode ? "#4CAF50" : "#1f8fdb"}
-                style={styles.methodIcon}
-              />
-            )}
-            <Text
-              style={[
-                styles.methodText,
-                { color: isDarkMode ? "#fff" : "#333" },
-              ]}
-            >
-              {method.title}
-            </Text>
-          </View>
-        </Link>
-        
+            href={method.route}
+            key={index}
+            style={[
+              styles.methodButton,
+              {
+                backgroundColor: isDarkMode ? "#222" : "#fff",
+                borderColor: isDarkMode ? "#333" : "#ddd",
+              },
+            ]}
+          >
+            <View style={styles.methodContent}>
+              {method.lib === "MaterialCommunityIcons" ? (
+                <MaterialCommunityIcons
+                  name={method.icon}
+                  size={24}
+                  color={isDarkMode ? "#4CAF50" : "#1f8fdb"}
+                  style={styles.methodIcon}
+                />
+              ) : (
+                <FontAwesome5
+                  name={method.icon}
+                  size={24}
+                  color={isDarkMode ? "#4CAF50" : "#1f8fdb"}
+                  style={styles.methodIcon}
+                />
+              )}
+              <Text
+                style={[
+                  styles.methodText,
+                  { color: isDarkMode ? "#fff" : "#333" },
+                ]}
+              >
+                {method.title}
+              </Text>
+            </View>
+          </Link>
         ))}
       </ScrollView>
     </View>

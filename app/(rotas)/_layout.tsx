@@ -77,6 +77,7 @@ function RootLayoutNav() {
         <Stack.Screen name="adicionarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="editarEnderecos" options={{ header: CustomHeader }} />
         <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />
+        <Stack.Screen name="formasDePagamento/pixPaymentScreen" options={{ header: CustomHeader }} />
       </Stack>
     </ThemeProvider>
 
