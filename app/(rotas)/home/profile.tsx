@@ -1,3 +1,4 @@
+import { fazerLogout } from "@/components/funcoesParaApi/autenticacao";
 import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
@@ -55,7 +56,7 @@ export default function Profile() {
         <MenuItem
           icon="sign-out"
           label="Logout"
-          onPress={() => console.log("Não implementado ainda (Logout)")}
+          onPress={() => fazerLogout()}
         />
       </View>
     </View>
