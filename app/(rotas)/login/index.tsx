@@ -1,4 +1,4 @@
-import { fazerLogin } from '@/components/funcoesParaApi/autenticacao';
+import { fazerLogin } from '@/components/api/auth/autenticacao';
 import { Text, View } from '@/components/Themed';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ export default function TabOneScreen() {
     const retult = await fazerLogin(email, password);
     console.log(retult);
 
-    
+
   }
   return (
     <View style={styles.container}>

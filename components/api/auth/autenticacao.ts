@@ -107,7 +107,7 @@ const setIsUpdatingToken = (value: boolean) => {
         }else{
             console.log("uma rotina de atualização de token está já está rodando");
         }
-        
+
     }
 
 

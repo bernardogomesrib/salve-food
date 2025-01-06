@@ -1,5 +1,4 @@
-
-import { getTempo, getToken } from '@/components/funcoesParaApi/autenticacao';
+import { getTempo, getToken } from '@/components/api/auth/autenticacao';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 

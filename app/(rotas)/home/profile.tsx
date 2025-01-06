@@ -1,4 +1,4 @@
-import { fazerLogout } from "@/components/funcoesParaApi/autenticacao";
+import { fazerLogout } from "@/components/api/auth/autenticacao";
 import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
