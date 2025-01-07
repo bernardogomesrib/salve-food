@@ -12,11 +12,8 @@ export default function TabOneScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const login = async () => {
-    console.log(email, password);
-    const retult = await doLogin(email, password);
-    console.log(retult);
-
-
+    console.log(`Email:${email} | Senha:${password}`);
+    await doLogin(email, password);
   }
   return (
     <View style={styles.container}>

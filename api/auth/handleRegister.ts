@@ -21,6 +21,8 @@ const handleRegister = async (nome: string, email: string, telefone: string, sen
     return;
   }
 
+  // TODO: Após a rota ser ajustada no backend, também enviar telefone neste POST
+  // Como a rota que salva os clientes só aceita estes campos, telefone está indo para o limbo
   try {
     const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/create`, {
       firstName,
