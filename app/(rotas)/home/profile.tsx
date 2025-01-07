@@ -1,4 +1,4 @@
-import { fazerLogout } from "@/components/api/auth/autenticacao";
+import { doLogout } from "@/api/auth/authModule";
 import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
@@ -56,7 +56,7 @@ export default function Profile() {
         <MenuItem
           icon="sign-out"
           label="Logout"
-          onPress={() => fazerLogout()}
+          onPress={() => doLogout()}
         />
       </View>
     </View>

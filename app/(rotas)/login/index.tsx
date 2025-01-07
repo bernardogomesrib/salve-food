@@ -1,4 +1,4 @@
-import { fazerLogin } from '@/components/api/auth/autenticacao';
+import { doLogin } from '@/api/auth/authModule';
 import { Text, View } from '@/components/Themed';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ export default function TabOneScreen() {
   const [error, setError] = useState("");
   const login = async () => {
     console.log(email, password);
-    const retult = await fazerLogin(email, password);
+    const retult = await doLogin(email, password);
     console.log(retult);
 
 
