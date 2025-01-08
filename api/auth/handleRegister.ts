@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 const handleRegister = async (nome: string, email: string, telefone: string, senha: string, confirma: string) => {
   if (!nome || !email || !telefone || !senha || !confirma) {
@@ -21,14 +21,14 @@ const handleRegister = async (nome: string, email: string, telefone: string, sen
     return;
   }
 
-  // TODO: Após a rota ser ajustada no backend, também enviar telefone neste POST
-  // Como a rota que salva os clientes só aceita estes campos, telefone está indo para o limbo
+
   try {
     const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/create`, {
       firstName,
       lastName,
       email,
       password: senha,
+      phoneNumber: telefone,
     });
 
     if (response.status === 201) {
