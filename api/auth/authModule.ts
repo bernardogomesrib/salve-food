@@ -82,6 +82,21 @@ const doLogin = async (login: string, password: string): Promise<void> => {
         }
     } catch (error: any) {
         console.error("Erro ao fazer login:", error.message);
+        Alert.prompt("Erro ao fazer login", error.message);
+        Alert.alert(
+            "Erro ao fazer login",
+            error.message,
+            [
+            {
+                text: "Tentar novamente",
+                onPress: () => doLogin(login, password),
+            },
+            {
+                text: "Preencher credenciais novamente",
+                onPress: () => router.push("/login"),
+            },
+            ]
+        );
         throw new Error("Falha no login. Verifique suas credenciais.");
     }
 };
