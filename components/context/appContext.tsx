@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { router } from 'expo-router';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import { Alert } from 'react-native';
 
 export interface Product {
     id: number;

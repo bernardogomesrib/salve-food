@@ -1,13 +1,12 @@
+import { Text, View } from "@/components/Themed";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  View
 } from "react-native";
 
 export default function EditCardScreen({ navigation }: any) {

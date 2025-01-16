@@ -16,6 +16,7 @@
     "@expo/vector-icons": "^14.0.4",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^7.0.14",
+    "@stripe/stripe-react-native": "^0.41.0",
     "axios": "^1.7.9",
     "expo": "~52.0.25",
     "expo-clipboard": "~7.0.1",

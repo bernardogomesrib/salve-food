@@ -5,7 +5,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -17,7 +17,7 @@ import { ColorCompliantHeader } from "@/components/ui/ColorCompliantHeader";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { defColorScheme } from "../../assets/styles/Styles";
 import { StripeProvider } from "@stripe/stripe-react-native";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 export {
   ErrorBoundary
 } from "expo-router";
@@ -56,6 +56,8 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const clrSch = useColorScheme();
   defColorScheme(clrSch);
+  const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <StripeProvider
@@ -63,27 +65,25 @@ function RootLayoutNav() {
     >
     <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ header: ColorCompliantHeader }} />
-        <Stack.Screen name="cadastro" options={{ title: "cadastre-se", headerShown: false }} />
-        <Stack.Screen name="recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }} />
-        <Stack.Screen name="home" options={{ header: CustomHeader }} />
-        <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
-        <Stack.Screen name="alterarDados" options={{ header: CustomHeader }} />
-        <Stack.Screen name="enviarEmail" options={{ headerShown: false }} />
-        <Stack.Screen name="orderHistory" options={{ header: CustomHeader }} />
-        <Stack.Screen name="profile" options={{ header: CustomHeader }} />
-        <Stack.Screen name="menu/index" options={{ headerShown: true }} />
-        <Stack.Screen name="seguranca" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/adicionarCartao" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/editarCartao" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/exibirCartoes" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/formasDePagamento" options={{ header: CustomHeader }} />
-        <Stack.Screen name="adicionarEnderecos" options={{ header: CustomHeader }} />
-        <Stack.Screen name="editarEnderecos" options={{ header: CustomHeader }} />
-        <Stack.Screen name="listaEnderecos" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/pixPaymentScreen" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/addCardScreenStripe" options={{ header: CustomHeader }} />
-        <Stack.Screen name="formasDePagamento/BoletoPaymentScreen" options={{ header: CustomHeader }} />
+          <Stack.Screen name="login/index" options={{ header: () => <ColorCompliantHeader color={clrSch} insets={insets} /> }} />
+          <Stack.Screen name="login/cadastro" options={{ title: "cadastre-se", headerShown: false }} />
+          <Stack.Screen name="login/recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }} />
+          <Stack.Screen name="alterarDados" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
+          <Stack.Screen name="login/enviarEmail" options={{ headerShown: false }} />
+          <Stack.Screen name="home" options={{ headerShown: false }} />
+          <Stack.Screen name="menu/index" options={{ headerShown: true }} />
+          <Stack.Screen name="seguranca" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/adicionarCartao" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/editarCartao" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/exibirCartoes" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/formasDePagamento" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="adicionarEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="editarEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="listaEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/pixPaymentScreen" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/addCardScreenStripe" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="formasDePagamento/BoletoPaymentScreen" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
       </Stack>
     </ThemeProvider>
     </StripeProvider>

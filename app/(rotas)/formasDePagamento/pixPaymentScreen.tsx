@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image, Alert } from "react-native";
-import { Text, Button } from "react-native-elements";
+import { StyleSheet, Image, Alert } from "react-native";
+import { Button } from "react-native-elements";
 import * as Clipboard from "expo-clipboard";
+import { Text, View } from "@/components/Themed";
 
 export default function PixPaymentScreen() {
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
@@ -48,7 +49,7 @@ export default function PixPaymentScreen() {
 
   return (
     <View style={styles.container}>
-      <Text h4>Pagamento por Pix (Mercado Pago)</Text>
+      <Text style={{fontSize:20}}>Pagamento por Pix (Mercado Pago)</Text>
 
       <Button
         title="Gerar Pix"
@@ -102,7 +103,6 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ffffff",
   },
   button: {
     marginVertical: 10,
