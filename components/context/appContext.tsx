@@ -34,6 +34,7 @@ export interface MyContextType {
     product: Product | undefined;
     products: Product[];
     restaurant: Restaurant | undefined;
+    setRestaurants: (restaurant: Restaurant[]) => void;
     addToCart: (product: CartItem) => void;
     delToCart: (product: CartItem) => void;
     removeFromCart: (productId: number) => void;
@@ -49,6 +50,7 @@ const defaultContextValue: MyContextType = {
     restaurants: [],
     product: undefined,
     restaurant: undefined,
+    setRestaurants: () => { },
     products: [],
     cart: [],
     addToCart: () => { },
@@ -154,7 +156,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ restaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario }}>
+        <MyContext.Provider value={{ restaurants,setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario }}>
             {children}
         </MyContext.Provider>
     );
