@@ -1,16 +1,13 @@
 import { styles } from "@/assets/styles/Styles";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { Router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { TouchableOpacity, useColorScheme } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TouchableOpacity } from "react-native";
 import { View } from "../Themed";
 
-const CustomHeader = () => {
-    const insets = useSafeAreaInsets();
-    const router = useRouter();
-    const color = useColorScheme();
+const CustomHeader = ({color, insets,router }:{color:'dark'|'light'|undefined|null,insets:any,router:Router}) => {
+    
     return (<>
 
         <View style={{ height: insets.top }}>
@@ -42,7 +39,7 @@ const CustomHeader = () => {
 
             <TouchableOpacity
                 onPress={() => {
-                    router.push("/profile");
+                    router.push("/home/profile");
                 }}
             >
                 <FontAwesome

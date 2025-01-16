@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, } from "react-native";
-import { styles as stilus } from "../../assets/styles/Styles";
+import { styles as stilus } from "../../../assets/styles/Styles";
 
 export default function EnviarEmail() {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ export default function EnviarEmail() {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/salve-food.png")}
+        source={require("../../../assets/images/salve-food.png")}
         style={stilus.image}
       />
       <Text style={styles.instructionText}>
@@ -34,11 +34,11 @@ export default function EnviarEmail() {
         title="Enviar"
         onPress={handleSubmit}
         style={stilus.buttonEntrar}
-        href="/recuperarSenha"
+        href="/(rotas)/login/recuperarSenha"
       />
       <Text style={styles.footerText}>
         Já tem uma conta?{" "}
-        <Link href="/(rotas)">
+        <Link href="/(rotas)/login">
           <Text style={stilus.esqueci}>Entre</Text>
         </Link>
       </Text>

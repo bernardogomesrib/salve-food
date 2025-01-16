@@ -1,5 +1,5 @@
 import { useMyContext } from "@/components/context/appContext";
-import { Text, View } from "@/components/Themed";
+import { Text, useThemeColor, View } from "@/components/Themed";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
@@ -9,7 +9,6 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { useThemeColor } from "@/components/Themed";
 
 export default function RestaurantScreen() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -101,7 +100,8 @@ export default function RestaurantScreen() {
                   selectedCategory === category && styles.categoryButtonActive,
                   { backgroundColor: selectedCategory === category ? textColor : backgroundColor },
                 ]}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => {if(category =="Todos")console.log(restaurant);
+                  setSelectedCategory(category)}}
               >
                 <Text
                   style={[
