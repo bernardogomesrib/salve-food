@@ -30,31 +30,52 @@ const saveTokens = async (data: {
 // Função para atualizar o token
 const updateToken = async (): Promise<void> => {
     try {
-        const refreshToken = await AsyncStorage.getItem("refresh_token");
+      const refreshToken = await AsyncStorage.getItem("refresh_token");
 
-        if (!refreshToken) {
-            router.push("/login");
-            return;
-        }
+      if (!refreshToken) {
+        stopTokenUpdateRoutine();
+        router.push("/login");
+        return;
+      }
+      const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/refresh`;
 
-        const response = await axios.post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/refresh`, {
-            refreshToken,
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken: refreshToken }),
+    });
+
+    const responseData = await response.json();
+
+      const {
+        access_token,
+        refresh_token,
+        expires_in,
+        refresh_token_expires_in,
+      } = responseData;
+
+      if (access_token && refresh_token) {
+        await saveTokens({
+          access_token,
+          refresh_token,
+          expires_in,
+          refresh_token_expires_in,
         });
 
-        const { access_token, refresh_token, expires_in, refresh_token_expires_in } = response.data;
-
-        if (access_token && refresh_token) {
-            await saveTokens({ access_token, refresh_token, expires_in, refresh_token_expires_in });
-
-            if (!isUpdatingToken) {
-                tokenUpdateRoutine();
-            }
-        } else {
-            Alert.alert("Erro ao atualizar sessão", "Tokens inválidos recebidos do servidor.");
+        if (!isUpdatingToken) {
+          tokenUpdateRoutine();
         }
+      } else {
+        Alert.alert(
+          "Erro ao atualizar sessão",
+          "Tokens inválidos recebidos do servidor."
+        );
+      }
     } catch (error: any) {
         Alert.alert("Erro ao atualizar sessão", error.message);
-        router.push("/login");
+        /* router.push("/login"); */
     }
 };
 
@@ -93,9 +114,10 @@ const doLogin = async (login: string, password: string): Promise<void> => {
             },
             {
                 text: "Preencher credenciais novamente",
-                onPress: () => router.push("/login"),
+                onPress: () => {stopTokenUpdateRoutine();router.push("/login")},
             },
             ]
+
         );
         throw new Error("Falha no login. Verifique suas credenciais.");
     }
@@ -136,12 +158,23 @@ const getToken = async (): Promise<string | null> => {
 };
 
 // Função que cria a rotina de atualização de token
+let tokenUpdateInterval: NodeJS.Timeout | null = null;
+
 const tokenUpdateRoutine = () => {
-    if (!isUpdatingToken) {
+    if (tokenUpdateInterval===null) {
         setIsUpdatingToken(true);
-        setInterval(updateToken, 30000); // Chamar a cada 30 segundos
+        tokenUpdateInterval = setInterval(updateToken, 30000); // Chamar a cada 3 segundos
     } else {
         console.log("Uma rotina de atualização de token já está rodando.");
+    }
+};
+
+// Função para parar a rotina de atualização de token
+const stopTokenUpdateRoutine = () => {
+    if (tokenUpdateInterval) {
+        clearInterval(tokenUpdateInterval);
+        tokenUpdateInterval = null;
+        setIsUpdatingToken(false);
     }
 };
 
@@ -155,6 +188,7 @@ const doLogout = async (): Promise<void> => {
         "login",
         "password",
     ]);
+    stopTokenUpdateRoutine();
     router.push("/login");
 };
 

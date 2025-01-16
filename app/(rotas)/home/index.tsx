@@ -1,7 +1,8 @@
 import { useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 const categories = [
   { id: 1, name: 'Brasileira', icon: '🇧🇷' },
@@ -14,7 +15,11 @@ const categories = [
 
 
 export default function Home() {
-  const {restaurants,handleRestaurantSelection} = useMyContext();
+  const {restaurants,handleRestaurantSelection,defineUsuario} = useMyContext();
+  useState(() => {
+    defineUsuario();
+  })
+  
   return (
     <View style={styles.container}>
 

@@ -1,9 +1,12 @@
 import { doLogout } from "@/api/auth/authModule";
+import { Usuario } from "@/api/auth/tokenHandler";
+import { useMyContext } from "@/components/context/appContext";
 import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
 export default function Profile() {
@@ -12,8 +15,19 @@ export default function Profile() {
     { light: "#fff", dark: "#000" },
     "background"
   );
+  const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
+  const { getUsuario } = useMyContext();
   const router = useRouter();
 
+  const fetchData = async () => {
+    const usuario = await getUsuario();
+    if (usuario !== undefined) {
+      setUsuario(usuario);
+    }
+  }
+  useEffect(() => {
+    fetchData();
+  });
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
@@ -24,11 +38,12 @@ export default function Profile() {
           size={100}
           color={textColor}
           style={styles.icon}
+          onPress={() => {fetchData}}
         />
-        <Text style={[styles.name, { color: textColor }]}>Lorem Ipsum</Text>
-        <Text style={[styles.info, { color: textColor }]}>(81) 4002-8922</Text>
+        <Text style={[styles.name, { color: textColor }]}>{usuario ? usuario.name : "carregando..."}</Text>
+        <Text style={[styles.info, { color: textColor }]}>{usuario ? usuario.phone : "carregando..."}</Text>
         <Text style={[styles.info, { color: textColor }]}>
-          EMAIL_EXEMPLO@TESTE.COM
+          {usuario ? usuario.email : "carregando..."}
         </Text>
       </View>
 
