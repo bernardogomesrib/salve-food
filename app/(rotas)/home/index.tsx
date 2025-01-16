@@ -1,8 +1,10 @@
-import { useMyContext } from '@/components/context/appContext';
+import { getRestaurantes, getRestaurantesNoLocation } from '@/api/loja/loja';
+import { Restaurant, useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import * as Location from 'expo-location';
 
 const categories = [
   { id: 1, name: 'Brasileira', icon: '🇧🇷' },
@@ -15,11 +17,48 @@ const categories = [
 
 
 export default function Home() {
-  const {restaurants,handleRestaurantSelection,defineUsuario} = useMyContext();
-  useState(() => {
+  const {restaurants,setRestaurants,handleRestaurantSelection,defineUsuario} = useMyContext();
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [pagina, setPagina] = useState(0);
+  const aoEntrar = async ()=>{
     defineUsuario();
+    paginar();
+  }
+  const paginar = async ()=>{
+
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão para pegar localização negada');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+
+      const restaurantes = await getRestaurantes(location.coords, pagina);
+    const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
+      .map(id => restaurantes.find(r => r.id === id));
+    setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível obter a localização.');
+      getRestaurantesNoLocation(pagina).then((res)=>{
+        const uniqueRestaurants = Array.from(new Set(res.map(r => r.id)))
+          .map(id => res.find(r => r.id === id));
+        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+      });
+    }
+  }
+  const toSet = ()=>{
+    const lista = ["Churrascarias", "Pizzarias", "Hamburguerias", "Pastelarias", "Sorveterias", "Confeitarias", "Padarias Gourmet", "Frutos do Mar", "Sopas e Caldos", "Lanchonetes", "Creperias", "Veganos", "Vegetarianos", "Sem Glúten", "Sem Lactose", "Orgânicos", "Comida Fitness", "Infantil", "Gourmet", "Low Carb/Keto", "Fast Food", "Italiana", "Japonesa", "Chinesa", "Brasileira", "Mexicana", "Árabe", "Indiana", "Francesa", "Tailandesa", "Coreana", "Mediterrânea", "Espanhola", "Alemã", "Portuguesa", "Peruana", "Americana", "Africana", "Turca", "Vietnamita", "Australiana ", "Churrascarias", "Pizzarias", "Hamburguerias", "Pastelarias", "Sorveterias", "Confeitarias", "Padarias Gourmet", "Frutos do Mar", "Sopas e Caldos", "Lanchonetes", "Creperias", "Nordestina", "Mineira", "Gaúcha", "Amazônica", "Étnica"]
+    const uniqueSet = new Set(lista);
+    console.log(uniqueSet);
+  }
+
+  useState(() => {
+    aoEntrar();
   })
-  
+  useState(()=>{paginar(),[pagina]});
   return (
     <View style={styles.container}>
 
@@ -31,7 +70,10 @@ export default function Home() {
           style={styles.categoriesContainer}
         >
           {categories.map((category) => (
-            <TouchableOpacity key={category.id} style={styles.categoryCard}>
+            <TouchableOpacity key={category.id} style={styles.categoryCard} onPress={() => {
+              toSet();
+              console.log(restaurants);
+            }}>
               <Text style={styles.categoryIcon}>{category.icon}</Text>
               <Text style={styles.categoryName}>{category.name}</Text>
             </TouchableOpacity>

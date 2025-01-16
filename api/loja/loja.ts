@@ -1,79 +1,80 @@
 import { Restaurant } from "@/components/context/appContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { LocationObjectCoords } from "expo-location";
 import { Alert } from "react-native";
 
 
-const getRestaurantes = async (
-  setRestaurantes: (restaurantes: Restaurant[]) => void
-) => {
-  console.log("getRestaurantes");
+const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
   const token = await AsyncStorage.getItem("token");
-  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja`;
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
-  console.log(url);
-  const response = await axios.get(
-    url,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  ).then((res) => {
-    console.log(res.data.content);
-    if(res.data.content){
-      const rest = res.data.content;
-      rest.array.forEach((element:any) => {
-        console.log(element);
-      });
-    }
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
-  
+  const restaur: Restaurant[] = [];
+  if (response.data.content) {
+    const rest = response.data.content;
+    rest.forEach((element: any) => {
+      restaur.push(conversor(element));
+    });
+    return restaur;
+  } else {
+    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    return [];
+  }
+};
+
+
+
+const getRestaurantesNoLocation = async (pagina: number) => {
+  const token = await AsyncStorage.getItem("token");
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const restaur: Restaurant[] = [];
+  if (response.data.content) {
+    const rest = response.data.content;
+    rest.forEach((element: any) => {
+      restaur.push(conversor(element));
+    });
+    return restaur;
+  } else {
+    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    return [];
+  }
 };
 
 
 const conversor = (rest:any)=>{
-  /* {
-      "id": 1,
-      "nome": "string",
-      "rua": "string",
-      "numero": "string",
-      "bairro": "string",
-      "cidade": "string",
-      "estado": "string",
-      "segmentoLoja": {
-        "id": 1,
-        "nome": "putaria"
-      },
-      "longitude": "string",
-      "latitude": "string",
-      "image": "http://10.31.89.124:9001/1loja/lojaImage?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=RoNHWxprGCgAVlnhOGbi%2F20250116%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250116T121932Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=74194926b9ede9a6384122e0ef1f8c89b7928a409fc533c6becbe422058f3478"
-    }
-
-    Restaurant {
-      id: number;
-      name: string;
-      rating: number;
-      category: string;
-      deliveryTime: string;
-      image: string;
-      description: string;
-      address: string;
-    }
- */
   const restaurant: Restaurant = {
     id: rest.id,
     name: rest.nome,
-    rating: 0, // Assuming rating is not available in the original object
+    rating: rest.rating,
     category: rest.segmentoLoja.nome,
-    deliveryTime: "N/A", // Assuming deliveryTime is not available in the original object
+    deliveryTime: rest.deliveryTime ? timeConversor(rest.deliveryTime) : "30 minutos",
     image: rest.image,
-    description: "", // Assuming description is not available in the original object
-    address: `${rest.rua}, ${rest.numero}, ${rest.bairro}, ${rest.cidade}, ${rest.estado}`
+    description: rest.descricao,
+    address: `${rest.rua}, ${rest.numero}, ${rest.bairro}, ${rest.cidade}, ${rest.estado}`,
   };
   return restaurant;
 }
 
+const timeConversor = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const min = minutes % 60;
 
+  if (hours > 0) {
+    return `${hours}h ${Math.floor(min)}min`;
+  } else {
+    return `${Math.floor(min)}min`;
+  }
+};
 
-export { getRestaurantes };
+export { getRestaurantes, getRestaurantesNoLocation };

@@ -72,7 +72,7 @@ const MyContext = createContext<MyContextType>(defaultContextValue);
 const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
     //const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-    const [restaurants, setRestaurants] = useState<Restaurant[]>(mockRestaurants);
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [product, setProduct] = useState<Product>();
     const [products, setProducts] = useState<Product[]>([]);
     const [restaurant, setRestaurant] = useState<Restaurant>();
@@ -208,30 +208,3 @@ const mockMenuItems = [
         },
     ],
 ]
-
-
-const mockRestaurants = [
-    {
-        id: 1,
-        name: "Restaurante do Chef",
-        rating: 4.8,
-        category: "Brasileira",
-        deliveryTime: "30-45 min",
-        image: "https://via.placeholder.com/400",
-        description:
-            "O melhor da culinária brasileira com ingredientes frescos e selecionados.",
-        address: "Rua das Flores, 123 - Centro",
-    },
-    {
-        id: 2,
-        name: "Pizza Express",
-        rating: 4.5,
-        category: "Italiana",
-        deliveryTime: "40-55 min",
-        image: "https://via.placeholder.com/400",
-        description:
-            "Pizzas artesanais com massa feita na hora e ingredientes importados.",
-        address: "Av. Principal, 456 - Jardim Europa",
-    },
-]
-
