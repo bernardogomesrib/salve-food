@@ -18,3 +18,10 @@ export interface MenuItem {
   image: string;
   category: string;
 }
+
+
+export interface Category{
+  id: number;
+  name: string;
+  emoji: string;
+}

@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { router } from 'expo-router';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import * as Location from 'expo-location';
+import { Alert } from 'react-native';
+import { getItemsDaApi } from '@/api/item/item';
 
 export interface Product {
     id: number;
@@ -43,6 +46,7 @@ export interface MyContextType {
     getUsuario: () => Promise<Usuario | undefined>;
     defineUsuario: () => void;
     usuario: Usuario | undefined;
+    location: Location.LocationObject | null;
 }
 
 const defaultContextValue: MyContextType = {
@@ -60,7 +64,8 @@ const defaultContextValue: MyContextType = {
     setUsuario: () => { },
     defineUsuario: () => { },
     getUsuario: async () => undefined,
-    usuario: undefined
+    usuario: undefined,
+    location: null
 };
 
 
@@ -77,7 +82,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [products, setProducts] = useState<Product[]>([]);
     const [restaurant, setRestaurant] = useState<Restaurant>();
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
-
+    const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const getUsuario = async () => {
         if (usuario === undefined) {
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
@@ -93,16 +98,38 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
 
     }
 
+    let positionUpdateRoutine: NodeJS.Timeout | null = null;
+
+    const startPositionUpdateRoutine = () => {
+        if (positionUpdateRoutine === null) {
+            positionUpdateRoutine = setInterval(iniciarCapturaDePosicao, 10000); // Chamar a cada 3 segundos
+        } else {
+            console.log("Uma rotina de atualização de token já está rodando.");
+        }
+    };
+
+    const iniciarCapturaDePosicao = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permissão para pegar localização negada');
+            return;
+        }
+        let location = await Location.getCurrentPositionAsync({});
+        //console.log(location);
+        setLocation(location);
+    }
     const defineUsuario = async () => {
         const u = await getUsuario();
         if (u !== undefined) {
             setUsuario(u)
         }
+        startPositionUpdateRoutine();
     }
 
-    const handleRestaurantSelection = (restaurant: Restaurant) => {
+    const handleRestaurantSelection = async (restaurant: Restaurant) => {
         setRestaurant(restaurant);
-        setProducts(mockMenuItems[restaurant.id - 1]);
+        const p = await getItemsDaApi(restaurant.id);
+        setProducts(p);
         console.log(restaurant);
         router.push('/restaurante');
     }
@@ -155,7 +182,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ restaurants,setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario }}>
+        <MyContext.Provider value={{ restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location }}>
             {children}
         </MyContext.Provider>
     );

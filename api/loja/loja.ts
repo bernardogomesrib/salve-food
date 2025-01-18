@@ -6,6 +6,7 @@ import { Alert } from "react-native";
 
 
 const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
+  console.log("pegando independente de categoria")
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
@@ -52,6 +53,52 @@ const getRestaurantesNoLocation = async (pagina: number) => {
 };
 
 
+const getRestaurantesPorCategoria = async (pos: LocationObjectCoords, pagina: number, categoria: number) => {
+  console.log("pegando via categoria")
+  const token = await AsyncStorage.getItem("token");
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/segmento/${categoria}?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const restaur: Restaurant[] = [];
+  if (response.data.content) {
+    const rest = response.data.content;
+    rest.forEach((element: any) => {
+      restaur.push(conversor(element));
+    });
+    return restaur;
+  } else {
+    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    return [];
+  }
+}
+
+const getRestaurantesPorCategoriaNoLocation = async (pagina: number, categoria: number) => {
+  const token = await AsyncStorage.getItem("token");
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/segmento/categoria?page=${pagina}&size=10`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const restaur: Restaurant[] = [];
+  if (response.data.content) {
+    const rest = response.data.content;
+    rest.forEach((element: any) => {
+      restaur.push(conversor(element));
+    });
+    return restaur;
+  } else {
+    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    return [];
+  }
+}
+
+
 const conversor = (rest:any)=>{
   const restaurant: Restaurant = {
     id: rest.id,
@@ -77,4 +124,4 @@ const timeConversor = (minutes: number): string => {
   }
 };
 
-export { getRestaurantes, getRestaurantesNoLocation };
+export { getRestaurantes, getRestaurantesNoLocation, getRestaurantesPorCategoria, getRestaurantesPorCategoriaNoLocation };

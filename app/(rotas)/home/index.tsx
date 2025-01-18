@@ -1,31 +1,33 @@
-import { getRestaurantes, getRestaurantesNoLocation } from '@/api/loja/loja';
+import { getRestaurantes, getRestaurantesNoLocation, getRestaurantesPorCategoria, getRestaurantesPorCategoriaNoLocation } from '@/api/loja/loja';
 import { Restaurant, useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
-import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
+import { getCategories } from '@/api/segmentoLoja/segmento';
+import { Category } from '@/assets/types/types';
 
-const categories = [
-  { id: 1, name: 'Brasileira', icon: '🇧🇷' },
-  { id: 2, name: 'Italiana', icon: '🇮🇹' },
-  { id: 3, name: 'Japonesa', icon: '🇯🇵' },
-  { id: 4, name: 'Fast Food', icon: '🍔' },
-  { id: 5, name: 'Vegana', icon: '🥗' },
-  { id: 6, name: 'Doces', icon: '🍰' },
-];
 
 
 export default function Home() {
-  const {restaurants,setRestaurants,handleRestaurantSelection,defineUsuario} = useMyContext();
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const { restaurants, setRestaurants, handleRestaurantSelection, defineUsuario,location } = useMyContext();
   const [pagina, setPagina] = useState(0);
-  const aoEntrar = async ()=>{
+  const [refreshing, setRefreshing] = useState(false);
+  const [categoria, setCategoria] = useState<null | number>(null);
+  const [categorias,setCategorias] = useState<Category[]|null>(null);
+  const aoEntrar = async () => {
     defineUsuario();
     paginar();
+    pegarCategorias();
   }
-  const paginar = async ()=>{
-
+  const pegarCategorias = async () => {
+    const resp = await getCategories();
+    setCategorias(resp);
+  }
+  const paginar = async () => {
+    setRefreshing(true);
+    console.log("paginar chamado");
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -33,60 +35,81 @@ export default function Home() {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-
-      const restaurantes = await getRestaurantes(location.coords, pagina);
-    const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
-      .map(id => restaurantes.find(r => r.id === id));
-    setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+      if (location) {
+        const restaurantes = categoria !==null ? await getRestaurantesPorCategoria(location.coords, pagina, categoria) : await getRestaurantes(location.coords, pagina);
+        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
+          .map(id => restaurantes.find(r => r.id === id));
+        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+        setRefreshing(false);
+      } else {
+        const restaurantes = categoria !==null ? await getRestaurantesPorCategoriaNoLocation(pagina, categoria) : await getRestaurantesNoLocation(pagina);
+        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
+          .map(id => restaurantes.find(r => r.id === id));
+        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+        setRefreshing(false);
+      }
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível obter a localização.');
-      getRestaurantesNoLocation(pagina).then((res)=>{
-        const uniqueRestaurants = Array.from(new Set(res.map(r => r.id)))
-          .map(id => res.find(r => r.id === id));
-        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
-      });
+
+
     }
   }
-  const toSet = ()=>{
-    const lista = ["Churrascarias", "Pizzarias", "Hamburguerias", "Pastelarias", "Sorveterias", "Confeitarias", "Padarias Gourmet", "Frutos do Mar", "Sopas e Caldos", "Lanchonetes", "Creperias", "Veganos", "Vegetarianos", "Sem Glúten", "Sem Lactose", "Orgânicos", "Comida Fitness", "Infantil", "Gourmet", "Low Carb/Keto", "Fast Food", "Italiana", "Japonesa", "Chinesa", "Brasileira", "Mexicana", "Árabe", "Indiana", "Francesa", "Tailandesa", "Coreana", "Mediterrânea", "Espanhola", "Alemã", "Portuguesa", "Peruana", "Americana", "Africana", "Turca", "Vietnamita", "Australiana ", "Churrascarias", "Pizzarias", "Hamburguerias", "Pastelarias", "Sorveterias", "Confeitarias", "Padarias Gourmet", "Frutos do Mar", "Sopas e Caldos", "Lanchonetes", "Creperias", "Nordestina", "Mineira", "Gaúcha", "Amazônica", "Étnica"]
-    const uniqueSet = new Set(lista);
-    console.log(uniqueSet);
+
+  useEffect(() => {
+    setRestaurants([]);
+    setPagina(0)
+    paginar();
+  }, [categoria]);
+
+  const onRefresh = () => {
+    setRestaurants([]);
+    setPagina(0);
   }
 
-  useState(() => {
+
+  useEffect(() => {
     aoEntrar();
-  })
-  useState(()=>{paginar(),[pagina]});
+  },[])
+
+  useEffect(() => { paginar(); }, [pagina]);
   return (
     <View style={styles.container}>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
         <Text style={styles.sectionTitle}>Categorias</Text>
-        <ScrollView 
-          horizontal 
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.categoriesContainer}
         >
-          {categories.map((category) => (
+          <TouchableOpacity style={styles.categoryCard} onPress={() => {
+            setCategoria(null);
+            setPagina(0);
+          }}>
+            <Text style={styles.categoryIcon}>{'🍽️'}</Text>
+
+            <Text style={styles.categoryName}>Todas</Text>
+          </TouchableOpacity>
+          {categorias?categorias.map((category) => (
             <TouchableOpacity key={category.id} style={styles.categoryCard} onPress={() => {
-              toSet();
+              setCategoria(category.id);
               console.log(restaurants);
             }}>
-              <Text style={styles.categoryIcon}>{category.icon}</Text>
+              <Text style={styles.categoryIcon}>{category.emoji}</Text>
               <Text style={styles.categoryName}>{category.name}</Text>
             </TouchableOpacity>
-          ))}
+          )):null}
         </ScrollView>
 
         <Text style={styles.sectionTitle}>Restaurantes</Text>
         {restaurants.map((restaurante) => (
           <TouchableOpacity
-          key={restaurante.id}
-          style={styles.restaurantCard}
-          onPress={() => handleRestaurantSelection(restaurante)}
-        >
+            key={restaurante.id}
+            style={styles.restaurantCard}
+            onPress={() => handleRestaurantSelection(restaurante)}
+          >
             <Image
               source={restaurante.image}
               style={styles.restaurantImage}
