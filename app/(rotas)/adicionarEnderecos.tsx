@@ -25,6 +25,7 @@ export default function AddAddressScreen() {
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
   const [address, setAddress] = useState<Address>({
+    apelido:"",
     rua: "",
     numero: "",
     bairro: "",
@@ -90,6 +91,7 @@ export default function AddAddressScreen() {
 
         {/* Formulário */}
         <View style={styles.form}>
+          <Input label="Apelido" value={address.apelido} onChangeText={(text) => setAddress({ ...address, apelido: text })} placeholder="Ex: Casa" />
           <Input label="Rua" value={address.rua} onChangeText={(text) => setAddress({ ...address, rua: text })} placeholder="Ex: Av. Paulista" />
           <Input label="Número" value={address.numero} onChangeText={(text) => setAddress({ ...address, numero: text })} placeholder="Ex: 123" />
           <Input label="Bairro" value={address.bairro} onChangeText={(text) => setAddress({ ...address, bairro: text })} placeholder="Ex: Bela Vista" />
