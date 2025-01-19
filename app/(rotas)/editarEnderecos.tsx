@@ -1,78 +1,35 @@
-import { FontAwesome5 } from "@expo/vector-icons";
+import { editarEndereco, fetchAddress, handleCepLookup, salvarEndereco } from "@/api/endereco/endereco";
+import { Address } from "@/assets/types/types";
+import { useMyContext } from "@/components/context/appContext";
+import { Input } from "@/components/ui/input";
 import * as Location from "expo-location";
 import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Modal,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-type Address = {
-  rua: string;
-  numero: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
-  pais: string;
-  complemento: string;
-  cep: string;
-};
 
-export default function EditAddressScreen() {
+
+export default function AddAddressScreen() {
+
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
-  const [address, setAddress] = useState<Address>({
-    rua: "",
-    numero: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    pais: "",
-    complemento: "",
-    cep: "",
-  });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
   const [region, setRegion] = useState<any>(null);
+  const { location, enderecoParaEditar, setEnderecoParaEditar, modificaEndereco } = useMyContext();
 
-  // Função para buscar o endereço via ViaCEP
-  const handleCepLookup = async () => {
-    if (!address.cep) {
-      Alert.alert("Erro", "Digite um CEP válido.");
-      return;
-    }
-    try {
-      const response = await fetch(
-        `https://viacep.com.br/ws/${address.cep}/json/`
-      );
-      const data = await response.json();
-      if (data.erro) {
-        Alert.alert("Erro", "CEP não encontrado.");
-        return;
-      }
-
-      setAddress({
-        ...address,
-        rua: data.logradouro || "",
-        bairro: data.bairro || "",
-        cidade: data.localidade || "",
-        estado: data.uf || "",
-        pais: "Brasil",
-        cep: data.cep || "",
-      });
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível buscar o CEP.");
-    }
-  };
+  
 
   const handleLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -83,70 +40,31 @@ export default function EditAddressScreen() {
       );
       return;
     }
+    if (location) {
+      const { latitude, longitude } = location?.coords;
+      setRegion({
+        latitude,
+        longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
 
-    const userLocation = await Location.getCurrentPositionAsync({});
-    const { latitude, longitude } = userLocation.coords;
+      setSelectedLocation({
+        latitude,
+        longitude,
+      });
 
-    setRegion({
-      latitude,
-      longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
+      setModalVisible(true);
+    }
 
-    setSelectedLocation({
-      latitude,
-      longitude,
-    });
-
-    setModalVisible(true);
   };
 
   const handleSelectLocation = (latitude: number, longitude: number) => {
     setSelectedLocation({ latitude, longitude });
   };
 
-  const fetchAddress = async (latitude: number, longitude: number) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyDohZlFgwg979AR1ndE_7eud9z7duRZ2GI`
-      );
-      const data = await response.json();
-      if (!data.results.length) {
-        Alert.alert("Erro", "Endereço não encontrado.");
-        return;
-      }
 
-      const components = data.results[0].address_components;
-      const addressString = data.results[0].formatted_address;
-
-      setAddress({
-        ...address,
-        rua: components.find((c:any) => c.types.includes("route"))?.long_name || "",
-        bairro:
-          components.find((c:any) => c.types.includes("sublocality"))?.long_name ||
-          "",
-        cidade:
-          components.find((c:any) => c.types.includes("locality"))?.long_name || "",
-        estado:
-          components.find((c:any) =>
-            c.types.includes("administrative_area_level_1")
-          )?.short_name || "",
-        pais:
-          components.find((c:any) => c.types.includes("country"))?.long_name || "",
-        cep:
-          components.find((c:any) => c.types.includes("postal_code"))?.long_name ||
-          "",
-      });
-
-      setSelectedLocation({
-        ...selectedLocation,
-        address: addressString,
-      });
-    } catch (error) {
-      Alert.alert("Erro", "Não foi possível buscar o endereço.");
-    }
-  };
+  
 
   return (
     <ScrollView
@@ -159,61 +77,20 @@ export default function EditAddressScreen() {
           { backgroundColor: isDarkMode ? "black" : "#f9f9f9" },
         ]}
       >
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <FontAwesome5
-              name="arrow-left"
-              size={24}
-              color={isDarkMode ? "#fff" : "#333"}
-            />
-          </TouchableOpacity>
-          <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#333" }]}>
-            Editar Endereço
-          </Text>
-        </View>
+
 
         {/* Formulário */}
         <View style={styles.form}>
-          {[
-            { label: "Rua", key: "rua" },
-            { label: "Número", key: "numero" },
-            { label: "Bairro", key: "bairro" },
-            { label: "Cidade", key: "cidade" },
-            { label: "Estado", key: "estado" },
-            { label: "País", key: "pais" },
-            { label: "Complemento (Opcional)", key: "complemento" },
-            { label: "CEP", key: "cep" },
-          ].map((field, index) => (
-            <View key={index} style={styles.inputGroup}>
-              <Text
-                style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}
-              >
-                {field.label}
-              </Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  {
-                    backgroundColor: isDarkMode ? "#222" : "#fff",
-                    color: isDarkMode ? "#fff" : "#333",
-                  },
-                ]}
-                placeholder={`Digite ${field.label.toLowerCase()}`}
-                placeholderTextColor={isDarkMode ? "#aaa" : "#888"}
-                value={address[field.key as keyof Address]}
-                onChangeText={(text) =>
-                  setAddress({ ...address, [field.key as keyof Address]: text })
-                }
-                keyboardType={
-                  field.key === "cep" || field.key === "numero"
-                    ? "numeric"
-                    : "default"
-                }
-              />
-            </View>
-          ))}
+          <Input label="Apelido" value={enderecoParaEditar.apelido} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, apelido: text })} placeholder="Ex: Casa" />
+          <Input label="Rua" value={enderecoParaEditar.rua} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, rua: text })} placeholder="Ex: Av. Paulista" />
+          <Input label="Número" value={enderecoParaEditar.numero} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, numero: text })} placeholder="Ex: 123" />
+          <Input label="Bairro" value={enderecoParaEditar.bairro} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, bairro: text })} placeholder="Ex: Bela Vista" />
+          <Input label="Cidade" value={enderecoParaEditar.cidade} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, cidade: text })} placeholder="Ex: São Paulo" />
+          <Input label="Estado" value={enderecoParaEditar.estado} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, estado: text })} placeholder="Ex: SP" />
+          <Input label="Complemento" value={enderecoParaEditar.complemento} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, complemento: text })} placeholder="Ex: Apto 101" />
+          <Input label="CEP" mask="cep" value={enderecoParaEditar.cep} keyboardType="numeric" onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, cep: text })} placeholder="Ex: 01311-000" />
 
-          <TouchableOpacity style={styles.cepButton} onPress={handleCepLookup}>
+          <TouchableOpacity style={styles.cepButton} onPress={() => { handleCepLookup(enderecoParaEditar, setEnderecoParaEditar) }}>
             <Text style={styles.cepButtonText}>Buscar pelo CEP</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -226,23 +103,11 @@ export default function EditAddressScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity
-            style={[styles.cancelButton, { backgroundColor: "#d9534f" }]}
-          >
-            <Link href="/listaEnderecos">
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </Link>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.confirmButton, { backgroundColor: "#4CAF50" }]}
-            onPress={() => Alert.alert("Endereço confirmado!")}
-          >
-            <Link href="/listaEnderecos">
-              <Text style={styles.confirmButtonText}>Confirmar</Text>
-            </Link>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={() => { modificaEndereco(editarEndereco(enderecoParaEditar));router.back() }}>
+
+          <Text style={styles.saveButtonText}>Salvar modificação no endereço</Text>
+
+        </TouchableOpacity>
       </View>
 
       {/* Modal de Mapa */}
@@ -254,6 +119,7 @@ export default function EditAddressScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            {/* Exibindo o mapa com a região do usuário */}
             <MapView
               style={styles.map}
               region={region}
@@ -274,6 +140,7 @@ export default function EditAddressScreen() {
               )}
             </MapView>
 
+            {/* Pré-visualização do endereço selecionado */}
             <View style={styles.preview}>
               <Text style={styles.previewText}>
                 {selectedLocation && selectedLocation.address
@@ -282,13 +149,44 @@ export default function EditAddressScreen() {
               </Text>
             </View>
 
+            {/* Botões para confirmar ou fechar o modal */}
             <TouchableOpacity
               style={styles.confirmButton}
-              onPress={() => {
-                fetchAddress(
+              onPress={async () => {
+                const response = await fetchAddress(
                   selectedLocation.latitude,
                   selectedLocation.longitude
                 );
+                if (response) {
+                  const { addressString, components } = response;
+                  setSelectedLocation({
+                    ...selectedLocation,
+                    address: addressString,
+                  });
+                  setEnderecoParaEditar({
+                    ...enderecoParaEditar,
+                    rua:
+                      components.find((c: any) => c.types.includes("route"))?.long_name || "",
+                    bairro:
+                      components.find((c: any) => c.types.includes("sublocality"))
+                        ?.long_name || "",
+                    cidade:
+                      components.find((c: any) => c.types.includes("locality"))?.long_name ||
+                      "",
+                    estado:
+                      components.find((c: any) =>
+                        c.types.includes("administrative_area_level_1")
+                      )?.short_name || "",
+                    pais:
+                      components.find((c: any) => c.types.includes("country"))?.long_name ||
+                      "",
+                    cep:
+                      components.find((c: any) => c.types.includes("postal_code"))
+                        ?.long_name || "",
+                    latitude: selectedLocation.latitude,
+                    longitude: selectedLocation.longitude,
+                  });
+                }
                 setModalVisible(false);
               }}
             >
@@ -333,30 +231,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   locationButtonText: { color: "#fff", fontWeight: "bold" },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  saveButton: {
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
     marginTop: 20,
+    backgroundColor: "#1f8fdb",
   },
-  cancelButton: {
-    flex: 1,
-    marginRight: 10,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  confirmButton: {
-    flex: 1,
-    marginLeft: 10,
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -389,6 +272,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     color: "#333",
+  },
+  confirmButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
   },
   confirmButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   closeButton: {

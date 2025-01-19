@@ -78,8 +78,8 @@ function RootLayoutNav() {
           <Stack.Screen name="formasDePagamento/editarCartao" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/exibirCartoes" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/formasDePagamento" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
-          <Stack.Screen name="adicionarEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
-          <Stack.Screen name="editarEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="adicionarEnderecos" options={{ title: "Novo Endereço", headerShown: true }} />
+          <Stack.Screen name="editarEnderecos" options={{ title:"Editar Endereço", headerShown:true}} />
           <Stack.Screen name="listaEnderecos" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/pixPaymentScreen" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/addCardScreenStripe" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />

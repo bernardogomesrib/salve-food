@@ -6,30 +6,8 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import { getItemsDaApi } from '@/api/item/item';
+import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
 
-export interface Product {
-    id: number;
-    description: string;
-    price: number;
-    image: string;
-    category: string;
-    name: string;
-
-}
-export interface CartItem {
-    product: Product;
-    quantity: number;
-}
-export interface Restaurant {
-    id: number;
-    name: string;
-    rating: number;
-    category: string;
-    deliveryTime: string;
-    image: string;
-    description: string;
-    address: string;
-}
 export interface MyContextType {
     cart: CartItem[];
     restaurants: Restaurant[];
@@ -47,6 +25,10 @@ export interface MyContextType {
     defineUsuario: () => void;
     usuario: Usuario | undefined;
     location: Location.LocationObject | null;
+    enderecos: Address[];
+    enderecoParaEditar: Address;
+    setEnderecoParaEditar: (endereco: Address) => void;
+    modificaEndereco: (promessa: Promise<any>) => void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -65,7 +47,23 @@ const defaultContextValue: MyContextType = {
     defineUsuario: () => { },
     getUsuario: async () => undefined,
     usuario: undefined,
-    location: null
+    location: null,
+    enderecos: [],
+    enderecoParaEditar: {
+        id: 0,
+        rua: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        pais: "",
+        complemento: "",
+        cep: "",
+        latitude: 0,
+        longitude: 0
+    },
+    setEnderecoParaEditar: () => { },
+    modificaEndereco: () => { }
 };
 
 
@@ -83,6 +81,36 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [restaurant, setRestaurant] = useState<Restaurant>();
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [enderecoParaEditar, setEnderecoParaEditar] = useState<Address>({
+        id: 0,
+        rua: "",
+        numero: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        pais: "",
+        complemento: "",
+        cep: "",
+        latitude: 0,
+        longitude: 0
+    });
+    const [enderecos, setEnderecos] = useState<Address[]>([]);
+    
+    const modificaEndereco = async (promessa:Promise < any > ) => {
+        const endereco = await promessa;
+        console.log(endereco,"promessa resolvida");
+        const existingAddressIndex = enderecos.findIndex((item) => item.id === endereco.id);
+        if (existingAddressIndex === -1) {
+            setEnderecos([...enderecos, endereco]);
+        } else {
+            for (let i = 0; i < enderecos.length; i++) {
+                if (enderecos[i].id === endereco.id) {
+                    enderecos[i] = endereco;
+                    setEnderecos([...enderecos]);
+                }
+            }
+        }
+    }
     const getUsuario = async () => {
         if (usuario === undefined) {
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
@@ -92,6 +120,8 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             });
             console.log(req.data);
             setUsuario(req.data);
+            setEnderecos(req.data.enderecos);
+
         } else {
             return usuario;
         }
@@ -182,7 +212,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location }}>
+        <MyContext.Provider value={{ modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );

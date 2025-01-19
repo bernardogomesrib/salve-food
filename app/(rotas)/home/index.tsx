@@ -1,12 +1,12 @@
 import { getRestaurantes, getRestaurantesNoLocation, getRestaurantesPorCategoria, getRestaurantesPorCategoriaNoLocation } from '@/api/loja/loja';
-import { Restaurant, useMyContext } from '@/components/context/appContext';
+import { useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import { getCategories } from '@/api/segmentoLoja/segmento';
-import { Category } from '@/assets/types/types';
+import { Category, Restaurant } from '@/assets/types/types';
 
 
 
@@ -64,6 +64,7 @@ export default function Home() {
   const onRefresh = () => {
     setRestaurants([]);
     setPagina(0);
+    paginar();
   }
 
 

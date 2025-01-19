@@ -1,4 +1,4 @@
-import { Restaurant } from "@/components/context/appContext";
+import { Restaurant } from "@/assets/types/types"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LocationObjectCoords } from "expo-location";

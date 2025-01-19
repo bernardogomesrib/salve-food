@@ -1,6 +1,8 @@
+import { Address2, toAddress2 } from "@/assets/types/types";
+import { useMyContext } from "@/components/context/appContext";
 import { Text, View } from "@/components/Themed";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import {
   Modal,
@@ -10,57 +12,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-type Address = {
-  id: string;
-  label: string;
-  address?: string;
-  district: string;
-  city: string;
-  details: string;
-  icon: string;
-};
-
-const addresses: Address[] = [
-  {
-    id: "1",
-    label: "Rua São José, 83",
-    district: "Nova Descoberta",
-    city: "Recife/PE",
-    details: "Primeiro Andar, xxxxxxxxxx",
-    icon: "location-on",
-  },
-  {
-    id: "2",
-    label: "Casa",
-    address: "Rua São João, 96",
-    district: "Nova Descoberta",
-    city: "Recife/PE",
-    details: "Primeiro Andar, xxxxxxxxxx",
-    icon: "home",
-  },
-  {
-    id: "3",
-    label: "Trabalho",
-    address: "Rua São João, 96",
-    district: "Nova Descoberta",
-    city: "Recife/PE",
-    details: "Primeiro Andar, xxxxxxxxxx",
-    icon: "work",
-  },
-];
-
 export default function ListaEnderecos() {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-
-  const openModal = (ad: Address) => {
+  const { enderecos, setEnderecoParaEditar } = useMyContext();
+  const [selectedAddress, setSelectedAddress] = useState<Address2 | null>(null);
+  const openModal = (ad: Address2) => {
     setSelectedAddress(ad);
     setModalVisible(true);
   };
 
   const closeModal = () => {
-    setModalVisible(false);
     setSelectedAddress(null);
+    setModalVisible(false);
   };
 
   return (
@@ -77,28 +40,32 @@ export default function ListaEnderecos() {
 
       <ScrollView>
         <View>
-          {addresses &&
-            addresses.map((address) => (
-              <View style={styles.card} key={address.id}>
-                <MaterialIcons
-                  name={address.icon as keyof typeof MaterialIcons.glyphMap}
-                  size={24}
-                  color="#000"
-                />
-                <View style={styles.cardContent}>
-                  <Text style={styles.cardTitle}>{address.label}</Text>
-                  <Text style={styles.cardText}>{address.address}</Text>
-                  <Text style={styles.cardText}>{address.district}</Text>
-                  <Text style={styles.cardText}>{address.city}</Text>
-                  <Text style={styles.cardText}>{address.details}</Text>
-                </View>
-                <TouchableOpacity onPress={() => openModal(address)}>
-                  <MaterialIcons name="more-vert" size={24} color="#000" />
-                </TouchableOpacity>
-              </View>
-            ))}
-        </View>
+          {enderecos &&
+            enderecos.map((address) => {
+              const ad = toAddress2(address);
+              return(
 
+                <View style={styles.card} key={address.id}>
+                  <MaterialIcons
+                    name={"location-on" as keyof typeof MaterialIcons.glyphMap}
+                    size={24}
+                    color="#000"
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>{ad.label}</Text>
+                    <Text style={styles.cardText}>{ad.address}</Text>
+                    <Text style={styles.cardText}>{ad.district}</Text>
+                    <Text style={styles.cardText}>{ad.city}</Text>
+                    <Text style={styles.cardText}>{ad.details}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => { openModal(ad); setEnderecoParaEditar(address) }}>
+                    <MaterialIcons name="more-vert" size={24} color="#000" />
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+        </View>
+            
         {/* Novo botão no final da lista */}
         <View style={{ alignItems: "center", marginVertical: 20 }}>
           <TouchableOpacity style={styles.buttonNewAddress}>
@@ -122,10 +89,10 @@ export default function ListaEnderecos() {
               <TouchableOpacity style={styles.modalButtonDelete}>
                 <Text style={styles.modalButtonText}>Excluir</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButtonEdit}>
-                <Link href={"/editarEnderecos"}>
+              <TouchableOpacity style={styles.modalButtonEdit} onPress={() => { closeModal();router.push("/(rotas)/editarEnderecos")}}>
+                
                   <Text style={styles.modalButtonText}>Editar</Text>
-                </Link>
+                
               </TouchableOpacity>
             </View>
             <TouchableOpacity

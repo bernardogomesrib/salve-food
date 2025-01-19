@@ -27,14 +27,6 @@ export default function Configuracoes() {
 
             </View>
 
-
-
-
-
-
-
-
-
             <View style={styles.menu}>
                 <MenuItem
                     icon="shield"
