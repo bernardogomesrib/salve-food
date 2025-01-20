@@ -34,8 +34,8 @@ export default function AddAddressScreen() {
     pais: "",
     complemento: "",
     cep: "",
-    latitude: 0,
-    longitude: 0,
+    latitude: null,
+    longitude: null,
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<any>(null);

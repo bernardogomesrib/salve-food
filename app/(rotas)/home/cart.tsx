@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMyContext } from '@/components/context/appContext';
 import {
-    View,
-    Text,
     StyleSheet,
     FlatList,
     TouchableOpacity,
@@ -11,6 +9,7 @@ import {
 import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { readConfigFile } from "typescript";
+import { Text, View } from "@/components/Themed";
 
 export default function CartScreen() {
     const { restaurant, products, cart, removeFromCart, addToCart, delToCart } = useMyContext();
@@ -33,12 +32,7 @@ export default function CartScreen() {
 
     const subtotal = cart.reduce((sum, item) => item.product ? sum + item.product.price * item.quantity : sum, 0);
     const total = subtotal + restaurantFare;
-    useEffect(() => {
-        if (cart.length === 0) {
-            router.push("/(rotas)/home")
 
-        }
-    }, [cart])
     return (
         <>
             <Stack.Screen
@@ -109,28 +103,30 @@ export default function CartScreen() {
                     </Text>
                 )}
 
-                <TouchableOpacity onPress={() => router.push("/restaurante")}>
+                {restaurant&&<TouchableOpacity onPress={() => router.push("/restaurante")}>
                     <Text style={styles.addMoreText}>Adicionar mais itens</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
+
+                
+                {restaurant && <><Text style={styles.sectionTitle}>Peça também</Text>
+                    <FlatList
+                        data={products}
+                        horizontal
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.suggestionItem}>
+                                <Image source={{ uri: item.image }} style={styles.suggestionImage} />
+                                <Text style={styles.suggestionPrice}>R$ {item.price.toFixed(2)}</Text>
+                                <Text style={styles.suggestionName}>{item.name}</Text>
+
+                            </View>
+                        )}
+                    /></>}
 
 
-                <Text style={styles.sectionTitle}>Peça também</Text>
-                <FlatList
-                    data={products}
-                    horizontal
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.suggestionItem}>
-                            <Image source={{ uri: item.image }} style={styles.suggestionImage} />
-                            <Text style={styles.suggestionPrice}>R$ {item.price.toFixed(2)}</Text>
-                            <Text style={styles.suggestionName}>{item.name}</Text>
-
-                        </View>
-                    )}
-                />
-
-
-                <View style={styles.summary}>
+                {cart.length > 0 && (<>
+                
+                    <View style={styles.summary}>
                     <Text style={styles.summaryTitle}>Resumo de valores</Text>
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>Subtotal</Text>
@@ -158,6 +154,8 @@ export default function CartScreen() {
                         <Text style={styles.continueButtonText}>Continuar</Text>
                     </TouchableOpacity>
                 </View>
+                </>
+                )}
             </View>
         </>
     );
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#fff",
     },
     header: {
         flexDirection: "row",
@@ -191,7 +188,10 @@ const styles = StyleSheet.create({
     },
     message: {
         fontSize: 20,
-        textAlign: "center"
+        textAlign: "center",
+        position: "absolute",
+        top: "25%",
+        width: "100%",
     },
     cartItem: {
         flexDirection: "row",
@@ -288,7 +288,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         padding: 16,
-        backgroundColor: "#fff",
         borderTopWidth: 1,
         borderTopColor: "#ddd",
     },

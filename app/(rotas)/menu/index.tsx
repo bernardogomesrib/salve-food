@@ -1,8 +1,9 @@
 import { useMyContext } from '@/components/context/appContext';
+import { Text, View } from '@/components/Themed';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 export default function DetalhesPrato() {
     const { restaurant, product, addToCart, delToCart, cart } = useMyContext();
     const name = product?.name;
@@ -23,10 +24,7 @@ export default function DetalhesPrato() {
         router.push("/(rotas)/home/cart");
     };
 
-    // const handleIncrease = () => setQuantity((prev) => prev + 1);
-    // const handleDecrease = () => {
-    //     if (quantity > 1) setQuantity((prev) => prev - 1);
-    // };
+    
 
 
     return (
@@ -90,7 +88,6 @@ export default function DetalhesPrato() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     image: {
         width: '100%',
@@ -163,7 +160,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
         borderColor: '#ddd',
     },

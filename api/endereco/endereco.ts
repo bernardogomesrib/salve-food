@@ -2,7 +2,7 @@ import { Address } from "@/assets/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { showMessage } from "react-native-flash-message";
-
+let loopbackCounter = 0;
 async function getCoordinatesFromAddress(
   address: string
 ): Promise<{ latitude: number; longitude: number } | null> {
@@ -119,6 +119,19 @@ const fetchAddress = async (latitude: number, longitude: number) => {
 
 
 const salvarEndereco = async (endereco: Address) => {
+  if(loopbackCounter >= 2){
+    showMessage({
+      message: "Erro",
+      description: "Não foi possível salvar informações do seu endereço.",
+      type: "danger"
+    })
+    loopbackCounter=0;
+    return;
+  }
+  if(endereco.latitude === 0 || endereco.longitude === 0){
+    loopbackCounter++;
+    handleCepLookup(endereco, salvarEndereco);
+  }
   console.log("tentando salvar")
   try {
     const response = await axios.post(
@@ -136,6 +149,7 @@ const salvarEndereco = async (endereco: Address) => {
         description: "Endereço salvo com sucesso.",
         type: "success"
       })
+      loopbackCounter=0;
       return response.data
     } else {
       showMessage({
@@ -143,10 +157,12 @@ const salvarEndereco = async (endereco: Address) => {
         description: "Não foi possível salvar o endereço. Tente novamente.",
         type: "danger"
       })
+      loopbackCounter = 0;
     }
     
   } catch (error) {
     console.log(error);
+    loopbackCounter = 0;
   }
 }
 async function editarEndereco(enderecoParaEditar: Address) {

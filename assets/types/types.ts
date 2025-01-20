@@ -37,8 +37,8 @@ export type Address = {
   pais: string;
   complemento: string;
   cep: string;
-  latitude: number;
-  longitude: number;
+  latitude: number|null;
+  longitude: number|null;
 };
 
 export const toAddress2 = function (end: Address): Address2 {
