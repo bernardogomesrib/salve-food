@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useThemeColor } from './themedefiner';
-import { TextInputMask } from 'react-native-masked-text';
+import { MaskedTextInput } from "react-native-mask-text";
 import { Ionicons } from '@expo/vector-icons';
 
 type LocalProps = {
@@ -46,7 +46,8 @@ const Input = (props: InputProps) => {
             <Text style={[stylesLocal.label, { color }]}>{label}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 8 }}>
             {mask ? (
-                    <TextInput
+                    <MaskedTextInput
+                        mask={mask}
                         value={value}
                         onChangeText={handleChangeText}
                         style={[stylesLocal.input, { color }, style]}
