@@ -69,6 +69,7 @@ const updateToken = async (): Promise<void> => {
           tokenUpdateRoutine();
         }
       } else {
+        stopTokenUpdateRoutine();
         showMessage({
             message: "Erro ao atualizar sessão",
             description: "Tokens inválidos recebidos do servidor.",
@@ -76,6 +77,7 @@ const updateToken = async (): Promise<void> => {
         })
       }
     } catch (error: any) {
+        stopTokenUpdateRoutine()
         showMessage({
             message: "Erro ao atualizar sessão",
             description: error.message,
@@ -113,21 +115,6 @@ const doLogin = async (login: string, password: string): Promise<void> => {
             description: error.message,
             type: "danger",
         })
-        Alert.alert(
-            "Erro ao fazer login",
-            error.message,
-            [
-            {
-                text: "Tentar novamente",
-                onPress: () => doLogin(login, password),
-            },
-            {
-                text: "Preencher credenciais novamente",
-                onPress: () => {stopTokenUpdateRoutine();router.push("/login")},
-            },
-            ]
-
-        );
         throw new Error("Falha no login. Verifique suas credenciais.");
     }
 };
