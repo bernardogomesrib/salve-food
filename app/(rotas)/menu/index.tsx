@@ -1,10 +1,10 @@
 import { useMyContext } from '@/components/context/appContext';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 export default function DetalhesPrato() {
-    const { restaurant, product } = useMyContext();
+    const { restaurant, product, addToCart, delToCart, cart } = useMyContext();
     const name = product?.name;
     const description = product?.description
     const price = product ? product?.price : 0;
@@ -12,11 +12,21 @@ export default function DetalhesPrato() {
     const restaurantName = restaurant?.name
     const restaurantDelivery = restaurant?.deliveryTime
     const restaurantRating = restaurant?.rating;
-    const [quantity, setQuantity] = useState(1);
-    const handleIncrease = () => setQuantity((prev) => prev + 1);
-    const handleDecrease = () => {
-        if (quantity > 1) setQuantity((prev) => prev - 1);
+    const getProductQuantity = (productId: number | undefined) => {
+        const cartItem = cart.find((item) => item.product?.id === productId);
+        return cartItem ? cartItem.quantity : 1;
     };
+
+    const quantity = getProductQuantity(product?.id);
+
+    const carrinho = async () => {
+        router.push("/(rotas)/home/cart");
+    };
+
+    // const handleIncrease = () => setQuantity((prev) => prev + 1);
+    // const handleDecrease = () => {
+    //     if (quantity > 1) setQuantity((prev) => prev - 1);
+    // };
 
 
     return (
@@ -56,15 +66,19 @@ export default function DetalhesPrato() {
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.quantitySelector}>
-                        <TouchableOpacity onPress={handleDecrease} style={styles.button}>
+                        <TouchableOpacity onPress={() => {
+                            delToCart({ product, quantity: 1 });
+                        }} style={styles.button}>
                             <MaterialIcons name="remove" size={20} color="#7EE462" />
                         </TouchableOpacity>
                         <Text style={styles.quantityText}>{quantity}</Text>
-                        <TouchableOpacity onPress={handleIncrease} style={styles.button}>
+                        <TouchableOpacity onPress={() => {
+                            addToCart({ product, quantity: 1 });
+                        }} style={styles.button}>
                             <MaterialIcons name="add" size={20} color="#7EE462" />
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.addButton}>
+                    <TouchableOpacity style={styles.addButton} onPress={carrinho}>
                         <Text style={styles.addButtonText}>Adicionar</Text>
                         <Text style={styles.addButtonPrice}>R$ {(quantity * price).toFixed(2)}</Text>
                     </TouchableOpacity>

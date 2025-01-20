@@ -1,12 +1,12 @@
 import { Usuario } from '@/api/auth/tokenHandler';
-import { getItemsDaApi } from '@/api/item/item';
-import { Address, CartItem, Product, Restaurant } from '@/assets/types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import { showMessage } from 'react-native-flash-message';
+import * as Location from 'expo-location';
+import { Alert } from 'react-native';
+import { getItemsDaApi } from '@/api/item/item';
+import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
 
 export interface MyContextType {
     cart: CartItem[];
@@ -17,9 +17,9 @@ export interface MyContextType {
     setRestaurants: (restaurant: Restaurant[]) => void;
     addToCart: (product: CartItem) => void;
     delToCart: (product: CartItem) => void;
-    removeFromCart: (productId: number) => void;
+    removeFromCart: (productId: number|undefined) => void;
     handleRestaurantSelection: (restaurant: Restaurant) => void;
-    handleProductSelection: (product: Product) => void;
+    handleProductSelection: (product: Product | undefined) => void;
     setUsuario: (usuario: Usuario) => void;
     getUsuario: () => Promise<Usuario | undefined>;
     defineUsuario: () => void;
@@ -95,10 +95,10 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         longitude: 0
     });
     const [enderecos, setEnderecos] = useState<Address[]>([]);
-    
-    const modificaEndereco = async (promessa:Promise < any > ) => {
+
+    const modificaEndereco = async (promessa: Promise<any>) => {
         const endereco = await promessa;
-        console.log(endereco,"promessa resolvida");
+        console.log(endereco, "promessa resolvida");
         const existingAddressIndex = enderecos.findIndex((item) => item.id === endereco.id);
         if (existingAddressIndex === -1) {
             setEnderecos([...enderecos, endereco]);
@@ -141,10 +141,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const iniciarCapturaDePosicao = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            showMessage({
-                message: 'Permissão para pegar localização negada',
-                type: 'danger',
-            })
+            Alert.alert('Permissão para pegar localização negada');
             return;
         }
         let location = await Location.getCurrentPositionAsync({});
@@ -166,14 +163,16 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         console.log(restaurant);
         router.push('/restaurante');
     }
-    const handleProductSelection = (product: Product) => {
+    const handleProductSelection = (product: Product | undefined) => {
         setProduct(product);
         router.push(`/menu`);
     }
-    const addToCart = (product: CartItem) => {
+    const addToCart = (product: CartItem | undefined) => {
+        if (product === undefined)
+            return;
         console.log(product);
 
-        const existingProductIndex = cart.findIndex((item) => item.product.id === product.product.id);
+        const existingProductIndex = cart.findIndex((item) => item.product?.id === product.product?.id);
 
         if (existingProductIndex !== -1) {
             const updatedCart = [...cart];
@@ -184,15 +183,17 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         }
     };
 
-    const delToCart = (product: CartItem) => {
-        const existingProductIndex = cart.findIndex((item) => item.product.id === product.product.id);
+    const delToCart = (product: CartItem | undefined) => {
+        if (product === undefined)
+            return;
+        const existingProductIndex = cart.findIndex((item) => item.product?.id === product.product?.id);
 
         if (existingProductIndex !== -1) {
             const updatedCart = [...cart];
             if (updatedCart[existingProductIndex].quantity > 0) {
                 updatedCart[existingProductIndex].quantity -= 1;
                 if (updatedCart[existingProductIndex].quantity === 0) {
-                    removeFromCart(product.product.id);
+                    removeFromCart(product.product?.id);
                 } else {
                     setCart(updatedCart);
                 }
@@ -202,14 +203,14 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         }
     };
 
-    const removeFromCart = (productId: number) => {
+    const removeFromCart = (productId: number | undefined) => {
         const updatedCart = cart
             .map((item) =>
-                item.product.id === productId && item.quantity > 1
+                item.product?.id === productId && item.quantity > 1
                     ? { ...item, quantity: item.quantity - 1 }
                     : item
             )
-            .filter((item) => item.product.id !== productId);
+            .filter((item) => item.product?.id !== productId);
 
         setCart(updatedCart);
     };

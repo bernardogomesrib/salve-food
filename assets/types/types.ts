@@ -8,6 +8,7 @@ export interface Restaurant {
   description?: string;
   address?: string;
   items?: MenuItem[];
+  time: number;
 }
 
 export interface MenuItem {
@@ -19,8 +20,7 @@ export interface MenuItem {
   category: string;
 }
 
-
-export interface Category{
+export interface Category {
   id: number;
   name: string;
   emoji: string;
@@ -43,8 +43,8 @@ export type Address = {
 
 export const toAddress2 = function (end: Address): Address2 {
   const endereco: Address2 = {
-    id: end.id?.toString() || '',
-    label: end.apelido?end.apelido:`${end.rua}, ${end.numero}`,
+    id: end.id?.toString() || "",
+    label: end.apelido ? end.apelido : `${end.rua}, ${end.numero}`,
     address: `${end.rua}, ${end.numero} - ${end.cep}`,
     district: end.bairro,
     city: `${end.cidade}/${end.estado}`,
@@ -55,14 +55,14 @@ export const toAddress2 = function (end: Address): Address2 {
 };
 
 export interface Address2 {
-  id: string;
+  id: string|number;
   label: string;
   address?: string;
   district: string;
   city: string;
   details: string;
   icon: string;
-};
+}
 
 /* {
     id: "1",
@@ -73,20 +73,16 @@ export interface Address2 {
     icon: "location-on",
   }, */
 
-
-
-
 export interface Product {
-    id: number;
-    description: string;
-    price: number;
-    image: string;
-    category: string;
-    name: string;
+  id: number;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  name: string;
 }
 
-
 export interface CartItem {
-    product: Product;
-    quantity: number;
+  product?: Product;
+  quantity: number;
 }

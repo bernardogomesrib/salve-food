@@ -24,38 +24,46 @@ export default function TabLayout() {
     const insets = useSafeAreaInsets();
     return (
 
-            <Tabs
-                screenOptions={{
-                    tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-                    // Disable the static render of the header on web
-                    // to prevent a hydration error in React Navigation v6.
-                    headerShown: useClientOnlyValue(false, true),
-                }}>
-                <Tabs.Screen
-                    name="index"
-                    options={{
-                        title: 'Shopping',
-                        tabBarIcon: ({ color }) => <TabBarIcon name="shopping-bag" color={color} />,
-                        header:()=><CustomHeader router={router} color={colorScheme} insets={insets}/>,
-                    }}
-                />
-                <Tabs.Screen
-                    name="orderHistory"
-                    options={{
-                        title: 'Carrinho',
-                        tabBarIcon: ({ color }) => <TabBarIcon name="shopping-cart" color={color} />,
-                        header:()=><CustomHeader router={router} color={colorScheme} insets={insets}/>,
-                    }}
-                />
-                <Tabs.Screen
-                    name="profile"
-                    options={{
-                        title: 'Perfil',
-                        tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-                        header:()=> <ColorCompliantHeader color ={colorScheme} insets={insets}/>,
-                    }}
-                />
-            </Tabs>
+        <Tabs
+            screenOptions={{
+                tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+                // Disable the static render of the header on web
+                // to prevent a hydration error in React Navigation v6.
+                headerShown: useClientOnlyValue(false, true),
+            }}>
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Shopping',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="shopping-bag" color={color} />,
+                    header: () => <CustomHeader router={router} color={colorScheme} insets={insets} />,
+                }}
+            />
+            <Tabs.Screen
+                name="cart"
+                options={{
+                    title: 'Carrinho',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="shopping-cart" color={color} />,
+                    header: () => <CustomHeader router={router} color={colorScheme} insets={insets} />,
+                }}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: 'Perfil',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+                    header: () => <ColorCompliantHeader color={colorScheme} insets={insets} />,
+                }}
+            />
+            <Tabs.Screen
+                name="orderHistory"
+                options={{
+                    title: 'Histórico',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="history" color={color} />,
+                    header: () => <CustomHeader router={router} color={colorScheme} insets={insets} />,
+                }}
+            />
+        </Tabs>
 
     );
 }
