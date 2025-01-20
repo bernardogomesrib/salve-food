@@ -1,12 +1,12 @@
-import { StyleSheet } from 'react-native';
-import { Text, View } from '@/components/Themed';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Image } from 'expo-image';
-import { Link } from 'expo-router';
-import { useState } from 'react';
-import { styles as stilus } from '../../../assets/styles/Styles';
-import  handleRegister  from '@/api/auth/handleRegister';
+import { StyleSheet } from "react-native";
+import { Text, View } from "@/components/Themed";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
+import { useState } from "react";
+import { styles as stilus } from "../../../assets/styles/Styles";
+import handleRegister from "@/api/auth/handleRegister";
 
 export default function RegisterScreen() {
   const [nome, setNome] = useState("");
@@ -17,7 +17,10 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../../assets/images/salve-food.png')} style={stilus.image} />
+      <Image
+        source={require("../../../assets/images/salve-food.png")}
+        style={stilus.image}
+      />
       <Text style={{ width: "70%", marginBottom: 20 }}>
         Para se cadastrar na nossa plataforma preencha os campos abaixo.
       </Text>
@@ -35,6 +38,7 @@ export default function RegisterScreen() {
         style={{ width: "80%" }}
       />
       <Input
+        mask="(99) 99999-9999"
         label={"Telefone"}
         value={telefone}
         onChangeText={setTelefone}
@@ -60,7 +64,7 @@ export default function RegisterScreen() {
         onPress={() => handleRegister(nome, email, telefone, senha, confirma)}
         style={stilus.buttonEntrar}
       />
-      <Text style={{ width: "70%", marginTop: 20, textAlign: 'center' }}>
+      <Text style={{ width: "70%", marginTop: 20, textAlign: "center" }}>
         Já tem uma conta?{" "}
         <Link href="/(rotas)/login">
           <Text style={stilus.esqueci}>Entre</Text>
@@ -73,7 +77,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
