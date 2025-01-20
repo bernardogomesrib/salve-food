@@ -6,15 +6,15 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   Modal,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
+import { showMessage } from "react-native-flash-message";
 import MapView, { Marker } from "react-native-maps";
 
 
@@ -46,10 +46,11 @@ export default function AddAddressScreen() {
   const handleLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert(
-        "Permissão Negada",
-        "É necessário conceder permissão de localização para usar esta funcionalidade."
-      );
+      showMessage({
+        message: "Permissão Negada",
+        description: "É necessário conceder permissão de localização para usar esta funcionalidade.",
+        type: "warning"
+      })
       return;
     }
     if(location){

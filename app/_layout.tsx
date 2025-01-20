@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 
 import MyProvider from '@/components/context/appContext';
 import { useColorScheme } from '@/components/useColorScheme';
+import FlashMessage from 'react-native-flash-message';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -54,8 +55,9 @@ function RootLayoutNav() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(rotas)" options={{ headerShown: false }} />
-        </Stack>
+        </Stack> 
       </ThemeProvider>
+      <FlashMessage position={"bottom"}/>
     </MyProvider>
   );
 }

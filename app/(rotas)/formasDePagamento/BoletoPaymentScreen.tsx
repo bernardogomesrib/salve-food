@@ -1,15 +1,15 @@
+import * as Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import React, { useState } from "react";
 import {
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  StyleSheet,
-  ScrollView,
+  View
 } from "react-native";
-import * as Clipboard from "expo-clipboard";
-import * as Linking from "expo-linking";
+import { showMessage } from "react-native-flash-message";
 
 export default function BoletoPaymentScreen() {
   const [amount, setAmount] = useState("40.0");
@@ -41,42 +41,58 @@ export default function BoletoPaymentScreen() {
 
       const data = await response.json();
       if (data.error) {
-        Alert.alert("Erro", data.error);
+        showMessage({
+          message: "Erro",
+          description: data.error,
+          type: "danger",
+        })
         return;
       }
       setBoletoLink(data.boleto_link || "");
       setBarcode(data.barcode || "");
-
-      Alert.alert(
-        "Boleto Gerado",
-        `Status: ${data.status}\n` +
+      
+      showMessage({
+        message: "Boleto Gerado",
+        description: `Status: ${data.status}\n` +
           `Detalhe: ${data.status_detail}\n` +
-          (data.boleto_link ? `Link: ${data.boleto_link}` : "")
-      );
+          (data.boleto_link ? `Link: ${data.boleto_link}` : ""),
+        type: "success",
+      })
     } catch (error) {
-      console.error(error);
-      Alert.alert("Erro", "Falha ao criar boleto no servidor.");
+      showMessage({
+        message: "Erro",
+        description: "Falha ao criar boleto no servidor.",
+        type: "danger",
+      })
     }
   }
 
   function handleOpenBoletoLink() {
     if (!boletoLink) {
-      Alert.alert("Info", "Link do boleto não disponível.");
-      return;
+      showMessage({
+        message: "Info",
+        description: "Link do boleto não disponível",
+        type: "info"
+      })
     }
     Linking.openURL(boletoLink);
   }
 
   async function handleCopyBarcode() {
     if (!barcode) {
-      Alert.alert("Info", "Código de barras não disponível.");
+      showMessage({
+        message: "Info",
+        description: "Código de barras não disponível",
+        type: "info"
+      })
       return;
     }
     await Clipboard.setStringAsync(barcode);
-    Alert.alert(
-      "Copiado",
-      "O código de barras foi copiado para a área de transferência."
-    );
+    showMessage({
+      message: "Copiado",
+      description: "O código de barras foi copiado para a área de transferência.",
+      type: "info"
+    })
   }
 
   return (

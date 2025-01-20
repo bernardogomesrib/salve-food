@@ -1,12 +1,12 @@
 import { Usuario } from '@/api/auth/tokenHandler';
+import { getItemsDaApi } from '@/api/item/item';
+import { Address, CartItem, Product, Restaurant } from '@/assets/types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import * as Location from 'expo-location';
-import { Alert } from 'react-native';
-import { getItemsDaApi } from '@/api/item/item';
-import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
+import { showMessage } from 'react-native-flash-message';
 
 export interface MyContextType {
     cart: CartItem[];
@@ -141,7 +141,10 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const iniciarCapturaDePosicao = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert('Permissão para pegar localização negada');
+            showMessage({
+                message: 'Permissão para pegar localização negada',
+                type: 'danger',
+            })
             return;
         }
         let location = await Location.getCurrentPositionAsync({});

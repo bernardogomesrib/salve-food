@@ -1,12 +1,13 @@
 import { getRestaurantes, getRestaurantesNoLocation, getRestaurantesPorCategoria, getRestaurantesPorCategoriaNoLocation } from '@/api/loja/loja';
+import { getCategories } from '@/api/segmentoLoja/segmento';
+import { Category, Restaurant } from '@/assets/types/types';
 import { useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
-import { getCategories } from '@/api/segmentoLoja/segmento';
-import { Category, Restaurant } from '@/assets/types/types';
+import { useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 
 
 
@@ -31,7 +32,10 @@ export default function Home() {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permissão para pegar localização negada');
+        showMessage({
+          message: 'Permissão para pegar localização negada',
+          type: 'danger',
+        })
         return;
       }
 
@@ -49,9 +53,11 @@ export default function Home() {
         setRefreshing(false);
       }
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível obter a localização.');
-
-
+      showMessage({
+        message: 'Erro',
+        description: 'Não foi possível obter a localização.',
+        type: 'danger',
+      })
     }
   }
 

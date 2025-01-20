@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 let isUpdatingToken = false;
 
@@ -68,13 +69,18 @@ const updateToken = async (): Promise<void> => {
           tokenUpdateRoutine();
         }
       } else {
-        Alert.alert(
-          "Erro ao atualizar sessão",
-          "Tokens inválidos recebidos do servidor."
-        );
+        showMessage({
+            message: "Erro ao atualizar sessão",
+            description: "Tokens inválidos recebidos do servidor.",
+            type: "danger",
+        })
       }
     } catch (error: any) {
-        Alert.alert("Erro ao atualizar sessão", error.message);
+        showMessage({
+            message: "Erro ao atualizar sessão",
+            description: error.message,
+            type: "danger",
+        })
         /* router.push("/login"); */
     }
 };
@@ -102,8 +108,11 @@ const doLogin = async (login: string, password: string): Promise<void> => {
             throw new Error("Resposta inválida do servidor.");
         }
     } catch (error: any) {
-        console.error("Erro ao fazer login:", error.message);
-        Alert.prompt("Erro ao fazer login", error.message);
+        showMessage({
+            message: "Erro ao fazer login",
+            description: error.message,
+            type: "danger",
+        })
         Alert.alert(
             "Erro ao fazer login",
             error.message,

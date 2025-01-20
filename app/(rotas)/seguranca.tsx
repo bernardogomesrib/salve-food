@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Modal, Text, TouchableOpacity } from "react-native";
+import { Modal, Text, TouchableOpacity } from "react-native";
 
 import { StyleSheet, useColorScheme, View } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 export default function Security() {
   const router = useRouter();
@@ -18,7 +19,11 @@ export default function Security() {
 
   const confirmSave = () => {
     setModalVisible(false);
-    Alert.alert("Sucesso", "Dados alterados com sucesso!");
+    showMessage({
+      message: "Sucesso",
+      description: "Dados alterados com sucesso!",
+      type: "success",
+    })
   };
 
   return (

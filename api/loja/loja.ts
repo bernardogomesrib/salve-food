@@ -1,8 +1,8 @@
-import { Restaurant } from "@/assets/types/types"; 
+import { Restaurant } from "@/assets/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LocationObjectCoords } from "expo-location";
-import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 
 const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
@@ -23,7 +23,11 @@ const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+      message: "Erro",
+      description: "Nenhum restaurante encontrado",
+      type: "warning",
+    })
     return [];
   }
 };
@@ -47,7 +51,11 @@ const getRestaurantesNoLocation = async (pagina: number) => {
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+      message: "Erro",
+      description: "Nenhum restaurante encontrado",
+      type: "warning",
+    })
     return [];
   }
 };
@@ -71,7 +79,11 @@ const getRestaurantesPorCategoria = async (pos: LocationObjectCoords, pagina: nu
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+      message: "Erro",
+      description: "Nenhum restaurante encontrado",
+      type: "warning",
+    })
     return [];
   }
 }
@@ -93,7 +105,11 @@ const getRestaurantesPorCategoriaNoLocation = async (pagina: number, categoria: 
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+      message: "Erro",
+      description: "Nenhum restaurante encontrado",
+      type: "warning",
+    })
     return [];
   }
 }

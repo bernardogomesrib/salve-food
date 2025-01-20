@@ -1,14 +1,22 @@
 import axios from 'axios';
 import { router } from 'expo-router';
-import { Alert } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 
 const handleRegister = async (nome: string, email: string, telefone: string, senha: string, confirma: string) => {
   if (!nome || !email || !telefone || !senha || !confirma) {
-    Alert.alert("Erro", "Todos os campos são obrigatórios.");
+    showMessage({
+      message: "Erro",
+      description: "Todos os campos são obrigatórios.",
+      type: "danger",
+    })
     return;
   }
   if (senha !== confirma) {
-    Alert.alert("Erro", "As senhas não coincidem.");
+    showMessage({
+      message: "Erro",
+      description: "As senhas não coincidem.",
+      type: "danger",
+    })
     return;
   }
 
@@ -17,7 +25,11 @@ const handleRegister = async (nome: string, email: string, telefone: string, sen
   const lastName = lastNameParts.join(" ");
 
   if (!firstName || !lastName) {
-    Alert.alert("Erro", "Por favor, insira seu nome completo.");
+    showMessage({
+      message: "Erro",
+      description: "Por favor, insira seu nome completo.",
+      type: "danger",
+    })
     return;
   }
 
@@ -32,14 +44,25 @@ const handleRegister = async (nome: string, email: string, telefone: string, sen
     });
 
     if (response.status === 201) {
-      Alert.alert("Sucesso", "Cadastro realizado com sucesso!");
+      showMessage({
+        message: "Sucesso",
+        description: "Cadastro realizado com sucesso!",
+        type: "success",
+      })
       router.push("/login");
     } else {
-      Alert.alert("Erro", "Não foi possível completar o cadastro. Tente novamente.");
+      showMessage({
+        message: "Erro",
+        description: "Não foi possível completar o cadastro. Tente novamente.",
+        type: "danger",
+      })
     }
   } catch (error: any) {
-    console.error("Erro ao cadastrar:", error);
-    Alert.alert("Erro", error.response?.data?.message || "Ocorreu um erro ao cadastrar.");
+    showMessage({
+      message: "Erro",
+      description: error.response?.data?.message || "Ocorreu um erro ao cadastrar.",
+      type: "danger",
+    })
   }
 };
 

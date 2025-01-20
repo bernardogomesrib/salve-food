@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { StyleSheet, Image, Alert } from "react-native";
-import { Button } from "react-native-elements";
-import * as Clipboard from "expo-clipboard";
 import { Text, View } from "@/components/Themed";
+import * as Clipboard from "expo-clipboard";
+import React, { useState } from "react";
+import { Image, StyleSheet } from "react-native";
+import { Button } from "react-native-elements";
+import { showMessage } from "react-native-flash-message";
 
 export default function PixPaymentScreen() {
   const [qrCodeBase64, setQrCodeBase64] = useState<string>("");
@@ -25,17 +26,28 @@ export default function PixPaymentScreen() {
 
       const data = await response.json();
       if (data.error) {
-        Alert.alert("Erro", data.error);
+        showMessage({
+          message: "Erro",
+          description: data.error,
+          type: "danger",
+        })
         return;
       }
 
       setQrCodeBase64(data.qr_code_base64);
       setQrCodePayload(data.qr_code);
       setPaymentStatus(data.status);
-
-      Alert.alert("Pix Gerado", "QR Code gerado com sucesso!");
+      showMessage({
+        message: "Pix Gerado",
+        description: "QR Code gerado com sucesso!",
+        type: "success",
+      })
     } catch (error) {
-      Alert.alert("Erro", "Falha ao criar pagamento Pix.");
+      showMessage({
+        message: "Erro",
+        description: "Falha ao criar pagamento Pix.",
+        type: "danger",
+      })
       console.error(error);
     }
   }
@@ -43,7 +55,11 @@ export default function PixPaymentScreen() {
   async function handleCopyPixCode() {
     if (qrCodePayload) {
       await Clipboard.setStringAsync(qrCodePayload);
-      Alert.alert("Pix Copia e Cola", "Código Pix copiado com sucesso!");
+      showMessage({
+        message: "Pix Copia e Cola",
+        description: "Código Pix copiado com sucesso!",
+        type: "success",
+      })
     }
   }
 
@@ -89,7 +105,11 @@ export default function PixPaymentScreen() {
       <Button
         title="Confirmar Pagamento (Simulado)"
         onPress={() => {
-          Alert.alert("Simulação", "Pagamento confirmado!");
+          showMessage({
+            message: "Simulação",
+            description: "Pagamento confirmado!",
+            type: "success",
+          })
         }}
         buttonStyle={[styles.button, { backgroundColor: "#2196F3" }]}
       />

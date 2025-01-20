@@ -1,7 +1,7 @@
-import { Category } from "@/assets/types/types"
+import { Category } from "@/assets/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 const getCategories = async ():Promise<Category[]> => {
     const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/segmento/usados`;
@@ -13,7 +13,11 @@ const getCategories = async ():Promise<Category[]> => {
     if (response.data) {
         return conversorLista(response.data);
     } else {
-        Alert.alert("Aviso", "Nenhuma categoria encontrada");
+      showMessage({
+        message: "Erro",
+        description: "Nenhuma categoria encontrada",
+        type: "warning",
+      })
         return [];
     }
 }
@@ -36,4 +40,4 @@ function conversorLista(elements: any[]): Category[] {
     return categories;
 }
 
-export { getCategories }
+export { getCategories };

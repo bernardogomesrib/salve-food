@@ -1,20 +1,19 @@
-import { editarEndereco, fetchAddress, handleCepLookup, salvarEndereco } from "@/api/endereco/endereco";
-import { Address } from "@/assets/types/types";
+import { editarEndereco, fetchAddress, handleCepLookup } from "@/api/endereco/endereco";
 import { useMyContext } from "@/components/context/appContext";
 import { Input } from "@/components/ui/input";
 import * as Location from "expo-location";
-import { Link, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  Alert,
   Modal,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
+import { showMessage } from "react-native-flash-message";
 import MapView, { Marker } from "react-native-maps";
 
 
@@ -34,10 +33,12 @@ export default function AddAddressScreen() {
   const handleLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert(
-        "Permissão Negada",
-        "É necessário conceder permissão de localização para usar esta funcionalidade."
-      );
+      showMessage({
+        message: "Permissão Negada",
+        description:
+          "É necessário conceder permissão de localização para usar esta funcionalidade.",
+        type: "danger",
+      })
       return;
     }
     if (location) {

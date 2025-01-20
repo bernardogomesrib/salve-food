@@ -1,8 +1,7 @@
 import { Address } from "@/assets/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { router } from "expo-router";
-import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 async function getCoordinatesFromAddress(
   address: string
@@ -35,7 +34,11 @@ async function getCoordinatesFromAddress(
 
 const handleCepLookup = async (address: Address, func: Function) => {
   if (!address.cep) {
-    Alert.alert("Erro", "Digite um CEP válido.");
+    showMessage({
+      message: "Erro",
+      description: "Digite um CEP válido.",
+      type: "danger",
+    })
     return;
   }
   try {
@@ -44,7 +47,11 @@ const handleCepLookup = async (address: Address, func: Function) => {
     );
     const data = await response.json();
     if (data.erro) {
-      Alert.alert("Erro", "CEP não encontrado.");
+      showMessage({
+        message: "Erro",
+        description: "CEP não encontrado.",
+        type: "danger",
+      })
       return;
     }
     console.log(data);
@@ -67,10 +74,18 @@ const handleCepLookup = async (address: Address, func: Function) => {
         longitude,
       });
     }else{
-        Alert.alert("Erro", "algum problema aconteceu ao buscar informações do seu endereço ...");
+      showMessage({
+        message: "Erro",
+        description: "Não foi possível buscar informações do seu endereço.",
+        type: "danger",
+      })
     }
   } catch (error) {
-    Alert.alert("Erro", "Não foi possível buscar o CEP.");
+    showMessage({
+      message: "Erro",
+      description: "Não foi possível buscar o CEP.",
+      type: "danger",
+    })
   }
 };
 
@@ -81,7 +96,11 @@ const fetchAddress = async (latitude: number, longitude: number) => {
     );
     const data = await response.json();
     if (!data.results.length) {
-      Alert.alert("Erro", "Endereço não encontrado.");
+      showMessage({
+        message: "Erro",
+        description: "Endereço não encontrado.",
+        type: "danger"
+      })
       return;
     }
 
@@ -90,7 +109,11 @@ const fetchAddress = async (latitude: number, longitude: number) => {
 
     return { addressString, components };
   } catch (error) {
-    Alert.alert("Erro", "Não foi possível buscar o endereço.");
+    showMessage({
+      message: "Erro",
+      description: "Não foi possível buscar o endereço.",
+      type: "danger"
+    })
   }
 };
 
@@ -108,12 +131,19 @@ const salvarEndereco = async (endereco: Address) => {
       }
     );
     if (response.status === 200) {
-      Alert.alert("Sucesso", "Endereço salvo com sucesso!");
+      showMessage({
+        message: "Sucesso",
+        description: "Endereço salvo com sucesso.",
+        type: "success"
+      })
       return response.data
     } else {
-      Alert.alert("Erro", "Não foi possível salvar o endereço. Tente novamente.");
+      showMessage({
+        message: "Erro",
+        description: "Não foi possível salvar o endereço. Tente novamente.",
+        type: "danger"
+      })
     }
-      
     
   } catch (error) {
     console.log(error);
@@ -132,24 +162,31 @@ async function editarEndereco(enderecoParaEditar: Address) {
       }
     );
     if (response.status === 200) {
-      Alert.alert("Sucesso", "Endereço salvo com sucesso!");
+      showMessage({
+        message: "Sucesso",
+        description: "Endereço salvo com sucesso.",
+        type: "success",
+      })
       return response.data;
     } else {
-      Alert.alert(
-        "Erro",
-        "Não foi possível salvar o endereço. Tente novamente."
-      );
+      showMessage({
+        message: "Erro",
+        description: "Não foi possível salvar o endereço. Tente novamente.",
+        type: "danger",
+      })
+
     }
   } catch (error:any) {
     console.log(error);
-    Alert.alert("Erro", error.message);
+    showMessage({
+      message: "Erro",
+      description: error.response?.data?.message || "Ocorreu um erro ao salvar o endereço.",
+      type: "danger",
+    })
   }
 }
 
 export {
-  getCoordinatesFromAddress,
-  handleCepLookup,
-  fetchAddress,
-  salvarEndereco,
-  editarEndereco,
+  editarEndereco, fetchAddress, getCoordinatesFromAddress,
+  handleCepLookup, salvarEndereco
 };

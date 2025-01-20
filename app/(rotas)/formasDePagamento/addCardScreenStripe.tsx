@@ -1,17 +1,17 @@
+import { FontAwesome } from "@expo/vector-icons";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from "react-native";
-import { Link, useRouter } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
 
 // Stripe
 import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
+import { showMessage } from "react-native-flash-message";
 
 export default function AddCardScreenStripe() {
   const colorScheme = useColorScheme();
@@ -41,20 +41,36 @@ export default function AddCardScreenStripe() {
       // Se seu back-end retorna { clientSecret }, capturamos:
       if (data.clientSecret) {
         setClientSecret(data.clientSecret);
-        Alert.alert("OK", "PaymentIntent criado no servidor!");
+        showMessage({
+          message: "OK",
+          description: "PaymentIntent criado no servidor!",
+          type: "success",
+        })
       } else {
-        Alert.alert("Erro", "Não recebi clientSecret do back-end!");
+        showMessage({
+          message: "Erro",
+          description: "Não recebi clientSecret do back-end!",
+          type: "danger",
+        })
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Erro", "Falha ao criar PaymentIntent.");
+      showMessage({
+        message: "Erro",
+        description: "Falha ao criar PaymentIntent.",
+        type: "danger",
+      })
     }
   };
 
   // Ao pressionar "Pagar", confirma o pagamento
   const handlePayPress = async () => {
     if (!clientSecret) {
-      Alert.alert("Atenção", "Primeiro gere o PaymentIntent (client_secret).");
+      showMessage({
+        message: "Erro",
+        description: "Primeiro gere o PaymentIntent (client_secret).",
+        type: "warning",
+      })
       return;
     }
 
@@ -64,16 +80,24 @@ export default function AddCardScreenStripe() {
       });
 
       if (error) {
-        Alert.alert("Erro Stripe", error.message || "Erro desconhecido");
+        showMessage({
+          message: "Erro Stripe",
+          description: error.message || "Erro desconhecido",
+          type: "danger",
+        })
       } else if (paymentIntent) {
-        Alert.alert(
-          "Pagamento OK",
-          `Status: ${paymentIntent.status}\nID: ${paymentIntent.id}`
-        );
+        showMessage({
+          message: "Pagamento OK",
+          description: `Status: ${paymentIntent.status}\nID: ${paymentIntent.id}`,
+          type: "success",
+        })
       }
     } catch (err) {
-      console.error("Erro ao confirmar pagamento:", err);
-      Alert.alert("Erro de rede", "Falha ao comunicar com Stripe.");
+      showMessage({
+        message: "Erro",
+        description: "Falha ao comunicar com Stripe.",
+        type: "danger",
+      })
     }
   };
 

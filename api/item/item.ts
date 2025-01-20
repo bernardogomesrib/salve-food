@@ -1,7 +1,7 @@
 import { MenuItem } from "@/assets/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 const getItemsDaApi = async (lojaId:number) => {
   const token = await AsyncStorage.getItem("token");
@@ -20,7 +20,11 @@ const getItemsDaApi = async (lojaId:number) => {
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+      message: "Erro",
+      description: "Nenhum restaurante encontrado",
+      type: "warning",
+    })
     return [];
   } 
 };
