@@ -43,7 +43,7 @@ export type Address = {
 
 export const toAddress2 = function (end: Address): Address2 {
   const endereco: Address2 = {
-    id: end.id?.toString() || "",
+    id: end.id ? end.id : 0,
     label: end.apelido ? end.apelido : `${end.rua}, ${end.numero}`,
     address: `${end.rua}, ${end.numero} - ${end.cep}`,
     district: end.bairro,
@@ -55,7 +55,7 @@ export const toAddress2 = function (end: Address): Address2 {
 };
 
 export interface Address2 {
-  id: string|number;
+  id: number;
   label: string;
   address?: string;
   district: string;
