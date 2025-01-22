@@ -5,6 +5,7 @@ import { useMyContext } from '@/components/context/appContext';
 import { Text, View } from '@/components/Themed';
 import { Image } from 'expo-image';
 import * as Location from 'expo-location';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
@@ -82,6 +83,9 @@ export default function Home() {
 
 
   useEffect(() => {
+    if(enderecoSelecionadoParaEntrega===undefined){
+      router.push('/(rotas)/listaEnderecos');
+    }
     aoEntrar();
   },[])
   useEffect(()=>{

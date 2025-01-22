@@ -29,44 +29,42 @@ const Input = (props: InputProps) => {
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
     };
-    
 
-    const handleChangeText = (text: string) => {
-        if(mask){
-            return text;
-        }
-    };
     return (
         <View style={[{ width }]}>
             <Text style={[stylesLocal.label, { color }]}>{label}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#ddd', borderRadius: 8 }}>
-            {mask ? (
+                {mask ? (
                     <MaskedTextInput
+                        onChangeText={(text: string, rawText: string) => {
+                            if (onChangeText) {
+                                onChangeText(rawText);
+                            }
+                        }}
                         mask={mask}
                         value={value}
-                        onChangeText={handleChangeText}
                         style={[stylesLocal.input, { color, flex: 1 }, style]}
                         placeholder={placeholder}
                         placeholderTextColor={lightColor || "#888"}
                         secureTextEntry={secureTextEntry && !isPasswordVisible}
                         {...otherProps}
                     />
-            ) : (
-                <TextInput
-                value={value}
-                onChangeText={onChangeText}
-                style={[stylesLocal.input, { color, flex: 1 }, style]}
-                placeholder={placeholder}
-                placeholderTextColor={lightColor || "#888"}
-                secureTextEntry={secureTextEntry && !isPasswordVisible}
-                {...otherProps}
-                />
-            )}
-            {secureTextEntry && (
-                <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 12 }}>
-                <Ionicons name={isPasswordVisible ? "eye" : "eye-off"} size={24} color={lightColor || "#888"} />
-                </TouchableOpacity>
-            )}
+                ) : (
+                    <TextInput
+                        value={value}
+                        onChangeText={onChangeText}
+                        style={[stylesLocal.input, { color, flex: 1 }, style]}
+                        placeholder={placeholder}
+                        placeholderTextColor={lightColor || "#888"}
+                        secureTextEntry={secureTextEntry && !isPasswordVisible}
+                        {...otherProps}
+                    />
+                )}
+                {secureTextEntry && (
+                    <TouchableOpacity onPress={togglePasswordVisibility} style={{ padding: 12 }}>
+                        <Ionicons name={isPasswordVisible ? "eye" : "eye-off"} size={24} color={lightColor || "#888"} />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -81,9 +79,7 @@ const stylesLocal = StyleSheet.create({
     input: {
         padding: 12,
         fontSize: 16,
-       
     },
-    
 });
 
 export { Input };

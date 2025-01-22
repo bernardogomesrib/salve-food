@@ -33,6 +33,7 @@ async function getCoordinatesFromAddress(
 }
 
 const handleCepLookup = async (address: Address, func: Function) => {
+  console.log(address.cep)
   if (!address.cep) {
     showMessage({
       message: "Erro",

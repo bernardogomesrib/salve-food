@@ -42,6 +42,19 @@ export type Address = {
 };
 
 export const toAddress2 = function (end: Address): Address2 {
+  let ic = "location-on";
+  if(end.apelido?.toLocaleLowerCase().includes("casa") ){
+    ic = "house";
+  }else if(end.apelido?.toLocaleLowerCase().includes("trabalho")){
+    ic = "work";
+  }else if(end.apelido?.toLocaleLowerCase().includes("apartamento")){
+    ic = "apartment";
+  }else{
+    ic = "location-on"
+  }
+
+
+
   const endereco: Address2 = {
     id: end.id ? end.id : 0,
     label: end.apelido ? end.apelido : `${end.rua}, ${end.numero}`,
@@ -49,7 +62,7 @@ export const toAddress2 = function (end: Address): Address2 {
     district: end.bairro,
     city: `${end.cidade}/${end.estado}`,
     details: end.complemento,
-    icon: "location-on",
+    icon: ic,
   };
   return endereco;
 };

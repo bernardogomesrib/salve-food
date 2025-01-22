@@ -69,32 +69,38 @@ export default function ListaEnderecos() {
 
   	<ScrollView>
     	<View>
-      	{enderecos &&
-        	enderecos.map((address) => {
-          	const ad = toAddress2(address);
-          	return(
+		{enderecos && enderecos.length > 0 ? (
+			enderecos.map((address) => {
+			const ad = toAddress2(address);
+			return(
 
-            	<View style={styles.card} key={address.id}>
-              	<MaterialIcons
-                	name={"location-on" as keyof typeof MaterialIcons.glyphMap}
-                	size={24}
-                	color="#000"
-              	/>
+				<View style={styles.card} key={address.id}>
+				<MaterialIcons
+					name={ad.icon as keyof typeof MaterialIcons.glyphMap}
+					size={24}
+					color="#000"
+				/>
 						<View style={styles.cardContent}>
 							<TouchableOpacity onPress={() => { setEnderecoSelecionadoParaEntrega(address);router.push("/(rotas)/home") }}>
-                	<Text style={styles.cardTitle}>{ad.label}</Text>
-                	<Text style={styles.cardText}>{ad.address}</Text>
-                	<Text style={styles.cardText}>{ad.district}</Text>
-                	<Text style={styles.cardText}>{ad.city}</Text>
-                	<Text style={styles.cardText}>{ad.details}</Text>
+					<Text style={styles.cardTitle}>{ad.label}</Text>
+					<Text style={styles.cardText}>{ad.address}</Text>
+					<Text style={styles.cardText}>{ad.district}</Text>
+					<Text style={styles.cardText}>{ad.city}</Text>
+					<Text style={styles.cardText}>{ad.details}</Text>
 					</TouchableOpacity>
-              	</View>
-              	<TouchableOpacity onPress={() => { openModal(ad); setEnderecoParaEditar(address) }}>
-                	<MaterialIcons name="more-vert" size={24} color="#000" />
-              	</TouchableOpacity>
-            	</View>
-          	);
-        	})}
+				</View>
+				<TouchableOpacity onPress={() => { openModal(ad); setEnderecoParaEditar(address) }}>
+					<MaterialIcons name="more-vert" size={24} color="#000" />
+				</TouchableOpacity>
+				</View>
+			);
+			})
+			) : (
+				<View>
+					<Text style={{fontSize:25,textAlign:"center"}}>Nenhum endereço cadastrado!</Text>
+					<Text style={{textAlign:"center"}}>Adicione algum endereço para poder usar os serviços!</Text>
+				</View>
+			)}
     	</View>
        	 
     	{/* Novo botão no final da lista */}

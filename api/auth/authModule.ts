@@ -35,7 +35,7 @@ const updateToken = async (): Promise<void> => {
 
     if (!refreshToken) {
       stopTokenUpdateRoutine();
-      router.push("/login");
+      router.push("/(rotas)/login");
       return;
     }
     const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/refresh`;
@@ -212,7 +212,7 @@ const getToken = async (): Promise<string | null> => {
     await doLogin(login, password);
     return AsyncStorage.getItem("token");
   } else {
-    router.push("/login");
+    router.push("/(rotas)/login");
     return null;
   }
 };
