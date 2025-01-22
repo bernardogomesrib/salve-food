@@ -100,7 +100,7 @@ export default function AddAddressScreen() {
           <Input label="Estado" value={address.estado} onChangeText={(text) => setAddress({ ...address, estado: text })} placeholder="Ex: SP" />
           <Input label="País" value={address.pais} onChangeText={(text) => setAddress({ ...address, pais: text })} placeholder="Ex: Brasil" />
           <Input label="Complemento" value={address.complemento} onChangeText={(text) => setAddress({ ...address, complemento: text })} placeholder="Ex: Apto 101" />
-          <Input label="CEP" mask="cep" value={address.cep} keyboardType="numeric" onChangeText={(text) => setAddress({ ...address, cep: text })} placeholder="Ex: 01311-000" />
+          <Input label="CEP" value={address.cep} keyboardType="numeric" onChangeText={(text) => setAddress({ ...address, cep: text })} placeholder="Ex: 01311-000" />
 
           <TouchableOpacity style={styles.cepButton} onPress={()=>{handleCepLookup(address,setAddress)}}>
             <Text style={styles.cepButtonText}>Buscar pelo CEP</Text>

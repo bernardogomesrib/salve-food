@@ -29,6 +29,7 @@ export interface MyContextType {
     enderecoParaEditar: Address;
     setEnderecoParaEditar: (endereco: Address) => void;
     modificaEndereco: (promessa: Promise<any>) => void;
+    apagaEndereco: (id: number) => void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -63,7 +64,8 @@ const defaultContextValue: MyContextType = {
         longitude: 0
     },
     setEnderecoParaEditar: () => { },
-    modificaEndereco: () => { }
+    modificaEndereco: () => { },
+    apagaEndereco: () => { }
 };
 
 
@@ -109,6 +111,14 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
                     setEnderecos([...enderecos]);
                 }
             }
+        }
+    }
+    const apagaEndereco = async (id: number) => {
+        const existingAddressIndex = enderecos.findIndex((item) => item.id === id);
+        if (existingAddressIndex !== -1) {
+            const updatedEnderecos = [...enderecos];
+            updatedEnderecos.splice(existingAddressIndex, 1);
+            setEnderecos(updatedEnderecos);
         }
     }
     const getUsuario = async () => {
@@ -216,7 +226,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{ apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );
