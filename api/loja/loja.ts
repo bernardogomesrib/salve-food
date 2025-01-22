@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LocationObjectCoords } from "expo-location";
 import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
   console.log("pegando independente de categoria com localização",pos.latitude,pos.longitude);
@@ -71,7 +72,11 @@ const getRestaurantesPorCategoria = async (
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+          message: "Erro",
+          description: "Nenhuma loja encontrada",
+          type: "warning",
+        })
     return [];
   }
 };
@@ -134,4 +139,5 @@ export {
   getRestaurantesNoLocation,
   getRestaurantesPorCategoria,
   getRestaurantesPorCategoriaNoLocation,
+  conversor,
 };

@@ -1,3 +1,6 @@
+import { Usuario } from "@/api/auth/tokenHandler";
+import { conversor } from "@/api/loja/loja";
+
 export interface Restaurant {
   id: number;
   name: string;
@@ -77,14 +80,6 @@ export interface Address2 {
   icon: string;
 }
 
-/* {
-    id: "1",
-    label: "Rua São José, 83",
-    district: "Nova Descoberta",
-    city: "Recife/PE",
-    details: "Primeiro Andar, xxxxxxxxxx",
-    icon: "location-on",
-  }, */
 
 export interface Product {
   id: number;
@@ -98,4 +93,155 @@ export interface Product {
 export interface CartItem {
   product?: Product;
   quantity: number;
+  price?: number;
 }
+
+
+export interface Pedido {
+  id: number;
+  date: string;
+  time: string;
+  status: string;
+  total: string;
+  paymentMethod: string;
+  deliveryFee: string;
+  items: CartItem[];
+  address: Address2;
+  restaurant: Restaurant;
+  recipient: Usuario
+}
+
+
+export const toPedido= function (pedido: any): Pedido {
+  const items: CartItem[] = [];
+  pedido.itens.forEach((element: any) => {
+    items.push({
+      product: {
+        id: element.item.id,
+        name: element.item.nome,
+        description: element.item.descricao,
+        price: element.valorUnitario,
+        image: element.item.itemImage,
+        category: element.item.categoriaItem.nome,
+      },
+      quantity: element.quantidade,
+    });
+  });
+   const pe: Pedido = {
+    id: pedido.id,
+    date: pedido.dataPedido,
+    time: pedido.dataPedido,
+    status: pedido.status,
+    total: `R$ ${pedido.valorTotal.toFixed(2)}`,
+    paymentMethod: pedido.formaPagamento,
+    deliveryFee: `R$ ${pedido.taxaEntrega.toFixed(2)}`,
+    items,
+    restaurant:conversor(pedido.loja),
+    address:pedido.enderecoEntrega,
+    recipient:pedido.criadoPor
+   }
+   return pe;
+}
+    
+    
+    /* {
+          id: 1,
+          date: "03/01/2025",
+          time: "18:45",
+          status: "Entregue",
+          total: "R$ 59,90",
+          paymentMethod: "Cartão de Crédito",
+          deliveryFee: "R$ 5,00",
+          items: [
+            { name: "Pizza de Calabresa", quantity: 1, unitPrice: "R$ 39,90" },
+            { name: "Coca-Cola 2L", quantity: 1, unitPrice: "R$ 15,00" },
+          ],
+          address: {
+            recipient: "João Silva",
+            street: "Av. Principal",
+            number: 123,
+            city: "Pernambuco",
+            neighborhood: "Recife",
+            reference: "Próximo ao Marco Zero",
+          },
+          restaurant: {
+            name: "Pizzaria Salve Food",
+            address: "Rua 01, do lado da rua 02, 10, Recife",
+            phone: "(81) 1234-5678",
+          },
+        }, */
+    /* 
+    {
+        "id": 252,
+        "dataPedido": "21/01/2025 18:05:06",
+        "dataUltimaModificacao": "21/01/2025 18:25:40",
+        "criadoPor": {
+          "id": "6346b60f-cc52-4ba5-b1f4-0fac460adaff",
+          "firstName": "Nome",
+          "lastName": "novo",
+          "email": "string@string",
+          "phone": "98989898",
+          "lastSeenAt": "2025-01-22T18:25:49.840741",
+          "loja": null,
+          "online": true
+        },
+        "enderecoEntrega": {
+          "id": 1,
+          "apelido": null,
+          "rua": "string",
+          "numero": "string",
+          "complemento": "string",
+          "bairro": "string",
+          "cidade": "string",
+          "estado": "string",
+          "latitude": 0.1,
+          "longitude": 0.1,
+          "cep": null,
+          "ativo": false
+        },
+        "status": "PREPARANDO",
+        "valorTotal": 64,
+        "taxaEntrega": 30,
+        "formaPagamento": "AINDA NÃO IMPLEMENTADO",
+        "itens": [
+          {
+            "id": 1,
+            "item": {
+              "id": 52,
+              "nome": "Espetinho de Camarão com Queijo",
+              "descricao": "Espetinho de camarão com uma barrotada de queijo e joga na fritura pra matar de ataque cardiaco o ataque cardiaco",
+              "valor": 32,
+              "categoriaItem": {
+                "id": 20,
+                "nome": "Camarão"
+              },
+              "itemImage": null
+            },
+            "quantidade": 2,
+            "valorUnitario": 32
+          }
+        ],
+        "loja": {
+          "id": 202,
+          "nome": "Bode do nô",
+          "descricao": "Pratos nordestinos como fava, arroz, farofa de jerimum, cuscuz e vinagrete, doces, espaço amplo e área kids.",
+          "rua": "R. São Miguel",
+          "numero": "1401",
+          "bairro": "Afogados",
+          "cidade": "Recife",
+          "estado": "PE",
+          "segmentoLoja": {
+            "id": 46,
+            "nome": "Nordestina",
+            "emoji": "🌵"
+          },
+          "longitude": -34.9793825,
+          "latitude": -8.08058,
+          "image": null,
+          "reviews": [],
+          "entregadores": [],
+          "rating": null,
+          "deliveryTime": null
+        },
+        "trajetoriaEntregador": null
+      } */
