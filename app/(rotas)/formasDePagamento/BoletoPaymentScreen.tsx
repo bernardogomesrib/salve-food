@@ -24,7 +24,7 @@ export default function BoletoPaymentScreen() {
   async function handleCreateBoleto() {
     try {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}create-boleto-payment`,
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}create-boleto-payment`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

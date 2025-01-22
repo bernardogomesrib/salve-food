@@ -28,7 +28,7 @@ export default function AddCardScreenStripe() {
     try {
       // Faz requisição ao seu back-end
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}create-payment-intent`,
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}create-payment-intent`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

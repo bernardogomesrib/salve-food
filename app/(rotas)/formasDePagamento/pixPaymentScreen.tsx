@@ -13,7 +13,7 @@ export default function PixPaymentScreen() {
   async function handleCreatePayment() {
     try {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}create-pix-payment`,
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}create-pix-payment`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

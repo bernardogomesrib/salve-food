@@ -4,7 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const mercadopago = require("mercadopago");
 const Stripe = require("stripe");
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN_PRODUCAO;
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN_TESTE_MERCADO_PAGO;
 const stripe = new Stripe(`${process.env.SECRET_KEY_TESTE_STRIPE}`, {
   apiVersion: "2022-11-15",
 });
