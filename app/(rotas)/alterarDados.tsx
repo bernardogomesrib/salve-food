@@ -1,41 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FontAwesome } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React from "react";
+import React, { useCallback, useState } from "react";
 
-import {
-  StyleSheet,
-  useColorScheme,
-  View
-} from "react-native";
-
+import { useMyContext } from "@/components/context/appContext";
+import { useFocusEffect } from "expo-router";
+import { StyleSheet, useColorScheme, View } from "react-native";
+import { updateUser } from "../../api/auth/authModule";
 export default function EditProfile() {
-  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [nome, setNome] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const { usuario } = useMyContext();
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUsuario = async () => {
+        if (usuario) {
+          setEmail(usuario.email);
+          setNome(usuario.name);
+          setTelefone(usuario.phone);
+        }
+      }
+      fetchUsuario();
+    }, [])
+  )
+
   const color = useColorScheme();
   return (
     <View style={styles.container}>
       {/* Header */}
-   
 
       {/* Profile Picture */}
       <View style={styles.profileContainer}>
-        <FontAwesome name="user-circle" size={100} color={color=='dark'? 'white':'black'} />
+        <FontAwesome
+          name="user-circle"
+          size={100}
+          color={color == "dark" ? "white" : "black"}
+        />
       </View>
 
-      {/* Form */}
       <View style={styles.form}>
         <View style={styles.inputGroup}>
           <Input
+            value={nome}
+            onChangeText={setNome}
             label="Nome"
             style={styles.input}
-            placeholder="Thyago Silva de Melo"
+            placeholder="Fulano Beltrano da Silva"
             placeholderTextColor="#aaa"
           />
         </View>
 
         <View style={styles.inputGroup}>
           <Input
+            value={telefone}
+            onChangeText={setTelefone}
+            mask="(99) 99999-9999"
             label="Número de Telefone"
             style={styles.input}
             placeholder="(81) 94002-8922"
@@ -45,8 +66,9 @@ export default function EditProfile() {
         </View>
 
         <View style={styles.inputGroup}>
-
           <Input
+            value={email}
+            onChangeText={setEmail}
             label="Email"
             style={styles.input}
             placeholder="tsm6@discente.ifpe.edu.br"
@@ -55,22 +77,13 @@ export default function EditProfile() {
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Input
-            label="Senha"
-            style={styles.input}
-            placeholder="************"
-            placeholderTextColor="#aaa"
-            secureTextEntry
-          />
-        </View>
       </View>
 
       {/* Button */}
       <Button
         title="Editar Perfil"
         style={styles.editButton}
-        onPress={() => console.log("Editar Perfil")}
+        onPress={() => updateUser(nome, email, telefone)}
       />
     </View>
   );
@@ -80,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
- 
+
   profileContainer: {
     alignItems: "center",
     marginVertical: 20,
@@ -94,15 +107,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    
+
     marginBottom: 5,
   },
   input: {
-    
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    
   },
   editButton: {
     padding: 16,
