@@ -29,16 +29,11 @@ const Input = (props: InputProps) => {
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
     };
-    const applyMask = (text: string) => {
-        if (mask === 'cep') {
-            return text.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2').slice(0, 9);
-        }
-        return text;
-    };
+    
 
     const handleChangeText = (text: string) => {
-        if (mask) {
-            onChangeText && onChangeText(applyMask(text));
+        if(mask){
+            return text;
         }
     };
     return (
@@ -50,7 +45,7 @@ const Input = (props: InputProps) => {
                         mask={mask}
                         value={value}
                         onChangeText={handleChangeText}
-                        style={[stylesLocal.input, { color }, style]}
+                        style={[stylesLocal.input, { color, flex: 1 }, style]}
                         placeholder={placeholder}
                         placeholderTextColor={lightColor || "#888"}
                         secureTextEntry={secureTextEntry && !isPasswordVisible}

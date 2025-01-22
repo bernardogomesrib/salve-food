@@ -93,10 +93,10 @@ export default function AddAddressScreen() {
         {/* Formulário */}
         <View style={styles.form}>
           <Input label="Apelido" value={address.apelido} onChangeText={(text) => setAddress({ ...address, apelido: text })} placeholder="Ex: Casa" />
-          <Input label="Rua" value={address.rua} onChangeText={(text) => setAddress({ ...address, rua: text })} placeholder="Ex: Av. Paulista" />
           <Input label="Número" value={address.numero} onChangeText={(text) => setAddress({ ...address, numero: text })} placeholder="Ex: 123" />
+          <Input label="CEP" mask="99999-999" value={address.cep} keyboardType="phone-pad" onBlur={() => { handleCepLookup(address, setAddress) }} onChangeText={(text) => {setAddress({ ...address, cep: text });}} placeholder="Ex: 01311-000" />
+          <Input label="Rua" value={address.rua} onChangeText={(text) => setAddress({ ...address, rua: text })} placeholder="Ex: Av. Paulista" />
           <Input label="Bairro" value={address.bairro} onChangeText={(text) => setAddress({ ...address, bairro: text })} placeholder="Ex: Bela Vista" />
-          <Input label="CEP" value={address.cep} keyboardType="numeric" onChangeText={(text) => {setAddress({ ...address, cep: text });if(text.length>=8){handleCepLookup(address,setAddress)}}} placeholder="Ex: 01311-000" />
           <Input label="Cidade" value={address.cidade} onChangeText={(text) => setAddress({ ...address, cidade: text })} placeholder="Ex: São Paulo" />
           <Input label="Estado" value={address.estado} onChangeText={(text) => setAddress({ ...address, estado: text })} placeholder="Ex: SP" />
           <Input label="País" value={address.pais} onChangeText={(text) => setAddress({ ...address, pais: text })} placeholder="Ex: Brasil" />

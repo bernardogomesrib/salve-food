@@ -136,10 +136,10 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             console.log(req.data);
             setUsuario(req.data);
             setEnderecos(req.data.enderecos);
-            if (req.data.enderecos.length > 0) {
+            if(enderecoSelecionadoParaEntrega===undefined&&req.data.enderecos.length>0){
                 setEnderecoSelecionadoParaEntrega(req.data.enderecos[0]);
             }
-
+            return req.data;
         } else {
             return usuario;
         }
