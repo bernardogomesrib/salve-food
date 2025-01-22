@@ -149,6 +149,7 @@ const salvarEndereco = async (endereco: Address) => {
         type: "success",
       });
       loopbackCounter = 0;
+      console.log(response.data);
       return response.data;
     } else {
       showMessage({

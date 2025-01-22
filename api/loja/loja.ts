@@ -5,7 +5,7 @@ import { LocationObjectCoords } from "expo-location";
 import { Alert } from "react-native";
 
 const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
-  console.log("pegando independente de categoria");
+  console.log("pegando independente de categoria com localização",pos.latitude,pos.longitude);
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
@@ -54,7 +54,7 @@ const getRestaurantesPorCategoria = async (
   pagina: number,
   categoria: number
 ) => {
-  console.log("pegando via categoria");
+  console.log("pegando via categoria com localização",pos.latitude,pos.longitude);
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/segmento/${categoria}?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 

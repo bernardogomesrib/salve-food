@@ -16,7 +16,7 @@ import {
 
 export default function ListaEnderecos() {
   const [modalVisible, setModalVisible] = useState(false);
-  const { enderecos, setEnderecoParaEditar,apagaEndereco } = useMyContext();
+  const { enderecos, setEnderecoParaEditar,apagaEndereco,setEnderecoSelecionadoParaEntrega } = useMyContext();
   const [selectedAddress, setSelectedAddress] = useState<Address2 | null>(null);
   const [enderecos2, setEnderecos2] = useState<Address2[]>([]);
   const openModal = (ad: Address2) => {
@@ -80,12 +80,14 @@ export default function ListaEnderecos() {
                 	size={24}
                 	color="#000"
               	/>
-              	<View style={styles.cardContent}>
+						<View style={styles.cardContent}>
+							<TouchableOpacity onPress={() => { setEnderecoSelecionadoParaEntrega(address);router.push("/(rotas)/home") }}>
                 	<Text style={styles.cardTitle}>{ad.label}</Text>
                 	<Text style={styles.cardText}>{ad.address}</Text>
                 	<Text style={styles.cardText}>{ad.district}</Text>
                 	<Text style={styles.cardText}>{ad.city}</Text>
                 	<Text style={styles.cardText}>{ad.details}</Text>
+					</TouchableOpacity>
               	</View>
               	<TouchableOpacity onPress={() => { openModal(ad); setEnderecoParaEditar(address) }}>
                 	<MaterialIcons name="more-vert" size={24} color="#000" />

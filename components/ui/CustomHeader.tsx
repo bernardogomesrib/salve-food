@@ -4,10 +4,12 @@ import { Image } from "expo-image";
 import { Router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { TouchableOpacity } from "react-native";
-import { View } from "../Themed";
+import { Text, View } from "../Themed";
+import { useMyContext } from "../context/appContext";
 
 const CustomHeader = ({color, insets,router }:{color:'dark'|'light'|undefined|null,insets:any,router:Router}) => {
-    
+    const { enderecoSelecionadoParaEntrega }= useMyContext();
+
     return (<>
 
         <View style={{ height: insets.top }}>
@@ -19,34 +21,26 @@ const CustomHeader = ({color, insets,router }:{color:'dark'|'light'|undefined|nu
                     console.log("Vázio por enquanto");
                 }}
             >
-                <FontAwesome
-                    name="bars"
-                    size={32}
-                    color={color == "dark" ? "white" : "black"}
-                />
+                
             </TouchableOpacity>
 
             <TouchableOpacity
                 onPress={() => {
-                    router.push("/home");
+                    router.push("/(rotas)/listaEnderecos");
                 }}
             >
-                <Image
+                {enderecoSelecionadoParaEntrega ? <Text>{enderecoSelecionadoParaEntrega.apelido} - {enderecoSelecionadoParaEntrega.rua }</Text>:<Image
                     source={require("../../assets/images/salve-food.png")}
                     style={styles.logo}
-                />
+                />}
             </TouchableOpacity>
 
             <TouchableOpacity
                 onPress={() => {
-                    router.push("/home/profile");
+                    console.log("Vázio por enquanto");
                 }}
             >
-                <FontAwesome
-                    name="user"
-                    size={32}
-                    color={color == "dark" ? "white" : "black"}
-                />
+                
             </TouchableOpacity>
         </View>
     </>

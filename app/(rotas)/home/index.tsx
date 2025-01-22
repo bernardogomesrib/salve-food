@@ -12,7 +12,7 @@ import { showMessage } from 'react-native-flash-message';
 
 
 export default function Home() {
-  const { restaurants, setRestaurants, handleRestaurantSelection, defineUsuario,location } = useMyContext();
+  const { restaurants, setRestaurants, handleRestaurantSelection, defineUsuario,location,enderecoSelecionadoParaEntrega } = useMyContext();
   const [pagina, setPagina] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [categoria, setCategoria] = useState<null | number>(null);
@@ -39,18 +39,25 @@ export default function Home() {
         return;
       }
 
-      if (location) {
+      if (enderecoSelecionadoParaEntrega&&enderecoSelecionadoParaEntrega.latitude&&enderecoSelecionadoParaEntrega.longitude){
+        const restaurantes = categoria !== null ? await getRestaurantesPorCategoria({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina, categoria) : await getRestaurantes({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina);
+        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
+          .map(id => restaurantes.find(r => r.id === id));
+        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
+        setRefreshing(false);
+      } else if (location){
         const restaurantes = categoria !==null ? await getRestaurantesPorCategoria(location.coords, pagina, categoria) : await getRestaurantes(location.coords, pagina);
         const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
           .map(id => restaurantes.find(r => r.id === id));
         setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
         setRefreshing(false);
-      } else {
+      }else{
         const restaurantes = categoria !==null ? await getRestaurantesPorCategoriaNoLocation(pagina, categoria) : await getRestaurantesNoLocation(pagina);
         const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
           .map(id => restaurantes.find(r => r.id === id));
         setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
         setRefreshing(false);
+
       }
     } catch (error) {
       showMessage({
@@ -77,7 +84,9 @@ export default function Home() {
   useEffect(() => {
     aoEntrar();
   },[])
-
+  useEffect(()=>{
+    onRefresh();
+  },[enderecoSelecionadoParaEntrega]);
   useEffect(() => { paginar(); }, [pagina]);
   return (
     <View style={styles.container}>
