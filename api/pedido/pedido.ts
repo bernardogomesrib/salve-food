@@ -4,7 +4,7 @@ import { showMessage } from "react-native-flash-message"
 
 const pegaPedidos = async (page: number, setTotalPages: Function) => {
   console.log("pegando pedidos")
-  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/pedidos?page=${page}`
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/pedidos/meus?page=${page}`
   try {
     const response = await axios.get(url, {
       headers: {

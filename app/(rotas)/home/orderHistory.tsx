@@ -45,48 +45,52 @@ export default function OrderHistory() {
       </View>
      
       <ScrollView>
-        {orders.map((item) => {
-          console.log(item.itens)
-          return (
-            <View key={item.id} style={[styles.orderCard, { backgroundColor }]}>
-              <Text style={[styles.orderHeader, { color: textColor }]}>
-                Pedido #{item.id} - {item.status}
-              </Text>
-              <Text style={[styles.orderText, { color: textColor }]}>
-                Data: {item.dataPedido}
-              </Text>
-              <Text style={[styles.orderText, { color: textColor }]}>
-                Total: R${item.valorTotal.toFixed(2)} (Taxa de Entrega: {item.taxaEntrega.toFixed(2)})
-              </Text>
-              <Text style={[styles.orderText, { color: textColor }]}>
-                Pagamento: {item.formaPagamento}
-              </Text>
-              <Text style={[styles.subHeader, { color: textColor }]}>Itens:</Text>
-              {item.itens && item.itens.map((it: any) => (
-                <Text
-                  key={it.id}
-                  style={[styles.orderText, { color: textColor }]}
-                >
-                  - {it.quantidade}x {it.item.nome} (R${(it.quantidade * it.valorUnitario).toFixed(2)})
+        {orders.length > 0 ? (
+          orders.map((item: any) => {
+            console.log(item.itens);
+            return (
+              <View key={item.id} style={[styles.orderCard, { backgroundColor }]}>
+                <Text style={[styles.orderHeader, { color: textColor }]}>
+                  Pedido #{item.id} - {item.status}
                 </Text>
-              ))}
-              <Text style={[styles.subHeader, { color: textColor }]}>
-                Endereço:
-              </Text>
-              <Text style={[styles.orderText, { color: textColor }]}>
-                {item.criadoPor.firstName + " " + item.criadoPor.lastName}, {item.enderecoEntrega.apelido ? item.enderecoEntrega.apelido : item.enderecoEntrega.rua},{" "}
-                {item.enderecoEntrega.numero}, {item.enderecoEntrega.bairro},{" "}
-                {item.enderecoEntrega.cidade} - {item.enderecoEntrega.estado}
-              </Text>
-              <Text style={[styles.subHeader, { color: textColor }]}>
-                Restaurante:
-              </Text>
-              <Text style={[styles.orderText, { color: textColor }]}>
-                {item.loja?.nome}, {item.loja?.rua} - {item.loja?.bairro} - {item.loja?.cidade}
-              </Text>
-            </View>
-          )
-        })}
+                <Text style={[styles.orderText, { color: textColor }]}>
+                  Data: {item.dataPedido}
+                </Text>
+                <Text style={[styles.orderText, { color: textColor }]}>
+                  Total: R${item.valorTotal.toFixed(2)} (Taxa de Entrega: {item.taxaEntrega.toFixed(2)})
+                </Text>
+                <Text style={[styles.orderText, { color: textColor }]}>
+                  Pagamento: {item.formaPagamento}
+                </Text>
+                <Text style={[styles.subHeader, { color: textColor }]}>Itens:</Text>
+                {item.itens && item.itens.map((it: any) => (
+                  <Text
+                    key={it.id}
+                    style={[styles.orderText, { color: textColor }]}
+                  >
+                    - {it.quantidade}x {it.item.nome} (R${(it.quantidade * it.valorUnitario).toFixed(2)})
+                  </Text>
+                ))}
+                <Text style={[styles.subHeader, { color: textColor }]}>
+                  Endereço:
+                </Text>
+                <Text style={[styles.orderText, { color: textColor }]}>
+                  {item.criadoPor.firstName + " " + item.criadoPor.lastName}, {item.enderecoEntrega.apelido ? item.enderecoEntrega.apelido : item.enderecoEntrega.rua},{" "}
+                  {item.enderecoEntrega.numero}, {item.enderecoEntrega.bairro},{" "}
+                  {item.enderecoEntrega.cidade} - {item.enderecoEntrega.estado}
+                </Text>
+                <Text style={[styles.subHeader, { color: textColor }]}>
+                  Restaurante:
+                </Text>
+                <Text style={[styles.orderText, { color: textColor }]}>
+                  {item.loja?.nome}, {item.loja?.rua} - {item.loja?.bairro} - {item.loja?.cidade}
+                </Text>
+              </View>
+            );
+          })
+        ) : (
+          <Text style={styles.emptyMessage}>Nenhum pedido encontrado.</Text>
+        )}
       </ScrollView>
 
     </View>
