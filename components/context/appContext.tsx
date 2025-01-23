@@ -135,7 +135,9 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
 
     }
     const getUsuario = async (required?:boolean|undefined) => {
-        if (usuario === undefined||required) {
+        console.log("getUsuario chamado");
+        if (usuario === undefined||required===true) {
+            console.log("buscando vai api")
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
                 headers: {
                     'Authorization': 'Bearer ' + (await AsyncStorage.getItem('token'))
@@ -175,7 +177,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         setLocation(location);
     }
     const defineUsuario = async () => {
-        const u = await getUsuario();
+        const u = await getUsuario(true);
         if (u !== undefined) {
             setUsuario(u)
         }

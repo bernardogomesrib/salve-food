@@ -8,26 +8,15 @@ import { useFocusEffect } from "expo-router";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { updateUser } from "../../api/auth/authModule";
 export default function EditProfile() {
-  const [email, setEmail] = useState("");
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const { usuario } = useMyContext();
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchUsuario = async () => {
-        if (usuario) {
-          setEmail(usuario.email);
-          setNome(usuario.name);
-          setTelefone(usuario.phone);
-        }
-      }
-      fetchUsuario();
-    }, [])
-  )
+  
+  const { usuario, getUsuario,setUsuario } = useMyContext();
+  const [nome, setNome] = useState(usuario?.name);
+  const [email, setEmail] = useState(usuario?.email);
+  const [telefone, setTelefone] = useState(usuario?.phone);
+  
 
   const color = useColorScheme();
-  return (
+  return usuario&&(
     <View style={styles.container}>
       {/* Header */}
 
@@ -39,12 +28,12 @@ export default function EditProfile() {
           color={color == "dark" ? "white" : "black"}
         />
       </View>
-
+      
       <View style={styles.form}>
         <View style={styles.inputGroup}>
           <Input
             value={nome}
-            onChangeText={setNome}
+            onChangeText={(text) => {setNome(text);setUsuario({ ...usuario, name: text });console.log(text)}}
             label="Nome"
             style={styles.input}
             placeholder="Fulano Beltrano da Silva"
@@ -54,8 +43,8 @@ export default function EditProfile() {
 
         <View style={styles.inputGroup}>
           <Input
-            value={telefone}
-            onChangeText={setTelefone}
+            value={usuario?.phone}
+            onChangeText={(text)=>{setTelefone(text);setUsuario({...usuario,phone:text})}}
             mask="(99) 99999-9999"
             label="Número de Telefone"
             style={styles.input}
@@ -67,8 +56,8 @@ export default function EditProfile() {
 
         <View style={styles.inputGroup}>
           <Input
-            value={email}
-            onChangeText={setEmail}
+            value={usuario?.email}
+            onChangeText={(text)=>{setEmail(text);setUsuario({...usuario,email:text})}}
             label="Email"
             style={styles.input}
             placeholder="tsm6@discente.ifpe.edu.br"
@@ -83,7 +72,7 @@ export default function EditProfile() {
       <Button
         title="Editar Perfil"
         style={styles.editButton}
-        onPress={() => updateUser(nome, email, telefone)}
+        onPress={() => updateUser(nome?nome:"", email?email:"", telefone?telefone:"")}
       />
     </View>
   );
