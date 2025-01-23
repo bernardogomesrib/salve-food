@@ -247,43 +247,4 @@ const useMyContext = () => {
 
 export { useMyContext };
 export default MyProvider;
-//area de variaveis de mock
 
-const mockMenuItems = [
-    [
-        {
-            id: 1,
-            name: "Feijoada Completa",
-            description: "Feijoada tradicional com arroz, couve e farofa",
-            price: 45.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pratos Principais",
-        },
-        {
-            id: 2,
-            name: "Moqueca de Peixe",
-            description: "Peixe fresco com leite de coco e dendê",
-            price: 52.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pratos Principais",
-        },
-    ],
-    [
-        {
-            id: 1,
-            name: "Pizza Margherita",
-            description: "Molho de tomate, mussarela, manjericão",
-            price: 39.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pizzas",
-        },
-        {
-            id: 2,
-            name: "Lasanha à Bolonhesa",
-            description: "Massa fresca, molho bolonhesa e bechamel",
-            price: 45.9,
-            image: "https://via.placeholder.com/400",
-            category: "Massas",
-        },
-    ],
-]
