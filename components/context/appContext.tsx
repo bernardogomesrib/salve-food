@@ -29,6 +29,9 @@ export interface MyContextType {
     enderecoParaEditar: Address;
     setEnderecoParaEditar: (endereco: Address) => void;
     modificaEndereco: (promessa: Promise<any>) => void;
+    apagaEndereco: (id: number) => void;
+    enderecoSelecionadoParaEntrega:undefined|Address;
+    setEnderecoSelecionadoParaEntrega:(endereco:Address|undefined)=>void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -63,7 +66,10 @@ const defaultContextValue: MyContextType = {
         longitude: 0
     },
     setEnderecoParaEditar: () => { },
-    modificaEndereco: () => { }
+    modificaEndereco: () => { },
+    apagaEndereco: () => { },
+    enderecoSelecionadoParaEntrega: undefined,
+    setEnderecoSelecionadoParaEntrega: () => { }
 };
 
 
@@ -81,6 +87,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [restaurant, setRestaurant] = useState<Restaurant>();
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega] = useState<Address | undefined>(undefined);
     const [enderecoParaEditar, setEnderecoParaEditar] = useState<Address>({
         id: 0,
         rua: "",
@@ -111,6 +118,14 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             }
         }
     }
+    const apagaEndereco = async (id: number) => {
+        const existingAddressIndex = enderecos.findIndex((item) => item.id === id);
+        if (existingAddressIndex !== -1) {
+            const updatedEnderecos = [...enderecos];
+            updatedEnderecos.splice(existingAddressIndex, 1);
+            setEnderecos(updatedEnderecos);
+        }
+    }
     const getUsuario = async () => {
         if (usuario === undefined) {
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
@@ -121,7 +136,10 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             console.log(req.data);
             setUsuario(req.data);
             setEnderecos(req.data.enderecos);
-
+            if(enderecoSelecionadoParaEntrega===undefined&&req.data.enderecos.length>0){
+                setEnderecoSelecionadoParaEntrega(req.data.enderecos[0]);
+            }
+            return req.data;
         } else {
             return usuario;
         }
@@ -216,7 +234,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );

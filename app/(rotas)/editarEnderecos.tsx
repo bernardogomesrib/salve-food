@@ -83,13 +83,13 @@ export default function AddAddressScreen() {
         {/* Formulário */}
         <View style={styles.form}>
           <Input label="Apelido" value={enderecoParaEditar.apelido} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, apelido: text })} placeholder="Ex: Casa" />
-          <Input label="Rua" value={enderecoParaEditar.rua} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, rua: text })} placeholder="Ex: Av. Paulista" />
+          <Input label="CEP" value={enderecoParaEditar.cep} keyboardType="numeric" onBlur={() => { handleCepLookup(enderecoParaEditar, setEnderecoParaEditar) }} onChangeText={(text) => { setEnderecoParaEditar({ ...enderecoParaEditar, cep: text }); if (text.length >= 8) { handleCepLookup(enderecoParaEditar, setEnderecoParaEditar)}}} placeholder="Ex: 01311-000" />
           <Input label="Número" value={enderecoParaEditar.numero} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, numero: text })} placeholder="Ex: 123" />
+          <Input label="Rua" value={enderecoParaEditar.rua} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, rua: text })} placeholder="Ex: Av. Paulista" />
           <Input label="Bairro" value={enderecoParaEditar.bairro} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, bairro: text })} placeholder="Ex: Bela Vista" />
+          <Input label="Complemento" value={enderecoParaEditar.complemento} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, complemento: text })} placeholder="Ex: Apto 101" />
           <Input label="Cidade" value={enderecoParaEditar.cidade} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, cidade: text })} placeholder="Ex: São Paulo" />
           <Input label="Estado" value={enderecoParaEditar.estado} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, estado: text })} placeholder="Ex: SP" />
-          <Input label="Complemento" value={enderecoParaEditar.complemento} onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, complemento: text })} placeholder="Ex: Apto 101" />
-          <Input label="CEP" mask="cep" value={enderecoParaEditar.cep} keyboardType="numeric" onChangeText={(text) => setEnderecoParaEditar({ ...enderecoParaEditar, cep: text })} placeholder="Ex: 01311-000" />
 
           <TouchableOpacity style={styles.cepButton} onPress={() => { handleCepLookup(enderecoParaEditar, setEnderecoParaEditar) }}>
             <Text style={styles.cepButtonText}>Buscar pelo CEP</Text>

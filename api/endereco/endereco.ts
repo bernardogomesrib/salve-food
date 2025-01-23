@@ -33,17 +33,19 @@ async function getCoordinatesFromAddress(
 }
 
 const handleCepLookup = async (address: Address, func: Function) => {
+  console.log(address.cep)
   if (!address.cep) {
     showMessage({
       message: "Erro",
       description: "Digite um CEP válido.",
       type: "danger",
-    })
+    });
     return;
   }
   try {
+
     const response = await fetch(
-      `https://viacep.com.br/ws/${address.cep}/json/`
+      `https://viacep.com.br/ws/${address.cep.replace("-","")}/json/`
     );
     const data = await response.json();
     if (data.erro) {
@@ -51,14 +53,14 @@ const handleCepLookup = async (address: Address, func: Function) => {
         message: "Erro",
         description: "CEP não encontrado.",
         type: "danger",
-      })
+      });
       return;
     }
     console.log(data);
     const coordinates = await getCoordinatesFromAddress(
       `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf} - ${data.cep}`
     );
-    console.log(" foi retornado da função",coordinates);
+    console.log(" foi retornado da função", coordinates);
     const latitude = coordinates?.latitude ?? null;
     const longitude = coordinates?.longitude ?? null;
     if (latitude && longitude) {
@@ -73,19 +75,19 @@ const handleCepLookup = async (address: Address, func: Function) => {
         latitude,
         longitude,
       });
-    }else{
+    } else {
       showMessage({
         message: "Erro",
         description: "Não foi possível buscar informações do seu endereço.",
         type: "danger",
-      })
+      });
     }
   } catch (error) {
     showMessage({
       message: "Erro",
       description: "Não foi possível buscar o CEP.",
       type: "danger",
-    })
+    });
   }
 };
 
@@ -99,8 +101,8 @@ const fetchAddress = async (latitude: number, longitude: number) => {
       showMessage({
         message: "Erro",
         description: "Endereço não encontrado.",
-        type: "danger"
-      })
+        type: "danger",
+      });
       return;
     }
 
@@ -112,59 +114,58 @@ const fetchAddress = async (latitude: number, longitude: number) => {
     showMessage({
       message: "Erro",
       description: "Não foi possível buscar o endereço.",
-      type: "danger"
-    })
+      type: "danger",
+    });
   }
 };
 
-
 const salvarEndereco = async (endereco: Address) => {
-  if(loopbackCounter >= 2){
+  if (loopbackCounter >= 2) {
     showMessage({
       message: "Erro",
       description: "Não foi possível salvar informações do seu endereço.",
-      type: "danger"
-    })
-    loopbackCounter=0;
+      type: "danger",
+    });
+    loopbackCounter = 0;
     return;
   }
-  if(endereco.latitude === 0 || endereco.longitude === 0){
+  if (endereco.latitude === 0 || endereco.longitude === 0) {
     loopbackCounter++;
     handleCepLookup(endereco, salvarEndereco);
   }
-  console.log("tentando salvar")
+  console.log("tentando salvar");
   try {
     const response = await axios.post(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/endereco`,
       endereco,
       {
         headers: {
-          'Authorization': 'Bearer ' + (await AsyncStorage.getItem('token'))
-        }
+          Authorization: "Bearer " + (await AsyncStorage.getItem("token")),
+        },
       }
     );
     if (response.status === 200) {
       showMessage({
         message: "Sucesso",
         description: "Endereço salvo com sucesso.",
-        type: "success"
-      })
-      loopbackCounter=0;
-      return response.data
+        type: "success",
+      });
+      loopbackCounter = 0;
+      console.log(response.data);
+      return response.data;
     } else {
       showMessage({
         message: "Erro",
         description: "Não foi possível salvar o endereço. Tente novamente.",
-        type: "danger"
-      })
+        type: "danger",
+      });
       loopbackCounter = 0;
     }
-    
   } catch (error) {
     console.log(error);
     loopbackCounter = 0;
   }
-}
+};
 async function editarEndereco(enderecoParaEditar: Address) {
   console.log("tentando salvar");
   try {
@@ -182,27 +183,74 @@ async function editarEndereco(enderecoParaEditar: Address) {
         message: "Sucesso",
         description: "Endereço salvo com sucesso.",
         type: "success",
-      })
+      });
       return response.data;
     } else {
       showMessage({
         message: "Erro",
         description: "Não foi possível salvar o endereço. Tente novamente.",
         type: "danger",
-      })
-
+      });
     }
-  } catch (error:any) {
+  } catch (error: any) {
     console.log(error);
     showMessage({
       message: "Erro",
-      description: error.response?.data?.message || "Ocorreu um erro ao salvar o endereço.",
+      description:
+        error.response?.data?.message ||
+        "Ocorreu um erro ao salvar o endereço.",
       type: "danger",
-    })
+    });
   }
 }
 
+const deleteEndereco = async (id: number) => {
+  console.log("tentando excluir");
+  try {
+    const response = await axios.delete(
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/endereco/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + (await AsyncStorage.getItem("token")),
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      showMessage({
+        message: "Erro",
+        description:
+          "Endereço apagado com sucesso",
+        type: "success",
+      });
+      return true;
+    } else {
+      showMessage({
+        message: "Erro",
+        description:
+          "status de resposta: "+response.status,
+        type: "success",
+      });
+      return false;
+    }
+  } catch (error: any) {
+    console.log(error);
+    showMessage({
+      message: "Erro",
+      description:
+        error.response?.data?.message ||error.error?.message||
+        "Ocorreu um erro ao apagar o endereço.",
+      type: "danger",
+    });
+    return false;
+  }
+};
+
 export {
-  editarEndereco, fetchAddress, getCoordinatesFromAddress,
-  handleCepLookup, salvarEndereco
+  getCoordinatesFromAddress,
+  handleCepLookup,
+  fetchAddress,
+  salvarEndereco,
+  editarEndereco,
+  deleteEndereco,
 };

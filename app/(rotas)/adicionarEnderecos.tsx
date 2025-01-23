@@ -92,15 +92,14 @@ export default function AddAddressScreen() {
 
         {/* Formulário */}
         <View style={styles.form}>
-          <Input label="Apelido" value={address.apelido} onChangeText={(text) => setAddress({ ...address, apelido: text })} placeholder="Ex: Casa" />
-          <Input label="Rua" value={address.rua} onChangeText={(text) => setAddress({ ...address, rua: text })} placeholder="Ex: Av. Paulista" />
-          <Input label="Número" value={address.numero} onChangeText={(text) => setAddress({ ...address, numero: text })} placeholder="Ex: 123" />
-          <Input label="Bairro" value={address.bairro} onChangeText={(text) => setAddress({ ...address, bairro: text })} placeholder="Ex: Bela Vista" />
-          <Input label="Cidade" value={address.cidade} onChangeText={(text) => setAddress({ ...address, cidade: text })} placeholder="Ex: São Paulo" />
-          <Input label="Estado" value={address.estado} onChangeText={(text) => setAddress({ ...address, estado: text })} placeholder="Ex: SP" />
-          <Input label="País" value={address.pais} onChangeText={(text) => setAddress({ ...address, pais: text })} placeholder="Ex: Brasil" />
-          <Input label="Complemento" value={address.complemento} onChangeText={(text) => setAddress({ ...address, complemento: text })} placeholder="Ex: Apto 101" />
-          <Input label="CEP" mask="cep" value={address.cep} keyboardType="numeric" onChangeText={(text) => setAddress({ ...address, cep: text })} placeholder="Ex: 01311-000" />
+          <Input label="Apelido" value={address.apelido} onChangeText={(text:string) => setAddress({ ...address, apelido: text })} placeholder="Ex: Casa" />
+          <Input label="CEP" value={address.cep} keyboardType="phone-pad" onBlur={() => { handleCepLookup(address, setAddress) }} onChangeText={(text:string) => {setAddress({ ...address, cep: text })}} placeholder="Ex: 01311-000" />
+          <Input label="Número" value={address.numero} onChangeText={(text:string) => setAddress({ ...address, numero: text })} placeholder="Ex: 123" />
+          <Input label="Rua" value={address.rua} onChangeText={(text:string) => setAddress({ ...address, rua: text })} placeholder="Ex: Av. Paulista" />
+          <Input label="Bairro" value={address.bairro} onChangeText={(text:string) => setAddress({ ...address, bairro: text })} placeholder="Ex: Bela Vista" />
+          <Input label="Cidade" value={address.cidade} onChangeText={(text:string) => setAddress({ ...address, cidade: text })} placeholder="Ex: São Paulo" />
+          <Input label="Estado" value={address.estado} onChangeText={(text:string) => setAddress({ ...address, estado: text })} placeholder="Ex: SP" />
+          <Input label="Complemento" value={address.complemento} onChangeText={(text:string) => setAddress({ ...address, complemento: text })} placeholder="Ex: Apto 101" />
 
           <TouchableOpacity style={styles.cepButton} onPress={()=>{handleCepLookup(address,setAddress)}}>
             <Text style={styles.cepButtonText}>Buscar pelo CEP</Text>

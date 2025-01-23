@@ -22,7 +22,7 @@ const getItemsDaApi = async (lojaId:number) => {
   } else {
     showMessage({
       message: "Erro",
-      description: "Nenhum restaurante encontrado",
+      description: "Nenhum item encontrado",
       type: "warning",
     })
     return [];

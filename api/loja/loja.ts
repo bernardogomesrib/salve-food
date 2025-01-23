@@ -3,9 +3,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LocationObjectCoords } from "expo-location";
 import { Alert } from "react-native";
+import { showMessage } from "react-native-flash-message";
 
 const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
-  console.log("pegando independente de categoria");
+  console.log("pegando independente de categoria com localização",pos.latitude,pos.longitude);
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
@@ -54,7 +55,7 @@ const getRestaurantesPorCategoria = async (
   pagina: number,
   categoria: number
 ) => {
-  console.log("pegando via categoria");
+  console.log("pegando via categoria com localização",pos.latitude,pos.longitude);
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/segmento/${categoria}?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
@@ -71,7 +72,11 @@ const getRestaurantesPorCategoria = async (
     });
     return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    showMessage({
+          message: "Erro",
+          description: "Nenhuma loja encontrada",
+          type: "warning",
+        })
     return [];
   }
 };
@@ -134,4 +139,5 @@ export {
   getRestaurantesNoLocation,
   getRestaurantesPorCategoria,
   getRestaurantesPorCategoriaNoLocation,
+  conversor,
 };
