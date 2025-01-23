@@ -7,6 +7,7 @@ import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import { getItemsDaApi } from '@/api/item/item';
 import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
+import { doLogout } from '@/api/auth/authModule';
 
 export interface MyContextType {
     cart: CartItem[];
@@ -21,7 +22,7 @@ export interface MyContextType {
     handleRestaurantSelection: (restaurant: Restaurant) => void;
     handleProductSelection: (product: Product | undefined) => void;
     setUsuario: (usuario: Usuario) => void;
-    getUsuario: () => Promise<Usuario | undefined>;
+    getUsuario: (required:boolean|undefined) => Promise<Usuario | undefined>;
     defineUsuario: () => void;
     usuario: Usuario | undefined;
     location: Location.LocationObject | null;
@@ -32,6 +33,7 @@ export interface MyContextType {
     apagaEndereco: (id: number) => void;
     enderecoSelecionadoParaEntrega:undefined|Address;
     setEnderecoSelecionadoParaEntrega:(endereco:Address|undefined)=>void;
+    logout:()=>void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -69,7 +71,8 @@ const defaultContextValue: MyContextType = {
     modificaEndereco: () => { },
     apagaEndereco: () => { },
     enderecoSelecionadoParaEntrega: undefined,
-    setEnderecoSelecionadoParaEntrega: () => { }
+    setEnderecoSelecionadoParaEntrega: () => { },
+    logout:()=>{}
 };
 
 
@@ -126,8 +129,13 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             setEnderecos(updatedEnderecos);
         }
     }
-    const getUsuario = async () => {
-        if (usuario === undefined) {
+    const logout= async ()=>{
+        setUsuario(undefined);
+        doLogout();
+
+    }
+    const getUsuario = async (required?:boolean|undefined) => {
+        if (usuario === undefined||required) {
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
                 headers: {
                     'Authorization': 'Bearer ' + (await AsyncStorage.getItem('token'))
@@ -234,7 +242,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{logout,enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );

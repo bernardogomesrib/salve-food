@@ -1,4 +1,3 @@
-import { doLogout } from "@/api/auth/authModule";
 import { Usuario } from "@/api/auth/tokenHandler";
 import { useMyContext } from "@/components/context/appContext";
 import { Text, View } from "@/components/Themed";
@@ -16,11 +15,11 @@ export default function Profile() {
     "background"
   );
   const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
-  const { getUsuario } = useMyContext();
+  const { getUsuario,logout } = useMyContext();
   const router = useRouter();
 
   const fetchData = async () => {
-    const usuario = await getUsuario();
+    const usuario = await getUsuario(true);
     if (usuario !== undefined) {
       setUsuario(usuario);
     }
@@ -71,7 +70,7 @@ export default function Profile() {
         <MenuItem
           icon="sign-out"
           label="Logout"
-          onPress={() => doLogout()}
+          onPress={() => logout()}
         />
       </View>
     </View>
