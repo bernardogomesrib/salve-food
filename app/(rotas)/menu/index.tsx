@@ -7,6 +7,7 @@ import { Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 export default function DetalhesPrato() {
     const { restaurant, product, addToCart, delToCart, cart } = useMyContext();
     const name = product?.name;
+    const [quantidade, setQuantidade] = useState(1);
     const description = product?.description
     const price = product ? product?.price : 0;
     const image = product ? product?.image : "";
@@ -21,6 +22,7 @@ export default function DetalhesPrato() {
     const quantity = getProductQuantity(product?.id);
 
     const carrinho = async () => {
+        await addToCart({product, quantity:quantidade});
         router.push("/(rotas)/home/cart");
     };
 
@@ -65,13 +67,13 @@ export default function DetalhesPrato() {
                 <View style={styles.footer}>
                     <View style={styles.quantitySelector}>
                         <TouchableOpacity onPress={() => {
-                            delToCart({ product, quantity: 1 });
+                            setQuantidade(quantidade - 1);
                         }} style={styles.button}>
                             <MaterialIcons name="remove" size={20} color="#7EE462" />
                         </TouchableOpacity>
                         <Text style={styles.quantityText}>{quantity}</Text>
                         <TouchableOpacity onPress={() => {
-                            addToCart({ product, quantity: 1 });
+                           setQuantidade(quantidade + 1);
                         }} style={styles.button}>
                             <MaterialIcons name="add" size={20} color="#7EE462" />
                         </TouchableOpacity>

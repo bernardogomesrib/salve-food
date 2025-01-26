@@ -13,13 +13,12 @@ import { showMessage } from 'react-native-flash-message';
 
 
 export default function Home() {
-  const { restaurants, setRestaurants, handleRestaurantSelection, defineUsuario,location,enderecoSelecionadoParaEntrega } = useMyContext();
+  const { restaurants, setRestaurants, handleRestaurantSelection, location,enderecoSelecionadoParaEntrega } = useMyContext();
   const [pagina, setPagina] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [categoria, setCategoria] = useState<null | number>(null);
   const [categorias,setCategorias] = useState<Category[]|null>(null);
   const aoEntrar = async () => {
-    defineUsuario();
     paginar();
     pegarCategorias();
   }

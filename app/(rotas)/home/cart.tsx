@@ -6,9 +6,8 @@ import {
     TouchableOpacity,
     Image,
 } from "react-native";
-import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { readConfigFile } from "typescript";
 import { Text, View } from "@/components/Themed";
 
 export default function CartScreen() {
