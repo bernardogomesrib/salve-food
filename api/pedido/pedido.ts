@@ -38,10 +38,18 @@ const fazPedido= async (pedido: any) => {
             Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
         }
         }).then((respose)=>{
-          showMessage({
-            message: "Sucesso",
-            description: "Pedido feito com sucesso.",
-            type: "success",
+          if(respose.status >= 200 && respose.status < 300){
+            showMessage({
+              message: "Sucesso",
+              description: "Pedido feito com sucesso.",
+              type: "success",
+            });
+
+          }else{
+            showMessage({
+              message: "Erro",
+              description: "Não foi possível fazer o pedido."+respose.data.error.message,
+              type: "warning",
           });
             return respose.data;
         }).catch((error)=>{

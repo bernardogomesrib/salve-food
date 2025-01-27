@@ -71,7 +71,7 @@ export default function DetalhesPrato() {
                         }} style={styles.button}>
                             <MaterialIcons name="remove" size={20} color="#7EE462" />
                         </TouchableOpacity>
-                        <Text style={styles.quantityText}>{quantity}</Text>
+                        <Text style={styles.quantityText}>{quantidade}</Text>
                         <TouchableOpacity onPress={() => {
                            setQuantidade(quantidade + 1);
                         }} style={styles.button}>

@@ -207,7 +207,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             updatedCart[existingProductIndex].quantity += 1;
             setCart(updatedCart);
         } else {
-            setCart([...cart, { ...product, quantity: 1 }]);
+            setCart([...cart, { ...product, quantity: product.quantity }]);
         }
     };
 
