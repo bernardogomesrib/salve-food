@@ -17,20 +17,14 @@ export default function CartScreen() {
     const restaurantFare = restaurant ? restaurant?.time / 2 : 30;
 
 
-
-
-    const mainProductId = 1; // ID do produto principal
-    const mainProduct = products[mainProductId];
-    const suggestedProducts = Object.values(products).filter(
-        (product) => product.id !== mainProductId
-    );
-
-    const [quantity, setQuantity] = useState(1);
-
     const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     const subtotal = cart.reduce((sum, item) => item.product ? sum + item.product.price * item.quantity : sum, 0);
     const total = subtotal + restaurantFare;
+
+    const confirmaPagamento = async () => {
+        router.push("/(rotas)/confirmacaoPagamento");
+    };
 
     return (
         <>
@@ -102,11 +96,11 @@ export default function CartScreen() {
                     </Text>
                 )}
 
-                {restaurant&&<TouchableOpacity onPress={() => router.push("/restaurante")}>
+                {restaurant && <TouchableOpacity onPress={() => router.push("/restaurante")}>
                     <Text style={styles.addMoreText}>Adicionar mais itens</Text>
                 </TouchableOpacity>}
 
-                
+
                 {restaurant && <><Text style={styles.sectionTitle}>Peça também</Text>
                     <FlatList
                         data={products}
@@ -124,35 +118,35 @@ export default function CartScreen() {
 
 
                 {cart.length > 0 && (<>
-                
+
                     <View style={styles.summary}>
-                    <Text style={styles.summaryTitle}>Resumo de valores</Text>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>Subtotal</Text>
-                        <Text style={styles.summaryValue}>R$ {subtotal.toFixed(2)}</Text>
+                        <Text style={styles.summaryTitle}>Resumo de valores</Text>
+                        <View style={styles.summaryRow}>
+                            <Text style={styles.summaryLabel}>Subtotal</Text>
+                            <Text style={styles.summaryValue}>R$ {subtotal.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.summaryRow}>
+                            <Text style={styles.summaryLabel}>Taxa de entrega</Text>
+                            <Text style={styles.summaryValue}>R$ {restaurantFare.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.summaryRow}>
+                            <Text style={styles.summaryTotalLabel}>Total</Text>
+                            <Text style={styles.summaryTotalValue}>R$ {total.toFixed(2)}</Text>
+                        </View>
                     </View>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>Taxa de entrega</Text>
-                        <Text style={styles.summaryValue}>R$ {restaurantFare.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryTotalLabel}>Total</Text>
-                        <Text style={styles.summaryTotalValue}>R$ {total.toFixed(2)}</Text>
-                    </View>
-                </View>
 
 
-                <View style={styles.footer}>
-                    <View style={styles.footerDetails}>
-                        <Text style={styles.footerTotalText}>Total com entrega</Text>
-                        <Text style={styles.footerTotalAmount}>
-                            R${total.toFixed(2)}/{totalQuantity} item{totalQuantity > 1 ? "s" : ""}
-                        </Text>
+                    <View style={styles.footer}>
+                        <View style={styles.footerDetails}>
+                            <Text style={styles.footerTotalText}>Total com entrega</Text>
+                            <Text style={styles.footerTotalAmount}>
+                                R${total.toFixed(2)}/{totalQuantity} item{totalQuantity > 1 ? "s" : ""}
+                            </Text>
+                        </View>
+                        <TouchableOpacity style={styles.continueButton} onPress={confirmaPagamento}>
+                            <Text style={styles.continueButtonText}>Continuar</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.continueButton}>
-                        <Text style={styles.continueButtonText}>Continuar</Text>
-                    </TouchableOpacity>
-                </View>
                 </>
                 )}
             </View>
