@@ -3,7 +3,7 @@ import axios from "axios";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 import { showMessage } from "react-native-flash-message";
-
+import { Usuario } from '@/api/auth/tokenHandler';
 let isUpdatingToken = false;
 
 const setIsUpdatingToken = (value: boolean) => {
@@ -90,7 +90,7 @@ const updateToken = async (): Promise<void> => {
 const updateUser = async (
   nome: string,
   email: string,
-  telefone: string,
+  telefone: string
 ) => {
   if (!nome || !email || !telefone) {
     showMessage({
@@ -135,6 +135,7 @@ const updateUser = async (
         message: "Sucesso",
         type: "success",
       });
+      router.back();
     } else {
       showMessage({
         message: "Erro",

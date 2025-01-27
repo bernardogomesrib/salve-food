@@ -7,6 +7,7 @@ import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import { getItemsDaApi } from '@/api/item/item';
 import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
+import { doLogout } from '@/api/auth/authModule';
 
 export interface MyContextType {
     cart: CartItem[];
@@ -21,7 +22,7 @@ export interface MyContextType {
     handleRestaurantSelection: (restaurant: Restaurant) => void;
     handleProductSelection: (product: Product | undefined) => void;
     setUsuario: (usuario: Usuario) => void;
-    getUsuario: () => Promise<Usuario | undefined>;
+    getUsuario: (required:boolean|undefined) => Promise<Usuario | undefined>;
     defineUsuario: () => void;
     usuario: Usuario | undefined;
     location: Location.LocationObject | null;
@@ -32,6 +33,7 @@ export interface MyContextType {
     apagaEndereco: (id: number) => void;
     enderecoSelecionadoParaEntrega:undefined|Address;
     setEnderecoSelecionadoParaEntrega:(endereco:Address|undefined)=>void;
+    logout:()=>void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -69,7 +71,8 @@ const defaultContextValue: MyContextType = {
     modificaEndereco: () => { },
     apagaEndereco: () => { },
     enderecoSelecionadoParaEntrega: undefined,
-    setEnderecoSelecionadoParaEntrega: () => { }
+    setEnderecoSelecionadoParaEntrega: () => { },
+    logout:()=>{}
 };
 
 
@@ -126,8 +129,15 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             setEnderecos(updatedEnderecos);
         }
     }
-    const getUsuario = async () => {
-        if (usuario === undefined) {
+    const logout= async ()=>{
+        setUsuario(undefined);
+        doLogout();
+
+    }
+    const getUsuario = async (required?:boolean|undefined) => {
+        console.log("getUsuario chamado");
+        if (usuario === undefined||required===true) {
+            console.log("buscando vai api")
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
                 headers: {
                     'Authorization': 'Bearer ' + (await AsyncStorage.getItem('token'))
@@ -167,7 +177,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         setLocation(location);
     }
     const defineUsuario = async () => {
-        const u = await getUsuario();
+        const u = await getUsuario(true);
         if (u !== undefined) {
             setUsuario(u)
         }
@@ -197,7 +207,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             updatedCart[existingProductIndex].quantity += 1;
             setCart(updatedCart);
         } else {
-            setCart([...cart, { ...product, quantity: 1 }]);
+            setCart([...cart, { ...product, quantity: product.quantity }]);
         }
     };
 
@@ -234,7 +244,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{logout,enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );
@@ -247,43 +257,4 @@ const useMyContext = () => {
 
 export { useMyContext };
 export default MyProvider;
-//area de variaveis de mock
 
-const mockMenuItems = [
-    [
-        {
-            id: 1,
-            name: "Feijoada Completa",
-            description: "Feijoada tradicional com arroz, couve e farofa",
-            price: 45.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pratos Principais",
-        },
-        {
-            id: 2,
-            name: "Moqueca de Peixe",
-            description: "Peixe fresco com leite de coco e dendê",
-            price: 52.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pratos Principais",
-        },
-    ],
-    [
-        {
-            id: 1,
-            name: "Pizza Margherita",
-            description: "Molho de tomate, mussarela, manjericão",
-            price: 39.9,
-            image: "https://via.placeholder.com/400",
-            category: "Pizzas",
-        },
-        {
-            id: 2,
-            name: "Lasanha à Bolonhesa",
-            description: "Massa fresca, molho bolonhesa e bechamel",
-            price: 45.9,
-            image: "https://via.placeholder.com/400",
-            category: "Massas",
-        },
-    ],
-]

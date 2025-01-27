@@ -5,7 +5,7 @@ import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
 import { FontAwesome } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
@@ -15,17 +15,18 @@ export default function Profile() {
     { light: "#fff", dark: "#000" },
     "background"
   );
-  const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
+   const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
   const { getUsuario } = useMyContext();
   const router = useRouter();
 
   const fetchData = async () => {
-    const usuario = await getUsuario();
-    if (usuario !== undefined) {
-      setUsuario(usuario);
+    const u = await getUsuario(false);
+    if (u !== undefined) {
+       setUsuario(u);
+      console.log(u.name);
     }
   }
-  useEffect(() => {
+  useFocusEffect(() => {
     fetchData();
   });
   return (

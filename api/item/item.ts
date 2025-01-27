@@ -4,8 +4,9 @@ import axios from "axios";
 import { showMessage } from "react-native-flash-message";
 
 const getItemsDaApi = async (lojaId:number) => {
+  console.log("pegando itens do restaurante com id :"+lojaId);
   const token = await AsyncStorage.getItem("token");
-  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/item`;
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/item/${lojaId}?page=0&size=10000`;
 
   const response = await axios.get(url, {
     headers: {
@@ -25,7 +26,7 @@ const getItemsDaApi = async (lojaId:number) => {
       description: "Nenhum item encontrado",
       type: "warning",
     })
-    return [];
+    return restaur;
   } 
 };
 

@@ -65,6 +65,7 @@ function RootLayoutNav() {
     >
     <ThemeProvider value={clrSch === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="login/index" options={{ header: () => <ColorCompliantHeader color={clrSch} insets={insets} /> }} />
           <Stack.Screen name="login/cadastro" options={{ title: "cadastre-se", headerShown: false }} />
           <Stack.Screen name="login/recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }} />
@@ -72,7 +73,7 @@ function RootLayoutNav() {
           <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
           <Stack.Screen name="login/enviarEmail" options={{ headerShown: false }} />
           <Stack.Screen name="home" options={{ headerShown: false }} />
-          <Stack.Screen name="menu/index" options={{ headerShown: true }} />
+          <Stack.Screen name="menu/index" options={{ headerShown: false }} />
           <Stack.Screen name="seguranca" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/adicionarCartao" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
           <Stack.Screen name="formasDePagamento/editarCartao" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
