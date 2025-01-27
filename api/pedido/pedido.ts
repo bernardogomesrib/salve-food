@@ -35,7 +35,7 @@ const fazPedido= async (pedido: any) => {
     return await axios
         .post(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/pedidos`, pedido, {
         headers: {
-            Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
+            Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
         }
         }).then((respose)=>{
           if(respose.status >= 200 && respose.status < 300){

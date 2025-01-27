@@ -80,7 +80,7 @@ export default function DetalhesPrato() {
                     </View>
                     <TouchableOpacity style={styles.addButton} onPress={carrinho}>
                         <Text style={styles.addButtonText}>Adicionar</Text>
-                        <Text style={styles.addButtonPrice}>R$ {(quantity * price).toFixed(2)}</Text>
+                        <Text style={styles.addButtonPrice}>R$ {(quantidade * price).toFixed(2)}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

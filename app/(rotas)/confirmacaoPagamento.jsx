@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useMyContext } from '@/components/context/appContext';
-import { Stack } from "expo-router";
-
+import { router, Stack } from "expo-router";
+import { showMessage } from 'react-native-flash-message';
+import { fazPedido } from '../../api/pedido/pedido'
 export default function PaymentOptionsScreen() {
 
-    const { restaurant, cart, enderecoSelecionadoParaEntrega, enderecos, setEnderecoSelecionadoParaEntrega } = useMyContext();
+    const { restaurant, cart,setCart,setRestarant, enderecoSelecionadoParaEntrega, enderecos, setEnderecoSelecionadoParaEntrega } = useMyContext();
     const restaurantFare = restaurant ? restaurant?.time / 2 : 30;
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     const subtotal = cart.reduce((sum, item) => item.product ? sum + item.product.price * item.quantity : sum, 0);
     const total = subtotal + restaurantFare;
-    const [modalVisible, setModalVisible] = useState(false); 
-
+    const [modalVisible, setModalVisible] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState(undefined);
     const enderecoSelecionado = (endereco) => {
         setEnderecoSelecionadoParaEntrega(endereco);
         setModalVisible(false);
@@ -25,6 +26,38 @@ export default function PaymentOptionsScreen() {
         { id: 2, name: "Cartão de Débito", icon: <FontAwesome name="credit-card-alt" size={24} color="#7EE462" /> },
         { id: 3, name: "Pix", icon: <MaterialIcons name="qr-code" size={24} color="#7EE462" /> }
     ];
+
+    const fazerCompra = async () => {
+        console.log("chamando fazer compra");
+        if(paymentMethod === undefined) {
+            showMessage({
+                message: "Erro",
+                description: "Selecione um metodo de pagamento",
+                type: "warning",
+            })
+            return;
+        }
+        const data = {
+            itens: cart,
+            enderecoEntregaId: enderecoSelecionadoParaEntrega.id,
+            valorTotal: totalQuantity,
+            taxaEntrega: restaurantFare,
+            lojaId: restaurant.id,
+            formaPagamento: paymentMethod
+        }
+
+        console.log(data);
+        const resp = await fazPedido(data);
+        if(resp.id){
+            setCart([]);
+            setRestarant(undefined);
+            router.push("/home");
+        }
+        console.log("pedido feito");
+        console.log(resp);
+    }
+
+
 
     return (
         <>
@@ -64,7 +97,7 @@ export default function PaymentOptionsScreen() {
                 <View style={styles.paymentContainer}>
                     <Text style={styles.paymentHeader}>Formas de Pagamento</Text>
                     {paymentOptions.map((option) => (
-                        <TouchableOpacity key={option.id} style={styles.option}>
+                        <TouchableOpacity key={option.id} style={styles.option} onPress={() => setPaymentMethod(option.name)}>
                             <View style={styles.iconContainer}>{option.icon}</View>
                             <Text style={styles.optionText}>{option.name}</Text>
                         </TouchableOpacity>
@@ -77,8 +110,8 @@ export default function PaymentOptionsScreen() {
                             R${total.toFixed(2)}/{totalQuantity} item{totalQuantity > 1 ? "s" : ""}
                         </Text>
                     </View>
-                    <TouchableOpacity style={styles.continueButton}>
-                        <Text style={styles.continueText}>Revisar Pedido</Text>
+                    <TouchableOpacity style={styles.continueButton} onPress={fazerCompra}>
+                        <Text style={styles.continueText}>Concluir pedido</Text>
                     </TouchableOpacity>
                 </View>
             </View>
