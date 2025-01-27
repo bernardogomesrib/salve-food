@@ -52,7 +52,8 @@ const fazPedido= async (pedido: any) => {
               type: "warning",
           });
             return respose.data;
-        }).catch((error)=>{
+          }
+        }).catch((error) => {
           showMessage({
             message: "Erro",
             description: error.message,
