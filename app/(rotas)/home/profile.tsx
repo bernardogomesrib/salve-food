@@ -76,6 +76,11 @@ export default function Profile() {
           label="Configurações"
           onPress={() => router.push("/configuracoes")}
         />
+        <MenuItem
+          icon="sign-out"
+          label="Sair"
+          onPress={() => doLogout()}
+          />
       </View>
     </View>
   );
