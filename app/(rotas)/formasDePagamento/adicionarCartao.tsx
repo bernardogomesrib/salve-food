@@ -1,25 +1,60 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Switch,
   Text,
-  TextInput,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
 
+import { useMyContext } from "@/components/context/appContext";
+import {
+  detectCardType,
+  formatCardNumber,
+  formatExpiryDate,
+  validateCard,
+} from "@/assets/utils/card";
+import { Input } from "@/components/ui/input";
+
 export default function AddCardScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
-  const [saveCard, setSaveCard] = useState(false);
   const router = useRouter();
+
   const [numero, setNumero] = useState("");
   const [nome, setNome] = useState("");
   const [validade, setValidade] = useState("");
   const [cvc, setCvc] = useState("");
+  
+  const [isCredit, setIsCredit] = useState(true);
+
+  const { addCard } = useMyContext();
+
+  const handleAddCard = async () => {
+    const isValid = validateCard({
+      nome,
+      numero,
+      validade,
+      cvc,
+    });
+
+    if (!isValid) return;
+
+    const newCard = {
+      id: Date.now(),
+      number: numero,
+      holder: nome,
+      expiry: validade,
+      cvc,
+      type: detectCardType(numero),
+      isCredit,
+    };
+
+    await addCard(newCard);
+    router.push("/formasDePagamento/exibirCartoes");
+  };
 
   return (
     <View
@@ -28,7 +63,6 @@ export default function AddCardScreen({ navigation }: any) {
         { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" },
       ]}
     >
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <FontAwesome
@@ -42,7 +76,6 @@ export default function AddCardScreen({ navigation }: any) {
         </Text>
       </View>
 
-      {/* Card Preview */}
       <View style={styles.cardPreview}>
         <View
           style={[
@@ -50,132 +83,104 @@ export default function AddCardScreen({ navigation }: any) {
             { backgroundColor: isDarkMode ? "#333" : "#000" },
           ]}
         >
-          <Text style={styles.cardNumber}>{numero !== "" ? numero : "**** **** **** 1234"}</Text>
+          <Text style={styles.cardNumber}>
+            {numero !== "" ? numero : "**** **** **** 1234"}
+          </Text>
           <View style={styles.cardDetails}>
-            <Text style={styles.cardName}>{nome !== "" ? nome : "THYAGO SILVA"}</Text>
-            <Text style={styles.cardDate}>{validade !== "" ? validade : "11/30"}</Text>
+            <Text style={styles.cardName}>
+              {nome !== "" ? nome : "NOME DO TITULAR"}
+            </Text>
+            <Text style={styles.cardDate}>
+              {validade !== "" ? validade : "MM/AA"}
+            </Text>
           </View>
           <Text style={styles.cardCVC}>CVC: {cvc !== "" ? cvc : "123"}</Text>
+          <Text style={styles.cardType}>
+            {isCredit ? "CRÉDITO" : "DÉBITO"}
+          </Text>
         </View>
       </View>
 
-      {/* Form Fields */}
       <View style={styles.form}>
-        <Text style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}>
-          Nome do Titular
-        </Text>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              backgroundColor: isDarkMode ? "#222" : "#fff",
-              color: isDarkMode ? "#fff" : "#333",
-            },
-          ]}
+        <Input
+          label="Nome do Titular"
           value={nome}
           onChangeText={setNome}
           placeholder="Digite o nome do titular"
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
         />
 
-        <Text style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}>
-          Número do Cartão
-        </Text>
-        <TextInput
-          style={[
-            styles.input,
-            {
-              backgroundColor: isDarkMode ? "#222" : "#fff",
-              color: isDarkMode ? "#fff" : "#333",
-            },
-          ]}
-          placeholder="1234 5678 1234 5678"
-          keyboardType="numeric"
+        <Input
+          label="Número do Cartão"
           value={numero}
-          onChangeText={setNumero}
+          onChangeText={(text) => setNumero(formatCardNumber(text))}
+          placeholder="1234 5678 1234 5678"
           placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
+          keyboardType="number-pad"
         />
 
         <View style={styles.row}>
           <View style={styles.halfInputContainer}>
-            <Text
-              style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}
-            >
-              Data de Validade
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: isDarkMode ? "#222" : "#fff",
-                  color: isDarkMode ? "#fff" : "#333",
-                },
-              ]}
+            <Input
+              label="Data de Validade"
               placeholder="MM/AA"
               value={validade}
-              onChangeText={setValidade}
+              onChangeText={(text) => setValidade(formatExpiryDate(text))}
               keyboardType="numeric"
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
             />
           </View>
           <View style={styles.halfInputContainer}>
-            <Text
-              style={[styles.label, { color: isDarkMode ? "#fff" : "#333" }]}
-            >
-              CVC
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: isDarkMode ? "#222" : "#fff",
-                  color: isDarkMode ? "#fff" : "#333",
-                },
-              ]}
+            <Input
+              label="CVC"
               placeholder="123"
               value={cvc}
               onChangeText={setCvc}
-              keyboardType="numeric"
+              keyboardType="number-pad"
               placeholderTextColor={isDarkMode ? "#aaa" : "#666"}
+              maxLength={3}
             />
           </View>
         </View>
 
-        {/* Save Card Checkbox */}
-        <View style={styles.checkboxContainer}>
-          <Switch
-            value={saveCard}
-            onValueChange={setSaveCard}
-            thumbColor={isDarkMode ? "#4CAF50" : "#1f8fdb"}
-            trackColor={{ false: "#767577", true: "#4CAF50" }}
-          />
-          <Text
-            style={[
-              styles.checkboxLabel,
-              { color: isDarkMode ? "#fff" : "#333" },
-            ]}
+        {/* Seletor de Crédito ou Débito */}
+        <View style={styles.creditDebitContainer}>
+          <TouchableOpacity
+            style={[styles.toggleButton, isCredit && styles.selectedToggle]}
+            onPress={() => setIsCredit(true)}
           >
-            Salvar informações do cartão
-          </Text>
+            <Text style={styles.toggleButtonText}>Crédito</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.toggleButton, !isCredit && styles.selectedToggle]}
+            onPress={() => setIsCredit(false)}
+          >
+            <Text style={styles.toggleButtonText}>Débito</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Add Card Button */}
-        <Link
-          href={"/formasDePagamento/exibirCartoes"}
+        <TouchableOpacity
           style={[
             styles.addButton,
             { backgroundColor: isDarkMode ? "#222" : "orange" },
           ]}
+          onPress={handleAddCard}
         >
-          <Text style={[styles.addButtonText,
-          { color: isDarkMode ? "white" : "white" },]
-          }>Adicionar Cartão</Text>
-        </Link>
+          <Text
+            style={[
+              styles.addButtonText,
+              { color: isDarkMode ? "white" : "white" },
+            ]}
+          >
+            Adicionar Cartão
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+// Estilizações
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -198,7 +203,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 300,
-    height: 180,
+    height: 200,
     borderRadius: 12,
     padding: 20,
     justifyContent: "space-between",
@@ -226,18 +231,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "right",
   },
+  cardType: {
+    color: "#fff",
+    fontSize: 14,
+    alignSelf: "flex-end",
+  },
   form: {
     marginTop: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  input: {
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 20,
-    fontSize: 16,
   },
   row: {
     flexDirection: "row",
@@ -246,14 +246,24 @@ const styles = StyleSheet.create({
   halfInputContainer: {
     width: "48%",
   },
-  checkboxContainer: {
+  creditDebitContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
+    justifyContent: "center",
+    marginVertical: 10,
   },
-  checkboxLabel: {
-    marginLeft: 10,
+  toggleButton: {
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "gray",
+  },
+  selectedToggle: {
+    backgroundColor: "#ccc",
+  },
+  toggleButtonText: {
     fontSize: 16,
+    color: "#333",
   },
   addButton: {
     padding: 15,
@@ -261,11 +271,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    marginTop: 20,
   },
   addButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    textAlign: "center",
   },
 });

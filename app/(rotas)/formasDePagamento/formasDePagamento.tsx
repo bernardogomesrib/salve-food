@@ -27,10 +27,9 @@ export default function PaymentMethodsScreen({ navigation }: any) {
   const paymentMethods: PaymentMethod[] = [
     {
       icon: "credit-card",
-      title: "Cartão de Crédito",
+      title: "Meus cartões",
       route: "./exibirCartoes",
     },
-    { icon: "credit-card", title: "Cartão de Débito", route: "./addCardScreenStripe" },
     { icon: "qrcode", title: "Pix", route: "./pixPaymentScreen" },
     {
       icon: "food-fork-drink",
@@ -44,12 +43,6 @@ export default function PaymentMethodsScreen({ navigation }: any) {
       route: "./ValeAlimentacao",
       lib: "MaterialCommunityIcons",
     },
-    {
-      icon: "barcode",
-      title: "Boleto Bancário",
-      route: "./BoletoPaymentScreen",
-      lib: "MaterialCommunityIcons",
-    },
     { icon: "paypal", title: "PayPal", route: "./PayPal", lib: "FontAwesome5" },
   ];
 
@@ -60,7 +53,6 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" },
       ]}
     >
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <FontAwesome5
@@ -81,7 +73,6 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         </View>
       </View>
 
-      {/* Payment Methods */}
       <ScrollView contentContainerStyle={styles.methodsContainer}>
         {paymentMethods.map((method, index) => (
           <Link

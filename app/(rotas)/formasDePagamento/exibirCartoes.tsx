@@ -1,6 +1,6 @@
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -11,37 +11,28 @@ import {
   View
 } from "react-native";
 
+import { formatExpiryDate, getCardIconName } from "@/assets/utils/card"; 
+
+import { useMyContext } from "@/components/context/appContext";
+
 export default function CardListScreen({ navigation }: any) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
-
-  const [cards, setCards] = useState([
-    {
-      id: "1",
-      type: "VISA",
-      number: "**** **** **** 1234",
-      holder: "JOÃO SILVA",
-      expiry: "12/25",
-    },
-    {
-      id: "2",
-      type: "MasterCard",
-      number: "**** **** **** 5678",
-      holder: "MARIA OLIVEIRA",
-      expiry: "08/24",
-    },
-  ]);
-
-  const [selectedCard, setSelectedCard] = useState<string|null>(null);
+  const { cards, loadCards, removeCard } = useMyContext();
+  const [selectedCard, setSelectedCard] = useState<number>();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleDeleteCard = (cardId: string|null) => {
-    setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  const handleDeleteCard = async (cardId: number) => {
+    await removeCard(cardId);
     setModalVisible(false);
   };
 
-  const confirmDelete = (cardId: string) => {
+  const confirmDelete = (cardId: number) => {
     setSelectedCard(cardId);
     setModalVisible(true);
   };
@@ -53,10 +44,9 @@ export default function CardListScreen({ navigation }: any) {
         { backgroundColor: isDarkMode ? "#121212" : "#f9f9f9" },
       ]}
     >
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <FontAwesome5
+          <FontAwesome
             name="arrow-left"
             size={24}
             color={isDarkMode ? "#fff" : "#333"}
@@ -67,10 +57,9 @@ export default function CardListScreen({ navigation }: any) {
         </Text>
       </View>
 
-      {/* Lista de Cartões */}
       <FlatList
         data={cards}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View
             style={[
@@ -82,12 +71,13 @@ export default function CardListScreen({ navigation }: any) {
             ]}
           >
             <View style={styles.cardIcon}>
-              <FontAwesome5
-                name={item.type === "VISA" ? "cc-visa" : "cc-mastercard"}
+              <FontAwesome
+                name={getCardIconName(item.type)} 
                 size={28}
                 color={isDarkMode ? "white" : "black"}
               />
             </View>
+
             <View style={styles.cardDetails}>
               <Text
                 style={[
@@ -111,19 +101,25 @@ export default function CardListScreen({ navigation }: any) {
                   { color: isDarkMode ? "#aaa" : "#666" },
                 ]}
               >
-                Vencimento: {item.expiry}
+                Vencimento: {formatExpiryDate(item.expiry)}
               </Text>
             </View>
-            {/* Botões de Ação */}
+
             <View style={styles.actionButtons}>
-              <Link href={"/formasDePagamento/editarCartao"} style={styles.editButton}>
-                <FontAwesome5 name="edit" size={18} color="#1f8fdb" />
+              <Link
+                href={{
+                  pathname: "/formasDePagamento/editarCartao",
+                  params: { card: JSON.stringify(item) }, 
+                }}
+                style={styles.editButton}
+              >
+                <FontAwesome name="edit" size={18} color="#1f8fdb" />
               </Link>
               <TouchableOpacity
                 onPress={() => confirmDelete(item.id)}
                 style={styles.deleteButton}
               >
-                <FontAwesome5 name="trash" size={18} color="#f44336" />
+                <FontAwesome name="trash" size={18} color="#f44336" />
               </TouchableOpacity>
             </View>
           </View>
@@ -137,7 +133,6 @@ export default function CardListScreen({ navigation }: any) {
         }
       />
 
-      {/* Modal de Confirmação */}
       <Modal
         transparent
         animationType="slide"
@@ -158,7 +153,9 @@ export default function CardListScreen({ navigation }: any) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.confirmButton]}
-                onPress={() => handleDeleteCard(selectedCard)}
+                onPress={() =>
+                  selectedCard !== undefined && handleDeleteCard(selectedCard)
+                }
               >
                 <Text style={styles.modalButtonText}>Excluir</Text>
               </TouchableOpacity>
@@ -167,13 +164,15 @@ export default function CardListScreen({ navigation }: any) {
         </View>
       </Modal>
 
-      {/* Botão para Adicionar Novo Cartão */}
-      <Link href={"/formasDePagamento/adicionarCartao"} style={[
+      <Link
+        href="/formasDePagamento/adicionarCartao"
+        style={[
           styles.addButton,
           { backgroundColor: isDarkMode ? "#222" : "orange" },
-        ]}>
-          <Text style={styles.addButtonText}>Novo Cartão</Text>
-        </Link>
+        ]}
+      >
+        <Text style={styles.addButtonText}>Novo Cartão</Text>
+      </Link>
     </View>
   );
 }
@@ -211,14 +210,13 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     marginVertical: 20,
-    
   },
   addButtonText: {
     marginLeft: 10,
     fontSize: 16,
     color: "#fff",
     fontWeight: "bold",
-    textAlign: "center", // Centraliza o texto dentro do componente Text
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
