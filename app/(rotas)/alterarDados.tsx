@@ -42,11 +42,11 @@ export default function EditProfile() {
       const pfp = await mudarPfp(blob,pickerResult.assets[0].mimeType??'');
       if(pfp!==undefined){
         console.log(pfp);
-        const newPfpUrl = `${pfp}?t=${new Date().getTime()}`;
+        
         if (usuario) {
           setUsuario({
             ...usuario,
-            pfp: newPfpUrl,
+            pfp: pfp,
             sub: usuario.sub ?? '',
             realm_access: usuario.realm_access ?? { roles: [] }
           });

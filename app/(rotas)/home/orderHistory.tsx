@@ -53,6 +53,9 @@ export default function OrderHistory() {
                 <Text style={[styles.orderHeader, { color: textColor }]}>
                   Pedido #{item.id} - {item.status}
                 </Text>
+                <Text style={[styles.orderHeader, { color: textColor }]}>
+                  Senha: {item.senha}
+                </Text>
                 <Text style={[styles.orderText, { color: textColor }]}>
                   Data: {item.dataPedido}
                 </Text>
