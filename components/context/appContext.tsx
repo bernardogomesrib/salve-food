@@ -6,11 +6,17 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import { getItemsDaApi } from '@/api/item/item';
-import { CartItem, Product, Restaurant, Address } from '@/assets/types/types';
+import { CartItem, Product, Restaurant, Address, Card } from '@/assets/types/types';
 import { doLogout } from '@/api/auth/authModule';
+import { showMessage } from 'react-native-flash-message';
 
 export interface MyContextType {
     cart: CartItem[];
+    cards: Card[];
+    addCard: (card: Card) => Promise<void>;
+    editCard: (card: Card) => Promise<void>;
+    removeCard: (id: number) => Promise<void>;
+    loadCards: () => Promise<void>;
     restaurants: Restaurant[];
     product: Product | undefined;
     products: Product[];
@@ -52,6 +58,11 @@ const defaultContextValue: MyContextType = {
     defineUsuario: () => { },
     getUsuario: async () => undefined,
     usuario: undefined,
+    cards: [],
+    addCard: async () => {},
+    editCard: async () => {},
+    removeCard: async () => {},
+    loadCards: async () => {},
     location: null,
     enderecos: [],
     enderecoParaEditar: {
@@ -83,6 +94,7 @@ const MyContext = createContext<MyContextType>(defaultContextValue);
 
 const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [cards, setCards] = useState<Card[]>([]);
     //const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [product, setProduct] = useState<Product>();
@@ -155,6 +167,67 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         }
 
     }
+
+    const loadCards = async () => {
+      try {
+        const storedCards = await AsyncStorage.getItem('@cards');
+        setCards(storedCards ? JSON.parse(storedCards) : []);
+      } catch (error) {
+        showMessage({
+          message: 'Erro ao carregar cartões',
+          type: 'danger',
+        })
+      }
+    };
+  
+    const addCard = async (newCard: Card) => {
+      try {
+        const updatedCards = [...cards, newCard];
+        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+        setCards(updatedCards);
+        showMessage({
+          message: 'Cartão adicionado com sucesso',
+          type: 'success',
+        })
+      } catch (error) {
+        showMessage({
+          message: 'Erro ao adicionar cartão',
+          type: 'danger',
+        })
+      }
+    };
+  
+    const editCard = async (updatedCard: Card) => {
+      try {
+        const updatedCards = cards.map((card) =>
+          card.id === updatedCard.id ? updatedCard : card
+        );
+        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+        setCards(updatedCards);
+        showMessage({
+          message: 'Cartão editado com sucesso',
+          type: 'success',
+        })
+      } catch (error) {
+        showMessage({
+          message: 'Erro ao editar cartão',
+          type: 'danger',
+        })
+      }
+    };
+  
+    const removeCard = async (id: number) => {
+      try {
+        const updatedCards = cards.filter((card) => card.id !== id);
+        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+        setCards(updatedCards);
+      } catch (error) {
+        showMessage({
+          message: 'Erro ao remover cartão',
+          type: 'danger',
+        })
+      }
+    };
 
     let positionUpdateRoutine: NodeJS.Timeout | null = null;
 
@@ -244,7 +317,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{ logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos, cards, addCard, editCard, removeCard, loadCards }}>
             {children}
         </MyContext.Provider>
     );
