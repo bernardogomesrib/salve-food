@@ -96,6 +96,15 @@ export interface CartItem {
   price?: number;
 }
 
+export interface Card {
+  isCredit: boolean;
+  id: number;
+  number: string;
+  holder: string;
+  expiry: string;
+  cvc: string;
+  type: 'visa' | 'mastercard'| 'amex' | 'discover' | 'diners' | 'jcb' | 'unknown'; 
+}
 
 export interface Pedido {
   id: number;
