@@ -28,6 +28,19 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "permissions": [
+      "ACCESS_COARSE_LOCATION",
+      "ACCESS_FINE_LOCATION",
+      "CAMERA",
+      "MANAGE_DOCUMENTS",
+      "READ_EXTERNAL_STORAGE",
+      "RECORD_AUDIO",
+      "USE_FINGERPRINT",
+      "VIBRATE",
+      "WAKE_LOCK",
+      "WRITE_EXTERNAL_STORAGE",
+      "INTERNET"
+    ],
     "web": {
       "bundler": "metro",
       "output": "static",
