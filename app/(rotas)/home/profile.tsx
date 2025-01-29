@@ -5,6 +5,7 @@ import { Text, View } from "@/components/Themed";
 import { MenuItem } from "@/components/ui/MenuItem";
 import { useThemeColor } from "@/components/ui/themedefiner";
 import { FontAwesome } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -18,7 +19,7 @@ export default function Profile() {
    const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
   const { getUsuario } = useMyContext();
   const router = useRouter();
-
+  const [hide,setHide] = useState<boolean>(false);
   const fetchData = async () => {
     const u = await getUsuario(false);
     if (u !== undefined) {
@@ -34,13 +35,19 @@ export default function Profile() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: textColor }]}>Seu Perfil</Text>
 
-        <FontAwesome
+        {usuario?.pfp===undefined||usuario?.pfp===null?<FontAwesome
           name="user-circle-o"
           size={100}
           color={textColor}
           style={styles.icon}
-          onPress={() => {fetchData}}
-        />
+        />:
+          <View style={{ alignItems: 'center', width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent', marginBottom: 10 }}>
+          <Image
+            source={{ uri: usuario?.pfp }}
+            style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}
+          />
+        </View>
+        }
         <Text style={[styles.name, { color: textColor }]}>{usuario ? usuario.name : "carregando..."}</Text>
         <Text style={[styles.info, { color: textColor }]}>{usuario ? usuario.phone : "carregando..."}</Text>
         <Text style={[styles.info, { color: textColor }]}>
@@ -68,11 +75,6 @@ export default function Profile() {
           icon="cog"
           label="Configurações"
           onPress={() => router.push("/configuracoes")}
-        />
-        <MenuItem
-          icon="sign-out"
-          label="Logout"
-          onPress={() => doLogout()}
         />
       </View>
     </View>

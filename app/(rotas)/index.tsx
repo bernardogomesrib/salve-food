@@ -9,7 +9,7 @@ export default function inicio() {
     const [pushTo, setPushTo] = useState<'/(rotas)/home' | '/(rotas)/login' | null>(null);
     const {defineUsuario} = useMyContext();
     const get = async () => {
-        const token = await getToken();
+        try{const token = await getToken();
         const tempo = await getExpirationTime();
         if (token && tempo > Date.now()) {
             //router.push('/(rotas)/home');
@@ -17,6 +17,10 @@ export default function inicio() {
             setPushTo('/(rotas)/home');
         } else {
             //router.push('/(rotas)/login');
+            setPushTo('/(rotas)/login');
+        }}
+        catch(e){
+            console.log(e);
             setPushTo('/(rotas)/login');
         }
     }

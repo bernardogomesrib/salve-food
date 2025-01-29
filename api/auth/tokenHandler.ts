@@ -1,5 +1,6 @@
 
 export type Usuario= {
+  pfp: string|null;
   sub: string;
   realm_access: {
     roles: string[];

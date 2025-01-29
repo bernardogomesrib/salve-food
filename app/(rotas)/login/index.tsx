@@ -6,15 +6,17 @@ import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { styles } from '../../../assets/styles/Styles';
+import { useMyContext } from '@/components/context/appContext';
 export default function TabOneScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const { defineUsuario } = useMyContext();
   const login = async () => {
     console.log(`Email:${email} | Senha:${password}`);
     await doLogin(email, password);
+    await defineUsuario();
   }
   return (
     <View style={styles.container}>

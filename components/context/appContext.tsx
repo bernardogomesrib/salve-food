@@ -18,11 +18,11 @@ export interface MyContextType {
     setRestaurants: (restaurant: Restaurant[]) => void;
     addToCart: (product: CartItem) => void;
     delToCart: (product: CartItem) => void;
-    removeFromCart: (productId: number|undefined) => void;
+    removeFromCart: (productId: number | undefined) => void;
     handleRestaurantSelection: (restaurant: Restaurant) => void;
     handleProductSelection: (product: Product | undefined) => void;
     setUsuario: (usuario: Usuario) => void;
-    getUsuario: (required:boolean|undefined) => Promise<Usuario | undefined>;
+    getUsuario: (required: boolean | undefined) => Promise<Usuario | undefined>;
     defineUsuario: () => void;
     usuario: Usuario | undefined;
     location: Location.LocationObject | null;
@@ -31,9 +31,9 @@ export interface MyContextType {
     setEnderecoParaEditar: (endereco: Address) => void;
     modificaEndereco: (promessa: Promise<any>) => void;
     apagaEndereco: (id: number) => void;
-    enderecoSelecionadoParaEntrega:undefined|Address;
-    setEnderecoSelecionadoParaEntrega:(endereco:Address|undefined)=>void;
-    logout:()=>void;
+    enderecoSelecionadoParaEntrega: undefined | Address;
+    setEnderecoSelecionadoParaEntrega: (endereco: Address | undefined) => void;
+    logout: () => void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -72,7 +72,7 @@ const defaultContextValue: MyContextType = {
     apagaEndereco: () => { },
     enderecoSelecionadoParaEntrega: undefined,
     setEnderecoSelecionadoParaEntrega: () => { },
-    logout:()=>{}
+    logout: () => { },
 };
 
 
@@ -90,7 +90,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [restaurant, setRestaurant] = useState<Restaurant>();
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
-    const [enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega] = useState<Address | undefined>(undefined);
+    const [enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega] = useState<Address | undefined>(undefined);
     const [enderecoParaEditar, setEnderecoParaEditar] = useState<Address>({
         id: 0,
         rua: "",
@@ -129,14 +129,14 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             setEnderecos(updatedEnderecos);
         }
     }
-    const logout= async ()=>{
+    const logout = async () => {
         setUsuario(undefined);
         doLogout();
 
     }
-    const getUsuario = async (required?:boolean|undefined) => {
+    const getUsuario = async (required?: boolean | undefined) => {
         console.log("getUsuario chamado");
-        if (usuario === undefined||required===true) {
+        if (usuario === undefined || required === true) {
             console.log("buscando vai api")
             const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/auth/introspect', {
                 headers: {
@@ -146,7 +146,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
             console.log(req.data);
             setUsuario(req.data);
             setEnderecos(req.data.enderecos);
-            if(enderecoSelecionadoParaEntrega===undefined&&req.data.enderecos.length>0){
+            if (enderecoSelecionadoParaEntrega === undefined && req.data.enderecos.length > 0) {
                 setEnderecoSelecionadoParaEntrega(req.data.enderecos[0]);
             }
             return req.data;
@@ -244,7 +244,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{logout,enderecoSelecionadoParaEntrega,setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
+        <MyContext.Provider value={{ logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos }}>
             {children}
         </MyContext.Provider>
     );

@@ -7,33 +7,82 @@ import { useMyContext } from "@/components/context/appContext";
 import { useFocusEffect } from "expo-router";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import { updateUser } from "../../api/auth/authModule";
+import { Image } from "expo-image";
+import * as ImagePicker from 'expo-image-picker';
+import { mudarPfp } from "@/api/usuario/pfp";
+import { showMessage } from "react-native-flash-message";
 export default function EditProfile() {
-  
-  const { usuario, getUsuario,setUsuario } = useMyContext();
+
+  const { usuario, getUsuario, setUsuario } = useMyContext();
   const [nome, setNome] = useState(usuario?.name);
   const [email, setEmail] = useState(usuario?.email);
   const [telefone, setTelefone] = useState(usuario?.phone);
-  
+
 
   const color = useColorScheme();
-  return usuario&&(
+  return usuario && (
     <View style={styles.container}>
       {/* Header */}
 
       {/* Profile Picture */}
       <View style={styles.profileContainer}>
-        <FontAwesome
+        {usuario?.pfp === undefined || usuario?.pfp === null ? <FontAwesome
           name="user-circle"
           size={100}
           color={color == "dark" ? "white" : "black"}
-        />
+        /> : <View style={{ alignItems: 'center', width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}>
+          <Image
+            source={{ uri: usuario?.pfp }}
+            style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}
+          />
+          <FontAwesome
+            name="camera"
+            size={16}
+            color={color == "dark" ? "white" : "black"}
+            style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', padding: 4, borderRadius: 50 }}
+              onPress={async () => {
+                const permissionResult =
+                  await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (!permissionResult.granted) {
+                  showMessage({
+                    message: "Permissão Negada",
+                    description: "Você precisa permitir o acesso à galeria para mudar a foto de perfil!",
+                    type: "danger",
+                  });
+                  return;
+                }
+
+                let pickerResult = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ["images"],
+                  allowsEditing: true,
+                  aspect: [1, 1],
+                  quality: 1,
+                });
+
+                if (!pickerResult.canceled) {
+                  const response = await fetch(pickerResult.assets[0].uri);
+                  const formData = new FormData();
+                  const blob = await response.blob();
+                  formData.append("file", blob, pickerResult.assets[0].fileName || "default_filename");
+                  await mudarPfp(formData);
+                  
+                } else {
+                  showMessage({
+                    message: "Cancelado",
+                    description: "Nenhuma imagem foi enviada para o servidor!",
+                    type: "warning",
+                  });
+                }
+              }}
+          />
+        </View>}
       </View>
-      
+
       <View style={styles.form}>
         <View style={styles.inputGroup}>
           <Input
             value={nome}
-            onChangeText={(text) => {setNome(text);setUsuario({ ...usuario, name: text });console.log(text)}}
+            onChangeText={(text) => { setNome(text); setUsuario({ ...usuario, name: text }); console.log(text) }}
             label="Nome"
             style={styles.input}
             placeholder="Fulano Beltrano da Silva"
@@ -44,7 +93,7 @@ export default function EditProfile() {
         <View style={styles.inputGroup}>
           <Input
             value={usuario?.phone}
-            onChangeText={(text)=>{setTelefone(text);setUsuario({...usuario,phone:text})}}
+            onChangeText={(text) => { setTelefone(text); setUsuario({ ...usuario, phone: text }) }}
             mask="(99) 99999-9999"
             label="Número de Telefone"
             style={styles.input}
@@ -57,7 +106,7 @@ export default function EditProfile() {
         <View style={styles.inputGroup}>
           <Input
             value={usuario?.email}
-            onChangeText={(text)=>{setEmail(text);setUsuario({...usuario,email:text})}}
+            onChangeText={(text) => { setEmail(text); setUsuario({ ...usuario, email: text }) }}
             label="Email"
             style={styles.input}
             placeholder="tsm6@discente.ifpe.edu.br"
@@ -72,7 +121,7 @@ export default function EditProfile() {
       <Button
         title="Editar Perfil"
         style={styles.editButton}
-        onPress={() => updateUser(nome?nome:"", email?email:"", telefone?telefone:"")}
+        onPress={() => updateUser(nome ? nome : "", email ? email : "", telefone ? telefone : "")}
       />
     </View>
   );

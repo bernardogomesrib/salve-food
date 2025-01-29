@@ -69,7 +69,7 @@ function RootLayoutNav() {
           <Stack.Screen name="login/index" options={{ header: () => <ColorCompliantHeader color={clrSch} insets={insets} /> }} />
           <Stack.Screen name="login/cadastro" options={{ title: "cadastre-se", headerShown: false }} />
           <Stack.Screen name="login/recuperarSenha" options={{ title: "Recuperar senha", headerShown: false }} />
-          <Stack.Screen name="alterarDados" options={{ header: () => <CustomHeader color={clrSch} insets={insets} router={router} /> }} />
+          <Stack.Screen name="alterarDados" options={{ title:"Editar Pefil", headerShown:true}} />
           <Stack.Screen name="restaurante/index" options={{ headerShown: true }} />
           <Stack.Screen name="login/enviarEmail" options={{ headerShown: false }} />
           <Stack.Screen name="home" options={{ headerShown: false }} />
