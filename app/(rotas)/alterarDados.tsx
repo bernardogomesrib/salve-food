@@ -17,114 +17,123 @@ export default function EditProfile() {
   const [nome, setNome] = useState(usuario?.name);
   const [email, setEmail] = useState(usuario?.email);
   const [telefone, setTelefone] = useState(usuario?.phone);
+  const onPress = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      showMessage({
+        message: "Permissão Negada",
+        description: "Você precisa permitir o acesso à galeria para mudar a foto de perfil!",
+        type: "danger",
+      });
+      return;
+    }
 
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-  const color = useColorScheme();
-  return usuario && (
-    <View style={styles.container}>
-      {/* Header */}
+    if (!pickerResult.canceled) {
+      const response = await fetch(pickerResult.assets[0].uri);
+      const blob = await response.blob();
+      const pfp = await mudarPfp(blob,pickerResult.assets[0].mimeType??'');
+      if(pfp!==undefined){
+        console.log(pfp);
+        const newPfpUrl = `${pfp}?t=${new Date().getTime()}`;
+        if (usuario) {
+          setUsuario({
+            ...usuario,
+            pfp: newPfpUrl,
+            sub: usuario.sub ?? '',
+            realm_access: usuario.realm_access ?? { roles: [] }
+          });
+        }
+      }
+    } else {
+      showMessage({
+        message: "Cancelado",
+        description: "Nenhuma imagem foi enviada para o servidor!",
+        type: "warning",
+      });
+    }
+}
 
-      {/* Profile Picture */}
-      <View style={styles.profileContainer}>
+const color = useColorScheme();
+return usuario && (
+  <View style={styles.container}>
+    {/* Header */}
+
+    {/* Profile Picture */}
+    <View style={styles.profileContainer}>
+       <View style={{ alignItems: 'center', width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}>
         {usuario?.pfp === undefined || usuario?.pfp === null ? <FontAwesome
           name="user-circle"
           size={100}
           color={color == "dark" ? "white" : "black"}
-        /> : <View style={{ alignItems: 'center', width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}>
-          <Image
-            source={{ uri: usuario?.pfp }}
-            style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}
-          />
-          <FontAwesome
-            name="camera"
-            size={16}
-            color={color == "dark" ? "white" : "black"}
-            style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', padding: 4, borderRadius: 50 }}
-              onPress={async () => {
-                const permissionResult =
-                  await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (!permissionResult.granted) {
-                  showMessage({
-                    message: "Permissão Negada",
-                    description: "Você precisa permitir o acesso à galeria para mudar a foto de perfil!",
-                    type: "danger",
-                  });
-                  return;
-                }
-
-                let pickerResult = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ["images"],
-                  allowsEditing: true,
-                  aspect: [1, 1],
-                  quality: 1,
-                });
-
-                if (!pickerResult.canceled) {
-                  const response = await fetch(pickerResult.assets[0].uri);
-                  const formData = new FormData();
-                  const blob = await response.blob();
-                  formData.append("file", blob, pickerResult.assets[0].fileName || "default_filename");
-                  await mudarPfp(formData);
-                  
-                } else {
-                  showMessage({
-                    message: "Cancelado",
-                    description: "Nenhuma imagem foi enviada para o servidor!",
-                    type: "warning",
-                  });
-                }
-              }}
-          />
-        </View>}
+        /> : <Image
+          source={{ uri: usuario?.pfp }}
+          style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'transparent' }}
+        />}
+        <FontAwesome
+          name="camera"
+          size={16}
+          color={color == "dark" ? "white" : "black"}
+          style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', padding: 4, borderRadius: 50 }}
+          onPress={onPress}
+        />
       </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputGroup}>
-          <Input
-            value={nome}
-            onChangeText={(text) => { setNome(text); setUsuario({ ...usuario, name: text }); console.log(text) }}
-            label="Nome"
-            style={styles.input}
-            placeholder="Fulano Beltrano da Silva"
-            placeholderTextColor="#aaa"
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Input
-            value={usuario?.phone}
-            onChangeText={(text) => { setTelefone(text); setUsuario({ ...usuario, phone: text }) }}
-            mask="(99) 99999-9999"
-            label="Número de Telefone"
-            style={styles.input}
-            placeholder="(81) 94002-8922"
-            placeholderTextColor="#aaa"
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Input
-            value={usuario?.email}
-            onChangeText={(text) => { setEmail(text); setUsuario({ ...usuario, email: text }) }}
-            label="Email"
-            style={styles.input}
-            placeholder="tsm6@discente.ifpe.edu.br"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-          />
-        </View>
-
-      </View>
-
-      {/* Button */}
-      <Button
-        title="Editar Perfil"
-        style={styles.editButton}
-        onPress={() => updateUser(nome ? nome : "", email ? email : "", telefone ? telefone : "")}
-      />
     </View>
-  );
+
+    <View style={styles.form}>
+      <View style={styles.inputGroup}>
+        <Input
+          value={nome}
+          onChangeText={(text) => { setNome(text); setUsuario({ ...usuario, name: text }); console.log(text) }}
+          label="Nome"
+          style={styles.input}
+          placeholder="Fulano Beltrano da Silva"
+          placeholderTextColor="#aaa"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Input
+          value={usuario?.phone}
+          onChangeText={(text) => { setTelefone(text); setUsuario({ ...usuario, phone: text }) }}
+          mask="(99) 99999-9999"
+          label="Número de Telefone"
+          style={styles.input}
+          placeholder="(81) 94002-8922"
+          placeholderTextColor="#aaa"
+          keyboardType="phone-pad"
+        />
+      </View>
+
+      <View style={styles.inputGroup}>
+        <Input
+          value={usuario?.email}
+          onChangeText={(text) => { setEmail(text); setUsuario({ ...usuario, email: text }) }}
+          label="Email"
+          style={styles.input}
+          placeholder="tsm6@discente.ifpe.edu.br"
+          placeholderTextColor="#aaa"
+          keyboardType="email-address"
+        />
+      </View>
+
+    </View>
+
+    {/* Button */}
+    <Button
+      title="Editar Perfil"
+      style={styles.editButton}
+      onPress={() => updateUser(nome ? nome : "", email ? email : "", telefone ? telefone : "")}
+    />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
