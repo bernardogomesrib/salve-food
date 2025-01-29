@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { useMyContext } from '@/components/context/appContext';
@@ -7,7 +7,7 @@ import { showMessage } from 'react-native-flash-message';
 import { fazPedido } from '../../api/pedido/pedido'
 export default function PaymentOptionsScreen() {
 
-    const { restaurant, cart,setCart,setRestarant, enderecoSelecionadoParaEntrega, enderecos, setEnderecoSelecionadoParaEntrega } = useMyContext();
+    const { restaurant, cart,setCart,setRestarant, enderecoSelecionadoParaEntrega, enderecos, setEnderecoSelecionadoParaEntrega, cards, loadCards } = useMyContext();
     const restaurantFare = restaurant ? restaurant?.time / 2 : 30;
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -27,6 +27,10 @@ export default function PaymentOptionsScreen() {
         { id: 3, name: "Pix", icon: <MaterialIcons name="qr-code" size={24} color="#7EE462" /> }
     ];
 
+    useEffect(() => {
+      loadCards();
+    }, []);
+    
     const fazerCompra = async () => {
         console.log("chamando fazer compra");
         if(paymentMethod === undefined) {
@@ -95,26 +99,68 @@ export default function PaymentOptionsScreen() {
 
 
                 <View style={styles.paymentContainer}>
-                    <Text style={styles.paymentHeader}>Formas de Pagamento</Text>
-                    {paymentOptions.map((option) => (
-                        <TouchableOpacity key={option.id} style={styles.option} onPress={() => setPaymentMethod(option.name)}>
-                            <View style={styles.iconContainer}>{option.icon}</View>
-                            <Text style={styles.optionText}>{option.name}</Text>
+                  <Text style={styles.paymentHeader}>Meus Cartões Salvos</Text>
+                  {(!cards || cards.length === 0) ? (
+                    <Text style={styles.optionText}>Nenhum cartão salvo.</Text>
+                  ) : (
+                    cards.map((card) => {
+                      const cardLabel = `${card.isCredit ? "Crédito" : "Débito"} - final ${card.number.slice(
+                        -4
+                      )}`;
+                      const isSelected = paymentMethod === cardLabel;
+
+                      return (
+                        <TouchableOpacity
+                          key={card.id}
+                          style={[
+                            styles.option,
+                            isSelected && styles.selectedOption,
+                          ]}
+                          onPress={() => setPaymentMethod(cardLabel)}
+                        >
+                          <View style={styles.iconContainer}>
+                            <FontAwesome name="credit-card" size={24} color="#7EE462" />
+                          </View>
+                          <Text style={styles.optionText}>{cardLabel}</Text>
                         </TouchableOpacity>
-                    ))}
+                      );
+                    })
+                  )}
+
+                  {/* Outras Formas de Pagamento */}
+                  <Text style={styles.paymentHeader}>Outras Formas de Pagamento</Text>
+                  {paymentOptions.map((option) => {
+                    const isSelected = paymentMethod === option.name;
+                    return (
+                      <TouchableOpacity
+                        key={option.id}
+                        style={[
+                          styles.option,
+                          isSelected && styles.selectedOption,
+                        ]}
+                        onPress={() => setPaymentMethod(option.name)}
+                      >
+                        <View style={styles.iconContainer}>{option.icon}</View>
+                        <Text style={styles.optionText}>{option.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  })}
                 </View>
+
+                {/* Rodapé com total + botão */}
                 <View style={styles.footer}>
-                    <View style={styles.footerDetails}>
-                        <Text style={styles.totalText}>Total</Text>
-                        <Text style={styles.totalAmount}>
-                            R${total.toFixed(2)}/{totalQuantity} item{totalQuantity > 1 ? "s" : ""}
-                        </Text>
-                    </View>
-                    <TouchableOpacity style={styles.continueButton} onPress={fazerCompra}>
-                        <Text style={styles.continueText}>Concluir pedido</Text>
-                    </TouchableOpacity>
+                  <View style={styles.footerDetails}>
+                    <Text style={styles.totalText}>Total</Text>
+                    <Text style={styles.totalAmount}>
+                      R${total.toFixed(2)}/{totalQuantity} item
+                      {totalQuantity > 1 ? "s" : ""}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={styles.continueButton} onPress={fazerCompra}>
+                    <Text style={styles.continueText}>Concluir pedido</Text>
+                  </TouchableOpacity>
                 </View>
-            </View>
+              </View>
 
             <Modal
                 visible={modalVisible}
@@ -224,6 +270,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
+    },
+    selectedOption: {
+      backgroundColor: "#DFFFD6",
+      borderWidth: 1,
+      borderColor: "#7EE462",
     },
     iconContainer: {
         marginRight: 15,
