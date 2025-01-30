@@ -14,9 +14,11 @@ const pegaPedidos = async (page: number, setTotalPages: Function) => {
     if (response.data.content.length > 0) {
       setTotalPages(response.data.totalPages);
       return response.data.content;
-    } else {
+    } else if(response.data.totalPages!==undefined) {
       setTotalPages(response.data.totalPages);
       return response.data.content;
+    }else{
+      return undefined;
     }
   } catch (error:any) {
     
@@ -25,6 +27,7 @@ const pegaPedidos = async (page: number, setTotalPages: Function) => {
       description: error.message,
       type: "danger",
     });
+    return undefined;
   }
 
     

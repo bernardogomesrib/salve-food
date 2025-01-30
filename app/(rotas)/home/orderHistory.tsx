@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, useThemeColor, View } from "@/components/Themed";
-import { Pedido } from "@/assets/types/types";
 import { pegaPedidos } from "@/api/pedido/pedido";
 
 export default function OrderHistory() {
@@ -10,26 +9,37 @@ export default function OrderHistory() {
     { light: "#fff", dark: "#000" },
     "background"
   );
+  const [carregando, setCarregando] = useState(true);
   const [pagina, setPagina] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[] | undefined>([]);
   const paginaPedidos = async () => {
     if (pagina > totalPage) {
       return;
     }
+    setCarregando(true);
     const pedidos = await pegaPedidos(pagina, setTotalPage);
 
-    const updatedOrders = pedidos.map((pedido: any) => {
-      const existingOrderIndex = orders.findIndex(order => order.id === pedido.id);
-      if (existingOrderIndex !== -1) {
-        orders[existingOrderIndex] = pedido;
-        return null;
+    if (pedidos !== undefined) {
+      if (orders === undefined) {
+        setOrders([]);
+        paginaPedidos();
+      }else{
+        const updatedOrders = pedidos.map((pedido: any) => {
+          const existingOrderIndex = orders.findIndex(order => order.id === pedido.id);
+          if (existingOrderIndex !== -1) {
+            orders[existingOrderIndex] = pedido;
+            return null;
+          }
+          return pedido;
+        }).filter((pedido: any) => pedido !== null);
+        setOrders([...orders, ...updatedOrders]);
       }
-      return pedido;
-    }).filter((pedido: any) => pedido !== null);
-
-    setOrders([...orders, ...updatedOrders]);
-
+    } else {
+      setOrders(undefined);
+      
+    }
+    setCarregando(false);
   }
   useEffect(() => {
     paginaPedidos();
@@ -43,9 +53,9 @@ export default function OrderHistory() {
           Histórico de Pedidos
         </Text>
       </View>
-     
+
       <ScrollView>
-        {orders.length > 0 ? (
+        {orders&&orders.length > 0 ? (
           orders.map((item: any) => {
             console.log(item.itens);
             return (
@@ -92,7 +102,7 @@ export default function OrderHistory() {
             );
           })
         ) : (
-          <Text style={styles.emptyMessage}>Nenhum pedido encontrado.</Text>
+            orders ? (carregando ? <Text style={styles.emptyMessage}>Carregando...</Text>:<Text style={styles.emptyMessage}>Nenhum pedido encontrado.</Text>):<Text style={styles.emptyMessage}>Erro ao carregar pedidos.</Text>
         )}
       </ScrollView>
 
