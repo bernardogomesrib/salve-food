@@ -10,7 +10,7 @@ import { getRestaurantesPorId } from '@/api/loja/loja';
 export default function PaymentOptionsScreen() {
 
     const { restaurant, cart, setCart, setRestaurant, enderecoSelecionadoParaEntrega, enderecos, setEnderecoSelecionadoParaEntrega, cards, loadCards } = useMyContext();
-    const restaurantFare = restaurant ? restaurant?.time / 2 : 30;
+    const restaurantFare = restaurant ? 5 + restaurant?.time / 2 : 30;
     const cor = useColorScheme();
     const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
