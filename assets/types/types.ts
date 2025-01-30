@@ -12,6 +12,7 @@ export interface Restaurant {
   address?: string;
   items?: MenuItem[];
   time: number;
+  tiposPagamento: string[];
 }
 
 export interface MenuItem {

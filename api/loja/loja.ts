@@ -119,6 +119,7 @@ const conversor = (rest: any) => {
     description: rest.descricao,
     address: `${rest.rua}, ${rest.numero}, ${rest.bairro}, ${rest.cidade}, ${rest.estado}`,
     time: rest.deliveryTime,
+    tiposPagamento: rest.tiposPagamento
   };
   return restaurant;
 };

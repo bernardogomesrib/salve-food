@@ -24,7 +24,8 @@ export default function PaymentOptionsScreen() {
     const paymentOptions = [
         { id: 1, name: "Cartão de Crédito", icon: <FontAwesome name="credit-card" size={24} color="#7EE462" /> },
         { id: 2, name: "Cartão de Débito", icon: <FontAwesome name="credit-card-alt" size={24} color="#7EE462" /> },
-        { id: 3, name: "Pix", icon: <MaterialIcons name="qr-code" size={24} color="#7EE462" /> }
+        { id: 3, name: "Pix", icon: <MaterialIcons name="qr-code" size={24} color="#7EE462" /> },
+        {id:4, name: "Dinheiro", icon: <FontAwesome name="money" size={24} color="#7EE462" />}
     ];
 
     useEffect(() => {
