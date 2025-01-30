@@ -40,6 +40,8 @@ export interface MyContextType {
     enderecoSelecionadoParaEntrega: undefined | Address;
     setEnderecoSelecionadoParaEntrega: (endereco: Address | undefined) => void;
     logout: () => void;
+    setCart: (cart: CartItem[]) => void;
+    setRestaurant: (restaurant: Restaurant|undefined) => void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -84,6 +86,8 @@ const defaultContextValue: MyContextType = {
     enderecoSelecionadoParaEntrega: undefined,
     setEnderecoSelecionadoParaEntrega: () => { },
     logout: () => { },
+    setCart: () => { },
+    setRestaurant: () => { }
 };
 
 
@@ -99,7 +103,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [product, setProduct] = useState<Product>();
     const [products, setProducts] = useState<Product[]>([]);
-    const [restaurant, setRestaurant] = useState<Restaurant>();
+    const [restaurant, setRestaurant] = useState<Restaurant|undefined>(undefined);
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega] = useState<Address | undefined>(undefined);
@@ -277,7 +281,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
 
         if (existingProductIndex !== -1) {
             const updatedCart = [...cart];
-            updatedCart[existingProductIndex].quantity += 1;
+            updatedCart[existingProductIndex].quantity += product.quantity;
             setCart(updatedCart);
         } else {
             setCart([...cart, { ...product, quantity: product.quantity }]);
@@ -317,7 +321,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     };
 
     return (
-        <MyContext.Provider value={{ logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, setRestaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos, cards, addCard, editCard, removeCard, loadCards }}>
+        <MyContext.Provider value={{ setRestaurants,setRestaurant, setCart,logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos, cards, addCard, editCard, removeCard, loadCards }}>
             {children}
         </MyContext.Provider>
     );

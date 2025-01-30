@@ -44,15 +44,15 @@ const fazPedido= async (pedido: any) => {
               description: "Pedido feito com sucesso.",
               type: "success",
             });
-
+            return respose.data;
           }else{
             showMessage({
               message: "Erro",
               description: "Não foi possível fazer o pedido."+respose.data.error.message,
               type: "warning",
           });
-            return respose.data;
-          }
+        }
+          return respose.data;
         }).catch((error) => {
           showMessage({
             message: "Erro",

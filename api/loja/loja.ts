@@ -105,7 +105,30 @@ const getRestaurantesPorCategoriaNoLocation = async (
     return [];
   }
 };
+const getRestaurantesPorId = async (id: number|undefined,lat:number,longi:number) => {
+  if(id===undefined){
+    showMessage({
+      message: "Erro",
+      description: "ID não encontrado",
+      type: "danger",
+    });
+    return undefined;
+  }
+  const token = await AsyncStorage.getItem("token");
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/${id}?lat=${lat}&longi=${longi}`;
 
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.data) {
+    return conversor(response.data);
+  } else {
+    Alert.alert("Aviso", "Nenhum restaurante encontrado");
+    return undefined;
+  }
+}
 const conversor = (rest: any) => {
   const restaurant: Restaurant = {
     id: rest.id,
@@ -141,4 +164,5 @@ export {
   getRestaurantesPorCategoria,
   getRestaurantesPorCategoriaNoLocation,
   conversor,
+  getRestaurantesPorId,
 };
