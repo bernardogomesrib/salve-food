@@ -10,6 +10,18 @@ import { CartItem, Product, Restaurant, Address, Card } from '@/assets/types/typ
 import { doLogout } from '@/api/auth/authModule';
 import { showMessage } from 'react-native-flash-message';
 
+interface Notification {
+    id:number;
+    senderName: string;
+    message: string;
+    receiverId: string;
+    notificationType: string;
+    pedidoId: number;
+}
+
+interface WebSocketContextProps {
+    notifications: Notification[];
+}
 export interface MyContextType {
     cart: CartItem[];
     cards: Card[];
@@ -41,7 +53,7 @@ export interface MyContextType {
     setEnderecoSelecionadoParaEntrega: (endereco: Address | undefined) => void;
     logout: () => void;
     setCart: (cart: CartItem[]) => void;
-    setRestaurant: (restaurant: Restaurant|undefined) => void;
+    setRestaurant: (restaurant: Restaurant | undefined) => void;
 }
 
 const defaultContextValue: MyContextType = {
@@ -61,10 +73,10 @@ const defaultContextValue: MyContextType = {
     getUsuario: async () => undefined,
     usuario: undefined,
     cards: [],
-    addCard: async () => {},
-    editCard: async () => {},
-    removeCard: async () => {},
-    loadCards: async () => {},
+    addCard: async () => { },
+    editCard: async () => { },
+    removeCard: async () => { },
+    loadCards: async () => { },
     location: null,
     enderecos: [],
     enderecoParaEditar: {
@@ -103,7 +115,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [product, setProduct] = useState<Product>();
     const [products, setProducts] = useState<Product[]>([]);
-    const [restaurant, setRestaurant] = useState<Restaurant|undefined>(undefined);
+    const [restaurant, setRestaurant] = useState<Restaurant | undefined>(undefined);
     const [usuario, setUsuario] = useState<Usuario | undefined>(undefined);
     const [location, setLocation] = useState<Location.LocationObject | null>(null);
     const [enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega] = useState<Address | undefined>(undefined);
@@ -121,7 +133,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         longitude: 0
     });
     const [enderecos, setEnderecos] = useState<Address[]>([]);
-
+    const [notificationRoutine, setNotificationRoutine] = useState<NodeJS.Timeout | null>(null);
     const modificaEndereco = async (promessa: Promise<any>) => {
         const endereco = await promessa;
         console.log(endereco, "promessa resolvida");
@@ -173,70 +185,71 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     }
 
     const loadCards = async () => {
-      try {
-        const storedCards = await AsyncStorage.getItem('@cards');
-        setCards(storedCards ? JSON.parse(storedCards) : []);
-      } catch (error) {
-        showMessage({
-          message: 'Erro ao carregar cartões',
-          type: 'danger',
-        })
-      }
+        try {
+            const storedCards = await AsyncStorage.getItem('@cards');
+            setCards(storedCards ? JSON.parse(storedCards) : []);
+        } catch (error) {
+            showMessage({
+                message: 'Erro ao carregar cartões',
+                type: 'danger',
+            })
+        }
     };
-  
+
     const addCard = async (newCard: Card) => {
-      try {
-        const updatedCards = [...cards, newCard];
-        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
-        setCards(updatedCards);
-        showMessage({
-          message: 'Cartão adicionado com sucesso',
-          type: 'success',
-        })
-      } catch (error) {
-        showMessage({
-          message: 'Erro ao adicionar cartão',
-          type: 'danger',
-        })
-      }
+        try {
+            const updatedCards = [...cards, newCard];
+            await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+            setCards(updatedCards);
+            showMessage({
+                message: 'Cartão adicionado com sucesso',
+                type: 'success',
+            })
+        } catch (error) {
+            showMessage({
+                message: 'Erro ao adicionar cartão',
+                type: 'danger',
+            })
+        }
     };
-  
+
     const editCard = async (updatedCard: Card) => {
-      try {
-        const updatedCards = cards.map((card) =>
-          card.id === updatedCard.id ? updatedCard : card
-        );
-        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
-        setCards(updatedCards);
-        showMessage({
-          message: 'Cartão editado com sucesso',
-          type: 'success',
-        })
-      } catch (error) {
-        showMessage({
-          message: 'Erro ao editar cartão',
-          type: 'danger',
-        })
-      }
+        try {
+            const updatedCards = cards.map((card) =>
+                card.id === updatedCard.id ? updatedCard : card
+            );
+            await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+            setCards(updatedCards);
+            showMessage({
+                message: 'Cartão editado com sucesso',
+                type: 'success',
+            })
+        } catch (error) {
+            showMessage({
+                message: 'Erro ao editar cartão',
+                type: 'danger',
+            })
+        }
     };
-  
+
     const removeCard = async (id: number) => {
-      try {
-        const updatedCards = cards.filter((card) => card.id !== id);
-        await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
-        setCards(updatedCards);
-      } catch (error) {
-        showMessage({
-          message: 'Erro ao remover cartão',
-          type: 'danger',
-        })
-      }
+        try {
+            const updatedCards = cards.filter((card) => card.id !== id);
+            await AsyncStorage.setItem('@cards', JSON.stringify(updatedCards));
+            setCards(updatedCards);
+        } catch (error) {
+            showMessage({
+                message: 'Erro ao remover cartão',
+                type: 'danger',
+            })
+        }
     };
 
     let positionUpdateRoutine: NodeJS.Timeout | null = null;
 
     const startPositionUpdateRoutine = () => {
         if (positionUpdateRoutine === null) {
+
             positionUpdateRoutine = setInterval(iniciarCapturaDePosicao, 10000); // Chamar a cada 3 segundos
         } else {
             console.log("Uma rotina de atualização de token já está rodando.");
@@ -257,6 +270,7 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
         const u = await getUsuario(true);
         if (u !== undefined) {
             setUsuario(u)
+            initializeNotificationRoutine();
         }
         startPositionUpdateRoutine();
     }
@@ -319,9 +333,56 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
 
         setCart(updatedCart);
     };
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+
+    
+
+    const initializeNotificationRoutine = async () => {
+
+
+        //alguma confirmação para ativar a rotina de notificação pedindo para o usuario ativar notificação
+            startnotificationRoutine();
+    }
+
+    const startnotificationRoutine = () => {
+        if (notificationRoutine === null) {
+
+            setNotificationRoutine(setInterval(iniciarCapturaDeNotificacao, 5000)); // Chamar a cada 5 segundos
+        } else {
+            console.log("Uma rotina de notificação já está rodando.");
+        }
+    };
+
+    const iniciarCapturaDeNotificacao = async () => {
+        const req = await axios.get(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/notifications', {
+            headers: {
+                Authorization: 'Bearer ' + (await AsyncStorage.getItem('token'))
+            }
+        });
+        console.log(req.data);
+        const newNotifications = req.data;
+        if (newNotifications && newNotifications.length > 0) {
+            setNotifications(newNotifications);
+            for (const notification of newNotifications) {
+                await new Promise<void>((resolve) => {
+                    showMessage({
+                        message: notification.senderName,
+                        description: notification.message,
+                        type: "info",
+                        onHide: () => resolve(),
+                    });
+                });
+                await new Promise((resolve) => setTimeout(resolve, 1000)); // Add a delay between notifications
+                await axios.delete(process.env.EXPO_PUBLIC_BACKEND_URL + '/api/notifications/' + notification.id, {headers:{Authorization: 'Bearer ' + (await AsyncStorage.getItem('token'))}}); 
+            }
+
+
+                //// aqui termina notificação
+        }
+    }
 
     return (
-        <MyContext.Provider value={{ setRestaurants,setRestaurant, setCart,logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos, cards, addCard, editCard, removeCard, loadCards }}>
+        <MyContext.Provider value={{ setRestaurants, setRestaurant, setCart, logout, enderecoSelecionadoParaEntrega, setEnderecoSelecionadoParaEntrega, apagaEndereco, modificaEndereco, enderecoParaEditar, setEnderecoParaEditar, restaurants, cart, addToCart, delToCart, removeFromCart, handleRestaurantSelection, product, restaurant, handleProductSelection, products, setUsuario, getUsuario, defineUsuario, usuario, location, enderecos, cards, addCard, editCard, removeCard, loadCards }}>
             {children}
         </MyContext.Provider>
     );

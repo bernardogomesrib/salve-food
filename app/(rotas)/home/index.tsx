@@ -144,6 +144,9 @@ export default function Home() {
             </View>
           </TouchableOpacity>
         ))}
+        <View style={{ height: 50 }}>
+
+        </View>
       </ScrollView>
     </View>
   );
