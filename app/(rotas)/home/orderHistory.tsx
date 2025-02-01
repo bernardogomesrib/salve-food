@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Text, useThemeColor, View } from "@/components/Themed";
 import { pegaPedidos } from "@/api/pedido/pedido";
 
@@ -14,7 +14,10 @@ export default function OrderHistory() {
   const [totalPage, setTotalPage] = useState(0);
   const [orders, setOrders] = useState<any[] | undefined>([]);
   const paginaPedidos = async () => {
+    console.log("pagina: ", pagina);
     if (pagina > totalPage) {
+      console.log("pagina maior que total de paginas");
+      setPagina(totalPage);
       return;
     }
     setCarregando(true);
@@ -54,7 +57,7 @@ export default function OrderHistory() {
         </Text>
       </View>
 
-      <ScrollView>
+      <ScrollView onMomentumScrollEnd={() => setPagina(pagina + 1)}>
         {orders&&orders.length > 0 ? (
           orders.map((item: any) => {
             console.log(item.itens);
