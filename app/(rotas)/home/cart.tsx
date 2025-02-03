@@ -14,7 +14,7 @@ export default function CartScreen() {
     const { restaurant, products, cart, removeFromCart, addToCart, delToCart } = useMyContext();
     const restaurantName = restaurant?.name;
     const restaurantImage = restaurant?.image;
-    const restaurantFare = restaurant ? restaurant?.time / 2 : 30;
+    const restaurantFare = restaurant ? 5 + restaurant?.time / 2 : 30;
 
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
