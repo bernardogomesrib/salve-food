@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { Text, useThemeColor, View } from "@/components/Themed";
 import { pegaPedidos } from "@/api/pedido/pedido";
 
@@ -57,7 +57,7 @@ export default function OrderHistory() {
         </Text>
       </View>
 
-      <ScrollView onMomentumScrollEnd={() => setPagina(pagina + 1)}>
+      <ScrollView onMomentumScrollEnd={() => setPagina(pagina + 1)} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={carregando} onRefresh={()=>{setPagina(0)}}/>} >
         {orders&&orders.length > 0 ? (
           orders.map((item: any) => {
             console.log(item.itens);

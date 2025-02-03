@@ -11,7 +11,7 @@ import { router, Stack } from "expo-router";
 import { Text, View } from "@/components/Themed";
 
 export default function CartScreen() {
-    const { restaurant, products, cart, removeFromCart, addToCart, delToCart } = useMyContext();
+    const { restaurant, products, cart, removeFromCart, addToCart, delToCart, handleProductSelection } = useMyContext();
     const restaurantName = restaurant?.name;
     const restaurantImage = restaurant?.image;
     const restaurantFare = restaurant ? 5 + restaurant?.time / 2 : 30;
@@ -107,12 +107,12 @@ export default function CartScreen() {
                         horizontal
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
-                            <View style={styles.suggestionItem}>
+                            <TouchableOpacity onPress={() => { handleProductSelection(item) }} style={styles.suggestionItem}>
                                 <Image source={{ uri: item.image }} style={styles.suggestionImage} />
                                 <Text style={styles.suggestionPrice}>R$ {item.price.toFixed(2)}</Text>
                                 <Text style={styles.suggestionName}>{item.name}</Text>
 
-                            </View>
+                            </TouchableOpacity>
                         )}
                     /></>}
 

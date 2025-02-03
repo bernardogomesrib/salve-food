@@ -50,19 +50,19 @@ export default function DetalhesPrato() {
                         <MaterialIcons name="restaurant" size={24} color="#000" />
                         <View style={styles.restaurantText}>
                             <Text style={styles.restaurantName}>{restaurantName}</Text>
-                            <Text style={styles.restaurantDetails}>{restaurantDelivery} | Frete grátis</Text>
+                            <Text style={styles.restaurantDetails}>{restaurantDelivery}</Text>
                         </View>
                         <View style={styles.rating}>
                             <MaterialIcons name="star" size={20} color="#FFA500" />
                             <Text style={styles.ratingText}>{restaurantRating}</Text>
                         </View>
                     </View>
-                    <Text style={styles.observationLabel}>Observação?</Text>
+                    {/* <Text style={styles.observationLabel}>Observação?</Text>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Ex.: Tirar cebola, molho à parte, etc."
                         placeholderTextColor="#999"
-                    />
+                    /> */}
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.quantitySelector}>
