@@ -64,4 +64,24 @@ const fazPedido= async (pedido: any) => {
           });
         });
 }
-export { pegaPedidos, fazPedido };
+
+const pegaPedidoPeloId = async (id: number) => {
+  const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/pedidos/${id}`;
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${await AsyncStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    showMessage({
+      message: "Erro",
+      description: error.message,
+      type: "danger",
+    });
+    return undefined;
+  }
+}
+
+export { pegaPedidos, fazPedido, pegaPedidoPeloId };
