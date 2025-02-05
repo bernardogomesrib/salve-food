@@ -63,6 +63,13 @@ export default function TabLayout() {
                     header: () => <CustomHeader router={router} color={colorScheme} insets={insets} />,
                 }}
             />
+            <Tabs.Screen
+                name="orderDetails"
+                options={{
+                    title: 'Detalhes',
+                    href: null
+                }}
+            />
         </Tabs>
 
     );
