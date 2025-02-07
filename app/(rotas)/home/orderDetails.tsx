@@ -1,15 +1,15 @@
-import { View, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { pegaPedidoPeloId } from '@/api/pedido/pedido';
+import ReviewSection from '@/components/Review';
 import { Text, useThemeColor } from '@/components/Themed';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { pegaPedidoPeloId } from '@/api/pedido/pedido';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from 'react-native';
 
 const StatusColors = {
   'PENDENTE': '#FFA500',
-  'CONFIRMADO': '#32CD32',
-  'EM_PREPARO': '#4169E1',
-  'PRONTO': '#9370DB',
+  'PREPARANDO': '#4169E1',
+  'AGUARDANDO_ENTREGADOR': '#9370DB',
   'A_CAMINHO': '#FF69B4',
   'ENTREGUE': '#228B22',
   'CANCELADO': '#FF0000',
@@ -17,15 +17,15 @@ const StatusColors = {
 
 const StatusIcons = {
   'PENDENTE': 'clock',
-  'CONFIRMADO': 'check-circle',
-  'EM_PREPARO': 'utensils',
-  'PRONTO': 'check-double',
+  'PREPARANDO': 'utensils',
+  'AGUARDANDO_ENTREGADOR': 'check-double',
   'A_CAMINHO': 'motorcycle',
   'ENTREGUE': 'flag-checkered',
   'CANCELADO': 'times-circle',
 };
 
 const UPDATE_INTERVAL = 10000;
+
 
 export default function OrderDetails() {
   const { id } = useLocalSearchParams();
@@ -48,13 +48,9 @@ export default function OrderDetails() {
     try {
       const data = await pegaPedidoPeloId(Number(id));
       if (data) {
-        // Verifica se o status mudou para ENTREGUE
         if (previousStatusRef.current && 
             previousStatusRef.current !== 'ENTREGUE' && 
             data.status === 'ENTREGUE') {
-          // Aqui você pode adicionar uma notificação ou feedback visual
-          // Por exemplo, um som ou vibração
-          // Você também pode parar o polling neste ponto
           if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
@@ -69,7 +65,6 @@ export default function OrderDetails() {
   };
 
   useEffect(() => {
-    // Função inicial de carregamento
     const initialLoad = async () => {
       setLoading(true);
       await fetchPedido();
@@ -78,10 +73,8 @@ export default function OrderDetails() {
 
     initialLoad();
 
-    // Configura o intervalo de atualização
     intervalRef.current = setInterval(fetchPedido, UPDATE_INTERVAL);
 
-    // Cleanup function
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -252,6 +245,14 @@ export default function OrderDetails() {
             </Text>
           </View>
         )}
+
+        {pedido.status === 'ENTREGUE' && (
+          <ReviewSection 
+            idLoja={pedido.loja.id}
+            textColor={textColor}
+            backgroundColor={cardBackgroundColor}
+          />
+        )}
       </ScrollView>
     </View>
   );
@@ -409,8 +410,42 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   errorText: {
+    color: '#FF0000',
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
   },
+  // Estilos para a seção de review
+  ratingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  starButton: {
+    padding: 8,
+  },
+  commentInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  submitButton: {
+    backgroundColor: '#4CAF50',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  successText: {
+    textAlign: 'center',
+    fontSize: 16,
+  }
 });
