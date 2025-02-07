@@ -11,13 +11,13 @@ import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-
 import { showMessage } from 'react-native-flash-message';
 
 
-
 export default function Home() {
-  const { restaurants, setRestaurants, handleRestaurantSelection, location,enderecoSelecionadoParaEntrega } = useMyContext();
+  const { restaurants, setRestaurants, handleRestaurantSelection, location, enderecoSelecionadoParaEntrega } = useMyContext();
   const [pagina, setPagina] = useState(0);
+  const [maxPage, setMaxPage] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [categoria, setCategoria] = useState<null | number>(null);
-  const [categorias,setCategorias] = useState<Category[]|null>(null);
+  const [categorias, setCategorias] = useState<Category[] | null>(null);
   const aoEntrar = async () => {
     paginar();
     pegarCategorias();
@@ -35,37 +35,43 @@ export default function Home() {
         showMessage({
           message: 'Permissão para pegar localização negada',
           type: 'danger',
-        })
+        });
         return;
       }
 
-      if (enderecoSelecionadoParaEntrega&&enderecoSelecionadoParaEntrega.latitude&&enderecoSelecionadoParaEntrega.longitude){
-        const restaurantes = categoria !== null ? await getRestaurantesPorCategoria({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina, categoria) : await getRestaurantes({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina);
-        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
-          .map(id => restaurantes.find(r => r.id === id));
-        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
-        setRefreshing(false);
-      } else if (location){
-        const restaurantes = categoria !==null ? await getRestaurantesPorCategoria(location.coords, pagina, categoria) : await getRestaurantes(location.coords, pagina);
-        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
-          .map(id => restaurantes.find(r => r.id === id));
-        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
-        setRefreshing(false);
-      }else{
-        const restaurantes = categoria !==null ? await getRestaurantesPorCategoriaNoLocation(pagina, categoria) : await getRestaurantesNoLocation(pagina);
-        const uniqueRestaurants = Array.from(new Set(restaurantes.map(r => r.id)))
-          .map(id => restaurantes.find(r => r.id === id));
-        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined));
-        setRefreshing(false);
+      if (maxPage === 0 || pagina <= maxPage) {
+        console.log("entrando");
+        let novosRestaurantes:Restaurant[] = [];
 
+        if (enderecoSelecionadoParaEntrega && enderecoSelecionadoParaEntrega.latitude && enderecoSelecionadoParaEntrega.longitude) {
+          novosRestaurantes = categoria !== null
+            ? await getRestaurantesPorCategoria({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina, categoria, setMaxPage)
+            : await getRestaurantes({ longitude: enderecoSelecionadoParaEntrega.longitude, latitude: enderecoSelecionadoParaEntrega.latitude, altitude: 0, accuracy: 0, altitudeAccuracy: 0, heading: 0, speed: 0 }, pagina, setMaxPage);
+        } else if (location) {
+          novosRestaurantes = categoria !== null
+            ? await getRestaurantesPorCategoria(location.coords, pagina, categoria, setMaxPage)
+            : await getRestaurantes(location.coords, pagina, setMaxPage);
+        } else {
+             await getRestaurantesNoLocation(pagina, setMaxPage);
+        }
+
+        const allRestaurants = [...restaurants, ...novosRestaurantes];
+        const uniqueRestaurants = Array.from(new Set(allRestaurants.map(r => r.id)))
+          .map(id => allRestaurants.find(r => r.id === id));
+        setRestaurants(uniqueRestaurants.filter((restaurant): restaurant is Restaurant => restaurant !== undefined) as Restaurant[]);
+
+        setRefreshing(false);
+        console.log("maxPage", maxPage);
       }
-    } catch (error) {
+      setRefreshing(false);
+    } catch (error: any) {
       showMessage({
-        message: 'Erro',
-        description: 'Não foi possível obter a localização.',
+        message: 'Erro ao carregar restaurantes',
         type: 'danger',
-      })
+      });
+      setRefreshing(false);
     }
+
   }
 
   useEffect(() => {
@@ -82,19 +88,36 @@ export default function Home() {
 
 
   useEffect(() => {
-    if(enderecoSelecionadoParaEntrega===undefined){
+    if (enderecoSelecionadoParaEntrega === undefined) {
       router.push('/(rotas)/listaEnderecos');
     }
     aoEntrar();
-  },[])
-  useEffect(()=>{
+  }, [])
+  useEffect(() => {
     onRefresh();
-  },[enderecoSelecionadoParaEntrega]);
+  }, [enderecoSelecionadoParaEntrega]);
   useEffect(() => { paginar(); }, [pagina]);
+
+
+  const handleScroll = async (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const distanceFromBottom =
+      contentSize.height - (layoutMeasurement.height + contentOffset.y);
+    if (distanceFromBottom < 1 && !refreshing) {
+      try {
+        if(pagina<maxPage){
+          setPagina(pagina + 1);
+          console.log("pagina", pagina);
+        }
+
+      } finally {
+      }
+    }
+  };
   return (
     <View style={styles.container}>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} refreshControl={
+      <ScrollView onScroll={handleScroll} style={styles.content} showsVerticalScrollIndicator={false} refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }>
         <Text style={styles.sectionTitle}>Categorias</Text>
@@ -105,21 +128,23 @@ export default function Home() {
         >
           <TouchableOpacity style={styles.categoryCard} onPress={() => {
             setCategoria(null);
+            setRestaurants([]);
             setPagina(0);
           }}>
             <Text style={styles.categoryIcon}>{'🍽️'}</Text>
 
             <Text style={styles.categoryName}>Todas</Text>
           </TouchableOpacity>
-          {categorias?categorias.map((category) => (
+          {categorias ? categorias.map((category) => (
             <TouchableOpacity key={category.id} style={styles.categoryCard} onPress={() => {
+              setRestaurants([]);
               setCategoria(category.id);
               console.log(restaurants);
             }}>
               <Text style={styles.categoryIcon}>{category.emoji}</Text>
               <Text style={styles.categoryName}>{category.name}</Text>
             </TouchableOpacity>
-          )):null}
+          )) : null}
         </ScrollView>
 
         <Text style={styles.sectionTitle}>Restaurantes</Text>

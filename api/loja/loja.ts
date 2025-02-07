@@ -5,8 +5,16 @@ import { LocationObjectCoords } from "expo-location";
 import { Alert } from "react-native";
 import { showMessage } from "react-native-flash-message";
 
-const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
-  console.log("pegando independente de categoria com localização",pos.latitude,pos.longitude);
+const getRestaurantes = async (
+  pos: LocationObjectCoords,
+  pagina: number,
+  setMaxPage: (max: number) => void
+) => {
+  console.log(
+    "pegando independente de categoria com localização",
+    pos.latitude,
+    pos.longitude
+  );
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10&lat=${pos.latitude}&longi=${pos.longitude}`;
 
@@ -18,6 +26,7 @@ const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
   const restaur: Restaurant[] = [];
   if (response.data.content) {
     const rest = response.data.content;
+    setMaxPage(response.data.totalPages);
     rest.forEach((element: any) => {
       restaur.push(conversor(element));
     });
@@ -28,7 +37,8 @@ const getRestaurantes = async (pos: LocationObjectCoords, pagina: number) => {
   }
 };
 
-const getRestaurantesNoLocation = async (pagina: number) => {
+const getRestaurantesNoLocation = async (pagina: number,
+  setMaxPage: (max: number) => void) => {
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja?page=${pagina}&size=10`;
 
@@ -43,6 +53,12 @@ const getRestaurantesNoLocation = async (pagina: number) => {
     rest.forEach((element: any) => {
       restaur.push(conversor(element));
     });
+    setMaxPage(response.data.totalPages);
+    showMessage({
+      message: "Erro",
+      description: "Não pode procurar lojas sem um endereço!",
+      type: "warning",
+    });
     return restaur;
   } else {
     Alert.alert("Aviso", "Nenhum restaurante encontrado");
@@ -53,7 +69,8 @@ const getRestaurantesNoLocation = async (pagina: number) => {
 const getRestaurantesPorCategoria = async (
   pos: LocationObjectCoords,
   pagina: number,
-  categoria: number
+  categoria: number,
+  setMaxPage: (max: number) => void
 ) => {
   console.log("pegando via categoria com localização",pos.latitude,pos.longitude);
   const token = await AsyncStorage.getItem("token");
@@ -67,9 +84,11 @@ const getRestaurantesPorCategoria = async (
   const restaur: Restaurant[] = [];
   if (response.data.content) {
     const rest = response.data.content;
+    setMaxPage(response.data.totalPages);
     rest.forEach((element: any) => {
       restaur.push(conversor(element));
     });
+    setMaxPage(response.data.totalPages);
     return restaur;
   } else {
     showMessage({
@@ -83,7 +102,8 @@ const getRestaurantesPorCategoria = async (
 
 const getRestaurantesPorCategoriaNoLocation = async (
   pagina: number,
-  categoria: number
+  categoria: number,
+  setMaxPage: (max: number) => void
 ) => {
   const token = await AsyncStorage.getItem("token");
   const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/loja/segmento/categoria?page=${pagina}&size=10`;
@@ -96,13 +116,19 @@ const getRestaurantesPorCategoriaNoLocation = async (
   const restaur: Restaurant[] = [];
   if (response.data.content) {
     const rest = response.data.content;
-    rest.forEach((element: any) => {
-      restaur.push(conversor(element));
+    setMaxPage(response.data.totalPages);
+    showMessage({
+      message: "Erro",
+      description: "Não pode procurar lojas sem um endereço!",
+      type: "warning",
     });
-    return restaur;
   } else {
-    Alert.alert("Aviso", "Nenhum restaurante encontrado");
-    return [];
+    showMessage({
+      message: "Erro",
+      description: "Não pode procurar lojas sem um endereço!",
+      type: "warning",
+    });
+   
   }
 };
 const getRestaurantesPorId = async (id: number|undefined,lat:number,longi:number) => {

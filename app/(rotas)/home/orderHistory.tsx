@@ -62,7 +62,21 @@ export default function OrderHistory() {
   useEffect(() => {
     console.log("foi alterado a quantidade de paginas total");
   }, [totalPage]);
+  const handleScroll = async (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const distanceFromBottom =
+      contentSize.height - (layoutMeasurement.height + contentOffset.y);
+    if (distanceFromBottom < 1 && !carregando) {
+      try {
+        if (pagina < totalPage) {
+          setPagina(pagina + 1);
+          console.log("pagina", pagina);
+        }
 
+      } finally {
+      }
+    }
+  };
   return (
     <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
@@ -72,7 +86,7 @@ export default function OrderHistory() {
       </View>
 
       <ScrollView
-        onMomentumScrollEnd={() => setPagina(pagina + 1)}
+       onScroll={handleScroll}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
