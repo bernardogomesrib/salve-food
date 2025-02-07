@@ -152,7 +152,7 @@ export default function ReviewSection({
       <Input
         label="Comentário"
         style={[styles.commentInput, { color: textColor, borderColor: textColor }]}
-        placeholder="Deixe seu comentário"
+        placeholder="Deixe seu comentário(Opcional)"
         placeholderTextColor="#808080"
         value={comment}
         onChangeText={setComment}
