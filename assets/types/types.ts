@@ -107,6 +107,13 @@ export interface Card {
   type: 'visa' | 'mastercard'| 'amex' | 'discover' | 'diners' | 'jcb' | 'unknown'; 
 }
 
+export interface Review {
+  idLoja: number;
+  nota: number;
+  comentario?: string;
+  imagem?: any;
+}
+
 export interface Pedido {
   id: number;
   date: string;
