@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "salve-food",
-    "slug": "salve-food",
+    "name": "Salve Food",
+    "slug": "Salve_Food",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -49,7 +49,15 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -59,7 +67,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "8e1714f0-daba-40fb-a831-6e5903a111be"
+        "projectId": "e7a34c61-9640-4779-9c6d-01590499b0ab"
       }
     },
     "owner": "bernardogomesrib"
