@@ -105,7 +105,7 @@ export default function PaymentOptionsScreen() {
 
 
                 <View style={styles.paymentContainer}>
-                    <Text style={[styles.paymentHeader,cor==="light"?{color:"#333"}:{color:"#aaa"}]}>Meus Cartões Salvos</Text>
+                   {/*  <Text style={[styles.paymentHeader,cor==="light"?{color:"#333"}:{color:"#aaa"}]}>Meus Cartões Salvos</Text>
                     {(!cards || cards.length === 0) ? (
                         <Text style={[styles.optionText,{textAlign:'center'}]}>Nenhum cartão salvo.</Text>
                     ) : (
@@ -131,10 +131,10 @@ export default function PaymentOptionsScreen() {
                                 </TouchableOpacity>
                             );
                         })
-                    )}
+                    )} */}
 
                     {/* Outras Formas de Pagamento */}
-                    <Text style={[styles.paymentHeader,cor==="light"?{color:"#333"}:{color:"#aaa"}]}>Outras Formas de Pagamento</Text>
+                    <Text style={[styles.paymentHeader,cor==="light"?{color:"#333"}:{color:"#aaa"}]}>Formas de Pagamento</Text>
                     {paymentOptions.map((option) => {
                         const isSelected = paymentMethod === option.name;
                         if (!restaurant?.tiposPagamento.includes("CARTAO_CREDITO") && option.name === "Cartão de Crédito") {

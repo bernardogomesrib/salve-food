@@ -71,11 +71,11 @@ export default function Profile() {
           label="Endereços"
           onPress={() => router.push("/listaEnderecos")}
         />
-        <MenuItem
+       {/*  <MenuItem
           icon="cog"
           label="Configurações"
           onPress={() => router.push("/configuracoes")}
-        />
+        /> */}
         <MenuItem
           icon="sign-out"
           label="Sair"

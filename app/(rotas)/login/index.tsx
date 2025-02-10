@@ -7,6 +7,7 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { styles } from '../../../assets/styles/Styles';
 import { useMyContext } from '@/components/context/appContext';
+import { Linking } from 'react-native';
 export default function TabOneScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,9 +33,15 @@ export default function TabOneScreen() {
         keyboardType="email-address"
       />
       <Input label="Senha" secureTextEntry style={{ width: "80%" }} value={password} onChangeText={setPassword}/>
-      <Link href="/(rotas)/login/enviarEmail" style={styles.esqueci}>
-        <Text style={styles.esqueci}>Esqueci a senha</Text>
-      </Link>
+      <Text
+        style={styles.esqueci}
+        onPress={() => {
+          const url = `${process.env.EXPO_PUBLIC_BACKEND_URL?.replace("8080", "9080/realms/salve/login-actions/reset-credentials?client_id=salve")}`;
+          Linking.openURL(url);
+        }}
+      >
+        Esqueci a senha
+      </Text>
       <Button title="Entrar" style={styles.buttonEntrar} onPress={login} />
       <Text>
         Não tem uma conta?{" "}
