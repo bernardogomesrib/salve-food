@@ -72,6 +72,9 @@ export default function ListaEnderecos() {
 		{enderecos && enderecos.length > 0 ? (
 			enderecos.map((address) => {
 			const ad = toAddress2(address);
+			if(ad===undefined){
+				return <></>
+			}
 			return(
 
 				<View style={styles.card} key={address.id}>

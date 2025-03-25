@@ -1,5 +1,6 @@
 import { Usuario } from "@/api/auth/tokenHandler";
 import { conversor } from "@/api/loja/loja";
+import { showMessage } from "react-native-flash-message";
 
 export interface Restaurant {
   id: number;
@@ -41,23 +42,28 @@ export type Address = {
   pais: string;
   complemento: string;
   cep: string;
-  latitude: number|null;
-  longitude: number|null;
+  latitude: number | null;
+  longitude: number | null;
 };
 
-export const toAddress2 = function (end: Address): Address2 {
-  let ic = "location-on";
-  if(end.apelido?.toLocaleLowerCase().includes("casa") ){
-    ic = "house";
-  }else if(end.apelido?.toLocaleLowerCase().includes("trabalho")){
-    ic = "work";
-  }else if(end.apelido?.toLocaleLowerCase().includes("apartamento")){
-    ic = "apartment";
-  }else{
-    ic = "location-on"
+export const toAddress2 = function (end: Address): Address2|undefined {
+  if (end.apelido === undefined) {
+    showMessage({
+      message: "Erro ao salvar endereço",
+      type: "danger",
+    });
+    return;
   }
-
-
+  let ic = "location-on";
+  if (end.apelido?.toLocaleLowerCase().includes("casa")) {
+    ic = "house";
+  } else if (end.apelido?.toLocaleLowerCase().includes("trabalho")) {
+    ic = "work";
+  } else if (end.apelido?.toLocaleLowerCase().includes("apartamento")) {
+    ic = "apartment";
+  } else {
+    ic = "location-on";
+  }
 
   const endereco: Address2 = {
     id: end.id ? end.id : 0,
@@ -81,7 +87,6 @@ export interface Address2 {
   icon: string;
 }
 
-
 export interface Product {
   id: number;
   description: string;
@@ -104,7 +109,14 @@ export interface Card {
   holder: string;
   expiry: string;
   cvc: string;
-  type: 'visa' | 'mastercard'| 'amex' | 'discover' | 'diners' | 'jcb' | 'unknown'; 
+  type:
+    | "visa"
+    | "mastercard"
+    | "amex"
+    | "discover"
+    | "diners"
+    | "jcb"
+    | "unknown";
 }
 
 export interface Review {
@@ -125,11 +137,10 @@ export interface Pedido {
   items: CartItem[];
   address: Address2;
   restaurant: Restaurant;
-  recipient: Usuario
+  recipient: Usuario;
 }
 
-
-export const toPedido= function (pedido: any): Pedido {
+export const toPedido = function (pedido: any): Pedido {
   const items: CartItem[] = [];
   pedido.itens.forEach((element: any) => {
     items.push({
@@ -144,7 +155,7 @@ export const toPedido= function (pedido: any): Pedido {
       quantity: element.quantidade,
     });
   });
-   const pe: Pedido = {
+  const pe: Pedido = {
     id: pedido.id,
     date: pedido.dataPedido,
     time: pedido.dataPedido,
@@ -153,15 +164,14 @@ export const toPedido= function (pedido: any): Pedido {
     paymentMethod: pedido.formaPagamento,
     deliveryFee: `R$ ${pedido.taxaEntrega.toFixed(2)}`,
     items,
-    restaurant:conversor(pedido.loja),
-    address:pedido.enderecoEntrega,
-    recipient:pedido.criadoPor
-   }
-   return pe;
-}
-    
-    
-    /* {
+    restaurant: conversor(pedido.loja),
+    address: pedido.enderecoEntrega,
+    recipient: pedido.criadoPor,
+  };
+  return pe;
+};
+
+/* {
           id: 1,
           date: "03/01/2025",
           time: "18:45",
@@ -187,7 +197,7 @@ export const toPedido= function (pedido: any): Pedido {
             phone: "(81) 1234-5678",
           },
         }, */
-    /* 
+/* 
     {
         "id": 252,
         "dataPedido": "21/01/2025 18:05:06",

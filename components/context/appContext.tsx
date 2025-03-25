@@ -136,6 +136,13 @@ const MyProvider: React.FC<MyProviderProps> = ({ children }: { children: ReactNo
     const [notificationRoutine, setNotificationRoutine] = useState<NodeJS.Timeout | null>(null);
     const modificaEndereco = async (promessa: Promise<any>) => {
         const endereco = await promessa;
+        if (endereco.apelido === undefined ) {
+            showMessage({
+                message: 'Erro ao salvar endereço',
+                type: 'danger',
+            });
+            return;
+        }
         console.log(endereco, "promessa resolvida");
         const existingAddressIndex = enderecos.findIndex((item) => item.id === endereco.id);
         if (existingAddressIndex === -1) {

@@ -120,6 +120,30 @@ const fetchAddress = async (latitude: number, longitude: number) => {
 };
 
 const salvarEndereco = async (endereco: Address) => {
+  if(endereco.apelido === ""||endereco.apelido === undefined){
+    showMessage({
+      message: "Erro",
+      description: "Digite um apelido para o endereço.",
+      type: "danger",
+    });
+    return;
+  }
+  if(endereco.cep === ""||endereco.cep === undefined){
+    showMessage({
+      message: "Erro",
+      description: "Digite um CEP para o endereço.",
+      type: "danger",
+    });
+    return;
+  }
+  if(endereco.numero === ""||endereco.numero === undefined){
+    showMessage({
+      message: "Erro",
+      description: "Digite um número para o endereço.",
+      type: "danger",
+    });
+    return;
+  }
   if (loopbackCounter >= 2) {
     showMessage({
       message: "Erro",
